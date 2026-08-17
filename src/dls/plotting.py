@@ -82,3 +82,14 @@ def panel_label(ax: plt.Axes, text: str, dx: float = -0.16, dy: float = 1.06) ->
         va="top",
         ha="left",
     )
+
+
+def panel_title(ax: plt.Axes, letter: str, text: str = "", size: float = 8.6,
+                pad: float = 7.0) -> None:
+    """Left-aligned title carrying its own bold panel letter.
+
+    Keeping the letter inside the title avoids the collisions that occur when a
+    separate label is placed in axes coordinates next to a centred title.
+    """
+    label = rf"$\bf{{{letter}}}$" + (f"   {text}" if text else "")
+    ax.set_title(label, loc="left", fontsize=size, pad=pad)

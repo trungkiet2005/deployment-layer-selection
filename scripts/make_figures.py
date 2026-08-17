@@ -17,7 +17,7 @@ from matplotlib.lines import Line2D
 
 from dls.dynamics import stationary_analysis
 from dls.functionals import build_functionals, build_selection_matrix
-from dls.plotting import PALETTE, panel_label, save, use_paper_style
+from dls.plotting import PALETTE, panel_title, save, use_paper_style
 from dls.race import STRATEGIES, RaceParams, build_race_tables
 from dls.ratchet import RatchetParams, hysteresis_sweep
 from dls.theory import (
@@ -49,18 +49,18 @@ def figure_functionals(base, outdir: Path) -> None:
         (build_selection_matrix(base, 5.0), r"selection functional $\pi_P$, $L=5$", "viridis"),
         (fun.wedge, r"wedge $\Delta=(1-\lambda)h\,m$", "cividis"),
     ]
-    fig, axes = plt.subplots(1, 4, figsize=(11.6, 3.0))
-    fig.subplots_adjust(wspace=0.55)
-    for k, (ax, (mat, title, cmap), lab) in enumerate(zip(axes, panels, "ABCD")):
+    fig, axes = plt.subplots(2, 2, figsize=(7.4, 6.4))
+    fig.subplots_adjust(wspace=0.34, hspace=0.42, bottom=0.07, top=0.93)
+    flat = axes.ravel()
+    for k, (ax, (mat, title, cmap), lab) in enumerate(zip(flat, panels, "ABCD")):
         im = ax.imshow(mat, cmap=cmap, aspect="equal")
-        ax.set_xticks(range(len(STRATEGIES)), STRATEGIES, fontsize=7.2)
-        if k == 0:
-            ax.set_yticks(range(len(STRATEGIES)), STRATEGIES, fontsize=7.2)
-            ax.set_ylabel("focal design $i$", fontsize=8.4)
-        else:
-            ax.set_yticks(range(len(STRATEGIES)), [""] * len(STRATEGIES))
-        ax.set_xlabel("opponent design $j$", fontsize=8.4)
-        ax.set_title(title, fontsize=8.4, pad=6)
+        ax.set_xticks(range(len(STRATEGIES)), STRATEGIES, fontsize=8.2)
+        ax.set_yticks(range(len(STRATEGIES)), STRATEGIES, fontsize=8.2)
+        if k % 2 == 0:
+            ax.set_ylabel("focal design $i$", fontsize=9.0)
+        if k >= 2:
+            ax.set_xlabel("opponent design $j$", fontsize=9.0)
+        panel_title(ax, lab, title, size=9.0, pad=8.0)
         ax.grid(False)
         span = float(mat.max() - mat.min())
         for i in range(mat.shape[0]):
@@ -68,11 +68,10 @@ def figure_functionals(base, outdir: Path) -> None:
                 v = mat[i, j]
                 rel = (v - mat.min()) / (span + 1e-12)
                 ax.text(
-                    j, i, f"{v:.1f}", ha="center", va="center", fontsize=6.4,
+                    j, i, f"{v:.1f}", ha="center", va="center", fontsize=7.6,
                     color="white" if rel < 0.55 else "black",
                 )
-        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04).ax.tick_params(labelsize=6.2)
-        panel_label(ax, lab, dx=-0.28 if k == 0 else -0.16, dy=1.22)
+        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.05).ax.tick_params(labelsize=7.0)
     save(fig, outdir / "fig02_functionals")
 
 
@@ -81,73 +80,60 @@ def figure_functionals(base, outdir: Path) -> None:
 # --------------------------------------------------------------------------
 
 
-def _simplex_coords(x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """Barycentric to Cartesian for a 3-simplex drawn as an equilateral triangle."""
-    v = np.array([[0.0, 0.0], [1.0, 0.0], [0.5, np.sqrt(3) / 2]])
-    pts = x @ v
-    return pts[..., 0], pts[..., 1]
-
-
-def figure_simplex(base, outdir: Path, n_traj: int = 26) -> None:
-    from dls.dynamics import integrate_replicator
+def figure_simplex(base, outdir: Path) -> None:
+    """Phase portraits drawn with the EGTtools simplex plotting utilities."""
+    from egttools.plotting import plot_replicator_dynamics_in_simplex
 
     sub = base.subset(POOL3)
     liabilities = [0.05, 1.5, 10.0, 45.0]
-    titles = [
-        "A   " + r"$L=0.05$: unsafe attractor",
-        "B   " + r"$L=1.5$: safe face protected",
-        "C   " + r"$L=10$: bistable",
-        "D   " + r"$L=45$: CAS eliminated",
+    subtitles = [
+        r"$L=0.05$: unsafe attractor",
+        r"$L=1.5$: safe face protected",
+        r"$L=10$: bistable",
+        r"$L=45$: CAS eliminated",
     ]
-    rng = np.random.default_rng(7)
 
-    fig, axes = plt.subplots(1, 4, figsize=(11.2, 3.2))
-    verts = np.eye(3)
-    vx, vy = _simplex_coords(verts)
+    fig, axes = plt.subplots(2, 2, figsize=(7.4, 6.2))
+    fig.subplots_adjust(wspace=0.02, hspace=0.02, bottom=0.06, top=0.95)
 
-    for ax, L, title, lab in zip(axes, liabilities, titles, "ABCD"):
-        pi_p = build_selection_matrix(sub, L)
-        ax.plot(
-            np.append(vx, vx[0]), np.append(vy, vy[0]),
-            color=PALETTE["neutral"], lw=1.0, zorder=3,
+    for ax, L, subtitle, letter in zip(axes.ravel(), liabilities, subtitles, "ABCD"):
+        pi_p = np.ascontiguousarray(build_selection_matrix(sub, L))
+        simplex, gradient_fn, roots, roots_xy, stability = (
+            plot_replicator_dynamics_in_simplex(payoff_matrix=pi_p, ax=ax)
         )
-        # streamlines from random interior starts
-        for _ in range(n_traj):
-            x0 = rng.dirichlet(np.ones(3) * 0.7)
-            _, traj = integrate_replicator(pi_p, x0, t_end=900.0, n_points=600)
-            tx, ty = _simplex_coords(traj)
-            ax.plot(tx, ty, color="#7F7F7F", lw=0.55, alpha=0.75, zorder=2)
-            ax.plot(tx[-1], ty[-1], "o", ms=3.0, color=PALETTE["unsafe"], zorder=4)
-            ax.plot(tx[0], ty[0], ".", ms=2.0, color="#BBBBBB", zorder=1)
+        (
+            simplex.add_axis(ax=ax)
+            .draw_triangle()
+            .draw_gradients(zorder=0, linewidth=0.7, density=1.1, arrowsize=0.9)
+            .draw_stationary_points(roots_xy, stability, zorder=5)
+            .add_vertex_labels(POOL3, epsilon_bottom=0.15, epsilon_top=0.09, fontsize=11)
+        )
 
-        # analytic interior rest point of the AS-CAS edge
+        # the analytic interior rest point of the AS-CAS edge, for comparison
         eq = face_equilibrium(sub, "AS", "CAS", L)
         if eq.fraction_second is not None and eq.stable:
-            xstar = np.zeros(3)
-            xstar[POOL3.index("AS")] = 1 - eq.fraction_second
-            xstar[POOL3.index("CAS")] = eq.fraction_second
-            ex, ey = _simplex_coords(xstar)
-            ax.plot(ex, ey, "*", ms=9, color=PALETTE["accent"],
-                    markeredgecolor="k", markeredgewidth=0.4, zorder=6)
+            bary = np.zeros(3)
+            bary[POOL3.index("AS")] = 1.0 - eq.fraction_second
+            bary[POOL3.index("CAS")] = eq.fraction_second
+            pt = bary @ np.asarray(simplex.corners, dtype=float)
+            ax.plot(pt[0], pt[1], "*", ms=11, color=PALETTE["accent"],
+                    markeredgecolor="k", markeredgewidth=0.5, zorder=7)
 
-        for k, s in enumerate(POOL3):
-            dx = -0.06 if vx[k] < 0.4 else (0.06 if vx[k] > 0.6 else 0.0)
-            dy = -0.075 if vy[k] < 0.1 else 0.045
-            ax.text(vx[k] + dx, vy[k] + dy, s, ha="center", va="center",
-                    fontsize=9, fontweight="bold", color=PALETTE[s])
-        ax.set_title(title, fontsize=8.6, loc="left")
-        ax.set_xlim(-0.14, 1.14)
-        ax.set_ylim(-0.14, 1.02)
-        ax.set_aspect("equal")
         ax.axis("off")
+        ax.set_aspect("equal")
+        # widen the view box so the vertex labels sit inside their own panel
+        ax.set_xlim(-0.20, 1.20)
+        ax.set_ylim(-0.19, 0.94)
+        panel_title(ax, letter, subtitle, size=9.6, pad=6.0)
 
     handles = [
-        Line2D([], [], color="#7F7F7F", lw=0.8, label="replicator trajectory"),
-        Line2D([], [], marker="o", ls="", ms=4, color=PALETTE["unsafe"], label="end state"),
-        Line2D([], [], marker="*", ls="", ms=8, color=PALETTE["accent"],
+        Line2D([], [], color="#4C72B0", lw=1.0, label="replicator flow (colour: speed)"),
+        Line2D([], [], marker="o", ls="", ms=5, color="k", label="rest point"),
+        Line2D([], [], marker="*", ls="", ms=9, color=PALETTE["accent"],
                markeredgecolor="k", label="analytic interior rest point"),
     ]
-    fig.legend(handles=handles, loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.06))
+    fig.legend(handles=handles, loc="upper center", ncol=3, bbox_to_anchor=(0.5, 0.07),
+               fontsize=8.4)
     save(fig, outdir / "fig03_simplex")
 
 
@@ -166,14 +152,14 @@ def figure_bifurcation(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     assert window is not None
     l_guard, _ = window
 
-    n = 90 if quick else 260
+    n = 90 if quick else 200
     grid = np.unique(np.concatenate([
         np.geomspace(1e-2, 60.0, n),
         np.array([l_cs_cas, l_cas_cs, l_as_cas, l_guard, l_cas_as]) * (1 + 1e-9),
     ]))
 
     rep = np.array([
-        longrun_unsafe_replicator(base, L, pool=POOL3, n_starts=40 if quick else 150)
+        longrun_unsafe_replicator(base, L, pool=POOL3, n_starts=40 if quick else 110)
         for L in grid
     ])
     sml = np.array([longrun_unsafe_sml(base, L, pool=POOL3, population_size=50) for L in grid])
@@ -189,7 +175,8 @@ def figure_bifurcation(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
         if e2.stable:
             branch_ascas[k] = e2.unsafe_frequency
 
-    fig, ax = plt.subplots(figsize=(6.6, 4.0))
+    fig, ax = plt.subplots(figsize=(7.0, 4.6))
+    fig.subplots_adjust(bottom=0.34, top=0.90)
     ax.axvspan(l_guard, l_cas_as, color=PALETTE["accent"], alpha=0.13, lw=0,
                label="bistability window")
 
@@ -210,22 +197,23 @@ def figure_bifurcation(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     ax.plot(grid, sml, "-", lw=1.2, color=PALETTE["safe"],
             label=r"finite population, $Z=50$, small mutation")
 
-    for L, txt in [
-        (l_cs_cas, r"$L^{*}_{\mathrm{CS}\to\mathrm{CAS}}$"),
-        (l_cas_cs, r"$L^{*}_{\mathrm{CAS}\to\mathrm{CS}}$"),
-        (l_as_cas, r"$L^{*}_{\mathrm{AS}\to\mathrm{CAS}}$"),
-        (l_guard, r"$L^{\dagger}$"),
-        (l_cas_as, r"$L^{*}_{\mathrm{CAS}\to\mathrm{AS}}$"),
+    for L, txt, dy in [
+        (l_cs_cas, r"$L^{*}_{\mathrm{CS}\to\mathrm{CAS}}$", 1.155),
+        (l_cas_cs, r"$L^{*}_{\mathrm{CAS}\to\mathrm{CS}}$", 1.075),
+        (l_as_cas, r"$L^{*}_{\mathrm{AS}\to\mathrm{CAS}}$", 1.155),
+        (l_guard, r"$L^{\dagger}$", 1.075),
+        (l_cas_as, r"$L^{*}_{\mathrm{CAS}\to\mathrm{AS}}$", 1.155),
     ]:
         ax.axvline(L, color=PALETTE["neutral"], lw=0.6, ls="--", alpha=0.55)
-        ax.text(L, 1.045, txt, rotation=0, ha="center", va="bottom", fontsize=6.4)
+        ax.text(L, dy, txt, ha="center", va="bottom", fontsize=6.6)
 
     ax.set_xscale("log")
     ax.set_xlabel(r"effective liability $L=\lambda h$  (payoff units per Unsafe action)")
     ax.set_ylabel(r"long-run Unsafe frequency $U^{*}$")
-    ax.set_ylim(-0.04, 1.10)
+    ax.set_ylim(-0.04, 1.13)
     ax.set_xlim(1e-2, 60)
-    ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=7.0)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3, fontsize=7.2,
+              columnspacing=1.4, handlelength=2.4)
     save(fig, outdir / "fig04_bifurcation")
 
     return pd.DataFrame(
@@ -249,17 +237,18 @@ def figure_filter(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
         (PALETTE["CAS"], "--", 1.9),
         (PALETTE["CS"], ":", 2.4),
     ]
-    grid = np.geomspace(1e-2, 60.0, 60 if quick else 160)
+    grid = np.geomspace(1e-2, 60.0, 60 if quick else 120)
 
     rows = []
-    fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.6), width_ratios=[1.35, 1])
+    fig, axes = plt.subplots(1, 2, figsize=(9.8, 4.1), width_ratios=[1.35, 1])
+    fig.subplots_adjust(wspace=0.30, top=0.80, bottom=0.14)
     ax = axes[0]
     for (label, pool), (c, ls, lw) in zip(pools.items(), styles):
         # a matched start measure: initial conditions are always drawn on the
         # {AS, CS, CAS} simplex, so pools of different size are compared from
         # the same ecosystem rather than from different sampling measures
         vals = [
-            matched_longrun_unsafe(base, L, pool=pool, n_starts=40 if quick else 150)
+            matched_longrun_unsafe(base, L, pool=pool, n_starts=40 if quick else 100)
             for L in grid
         ]
         ax.plot(grid, vals, color=c, ls=ls, lw=lw, label=label)
@@ -272,28 +261,30 @@ def figure_filter(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     ax.set_ylabel(r"long-run Unsafe frequency $U^{*}$")
     ax.set_ylim(-0.04, 1.06)
     ax.legend(loc="upper right", fontsize=7.2)
-    ax.set_title("removing designs that fail a solo evaluation", fontsize=8.6)
-    panel_label(ax, "A")
+    panel_title(ax, "A", "removing designs that fail a solo evaluation", size=8.4)
 
     ax = axes[1]
     scores = [base.unsafe_frequency[k, base.strategies.index("AS")] for k in range(4)]
-    equilibrium = []
-    for s in STRATEGIES:
-        idx = base.strategies.index(s)
-        equilibrium.append(base.unsafe_frequency[idx, idx])
+    equilibrium = [base.unsafe_frequency[base.strategies.index(s),
+                                         base.strategies.index(s)] for s in STRATEGIES]
     xpos = np.arange(4)
-    ax.bar(xpos - 0.2, scores, width=0.38, color=PALETTE["safe"],
-           label="solo evaluation: $u(i,\\mathrm{AS})$")
-    ax.bar(xpos + 0.2, equilibrium, width=0.38, color=PALETTE["unsafe"],
-           label="self-play: $u(i,i)$")
+    b1 = ax.bar(xpos - 0.2, scores, width=0.38, color=PALETTE["safe"],
+                label=r"solo evaluation: $u(i,\mathrm{AS})$")
+    b2 = ax.bar(xpos + 0.2, equilibrium, width=0.38, color=PALETTE["unsafe"],
+                label=r"self-play: $u(i,i)$")
+    for rect, v in list(zip(b1, scores)) + list(zip(b2, equilibrium)):
+        ax.annotate(f"{v:.2f}", (rect.get_x() + rect.get_width() / 2, v),
+                    textcoords="offset points", xytext=(0, 2), ha="center",
+                    fontsize=6.0, color=PALETTE["neutral"])
     ax.axhline(0.2, color=PALETTE["neutral"], ls="--", lw=0.8)
-    ax.text(3.42, 0.225, r"$\varepsilon=0.2$", fontsize=7, ha="right")
+    ax.text(-0.55, 0.215, r"$\varepsilon=0.2$", fontsize=6.8, ha="left",
+            color=PALETTE["neutral"])
     ax.set_xticks(xpos, STRATEGIES)
     ax.set_ylabel("Unsafe frequency")
-    ax.set_ylim(0, 1.12)
-    ax.legend(loc="upper left", fontsize=7.2)
-    ax.set_title("what a solo evaluation can and cannot see", fontsize=8.8)
-    panel_label(ax, "B")
+    ax.set_ylim(0, 1.18)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.02), ncol=2, fontsize=7.2,
+              columnspacing=1.2)
+    panel_title(ax, "B", "", size=8.4, pad=22.0)
 
     save(fig, outdir / "fig05_filter")
     return pd.DataFrame(rows)
@@ -308,19 +299,19 @@ def figure_safe_face(base, outdir: Path) -> pd.DataFrame:
     xs = np.linspace(0.0, 1.0, 400)
     barrier = np.array([safe_face_barrier(base, x) for x in xs])
 
-    fig, axes = plt.subplots(1, 3, figsize=(11.0, 3.3))
+    fig, axes = plt.subplots(1, 3, figsize=(11.6, 3.7))
+    fig.subplots_adjust(wspace=0.36, top=0.84, bottom=0.17)
 
     ax = axes[0]
     ax.plot(xs, barrier, color=PALETTE["CS"], lw=2.2)
     ax.set_yscale("log")
     ax.set_xlabel(r"share of conditional safety $x$ on the safe face")
     ax.set_ylabel(r"invasion barrier $L^{*}(x)$")
-    ax.set_title("barrier of a mixed safe face", fontsize=8.6)
+    panel_title(ax, "A", "barrier of a mixed safe face", size=8.4)
     ax.annotate(f"{barrier[0]:.1f}", (0.0, barrier[0]), textcoords="offset points",
-                xytext=(12, 4), fontsize=7.5)
+                xytext=(12, 2), fontsize=7.5)
     ax.annotate(f"{barrier[-1]:.2f}", (1.0, barrier[-1]), textcoords="offset points",
-                xytext=(-26, -12), fontsize=7.5)
-    panel_label(ax, "A")
+                xytext=(-28, 4), fontsize=7.5)
 
     ax = axes[1]
     ls = np.geomspace(0.3, 60.0, 400)
@@ -333,8 +324,7 @@ def figure_safe_face(base, outdir: Path) -> pd.DataFrame:
     ax.set_xscale("log")
     ax.set_xlabel(r"effective liability $L$")
     ax.set_ylabel(r"critical share $x^{*}(L)$")
-    ax.set_title("conditional safety required at each $L$", fontsize=8.6)
-    panel_label(ax, "B")
+    panel_title(ax, "B", "conditional safety required at each $L$", size=8.4)
 
     # neutral drift on the AS-CS edge
     ax = axes[2]
@@ -353,14 +343,15 @@ def figure_safe_face(base, outdir: Path) -> pd.DataFrame:
                      "prob_vulnerable": float(dist[frac < xstar].sum())})
     xstar = critical_cs_fraction(base, 5.0)
     ax.axvline(xstar, color=PALETTE["unsafe"], ls="--", lw=1.1)
-    ax.text(xstar - 0.03, 0.55, r"$x^{*}(L{=}5)$", rotation=90, fontsize=7,
-            ha="right", color=PALETTE["unsafe"])
+    ax.text(xstar + 0.025, 0.30, r"$x^{*}(L{=}5)$", fontsize=6.8, ha="left",
+            va="center", color=PALETTE["unsafe"])
     ax.axvspan(0, xstar, color=PALETTE["unsafe"], alpha=0.10, lw=0)
     ax.set_xlabel(r"share of CS on the neutral safe face")
     ax.set_ylabel("stationary density (scaled)")
-    ax.set_title("neutral drift on the safe face", fontsize=8.6)
-    ax.legend(fontsize=7.2, loc="upper center")
-    panel_label(ax, "C")
+    ax.set_ylim(0, 1.30)
+    panel_title(ax, "C", "neutral drift on the safe face", size=8.4)
+    ax.legend(fontsize=7.0, loc="upper center", ncol=3, columnspacing=0.9,
+              handlelength=1.4, borderpad=0.2)
 
     save(fig, outdir / "fig06_safe_face")
     return pd.DataFrame(rows)
@@ -408,9 +399,8 @@ def figure_finite(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
         cbar.ax.tick_params(labelsize=6.5)
         if show_cbar_label:
             cbar.set_label(r"stationary $U^{*}$", fontsize=8)
-        panel_label(ax, lab, dx=-0.20)
-    axes[0].set_title(r"$Z=50$, varying selection intensity", fontsize=8.8)
-    axes[1].set_title(r"$\beta=0.05$, varying population size", fontsize=8.8)
+    panel_title(axes[0], "A", r"$Z=50$, varying selection intensity", size=8.4)
+    panel_title(axes[1], "B", r"$\beta=0.05$, varying population size", size=8.4)
     save(fig, outdir / "fig07_finite")
 
     rows = [
@@ -438,7 +428,9 @@ def figure_hysteresis(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     l_down = invasion_threshold(base, "CAS", "CS").critical_liability
     l_up = l_down / (1.0 - params.theta)
 
-    fig, axes = plt.subplots(1, 2, figsize=(9.2, 3.5))
+    fig, axes = plt.subplots(1, 2, figsize=(9.4, 4.1))
+    fig.subplots_adjust(wspace=0.30, top=0.86, bottom=0.30)
+
     ax = axes[0]
     ax.plot(sweep.liability_values, sweep.unsafe_forward, "-o", ms=2.6,
             color=PALETTE["safe"], label=r"$L$ decreasing, $z=0$ initially")
@@ -446,17 +438,17 @@ def figure_hysteresis(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
             color=PALETTE["unsafe"], label=r"$L$ increasing, capability diffused")
     ax.axvline(l_down, color=PALETTE["neutral"], ls="--", lw=0.7)
     ax.axvline(l_up, color=PALETTE["neutral"], ls="--", lw=0.7)
-    ax.annotate("", xy=(l_up, 0.55), xytext=(l_down, 0.55),
+    ax.annotate("", xy=(l_up, 0.52), xytext=(l_down, 0.52),
                 arrowprops=dict(arrowstyle="<->", lw=0.8, color=PALETTE["accent"]))
-    ax.text(np.sqrt(l_down * l_up), 0.58,
+    ax.text(np.sqrt(l_down * l_up), 0.55,
             rf"$\times {l_up / l_down:.0f}$", ha="center", fontsize=7.5,
             color=PALETTE["accent"])
     ax.set_xscale("log")
     ax.set_xlabel(r"base effective liability $L$")
     ax.set_ylabel(r"long-run Unsafe frequency $U^{*}$")
-    ax.set_title(f"hysteresis loop, area = {sweep.loop_area:.2f}", fontsize=8.6)
-    ax.legend(fontsize=7.0, loc="center left")
-    panel_label(ax, "A")
+    ax.set_ylim(-0.05, 1.08)
+    panel_title(ax, "A", f"hysteresis loop, area $=$ {sweep.loop_area:.2f}", size=8.4)
+    ax.legend(fontsize=7.0, loc="upper center", bbox_to_anchor=(0.5, -0.20))
 
     ax = axes[1]
     ax.plot(sweep.liability_values, sweep.z_forward, "-o", ms=2.6,
@@ -466,9 +458,9 @@ def figure_hysteresis(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     ax.set_xscale("log")
     ax.set_xlabel(r"base effective liability $L$")
     ax.set_ylabel(r"diffused capability stock $z$")
-    ax.set_title("the ratchet variable never decreases", fontsize=8.6)
-    ax.legend(fontsize=7.2, loc="center left")
-    panel_label(ax, "B")
+    ax.set_ylim(-0.05, 1.08)
+    panel_title(ax, "B", "the ratchet variable never decreases", size=8.4)
+    ax.legend(fontsize=7.0, loc="upper center", bbox_to_anchor=(0.5, -0.20), ncol=2)
 
     save(fig, outdir / "fig08_hysteresis")
     return pd.DataFrame(

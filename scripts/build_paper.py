@@ -16,7 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIGURES = ["fig02_functionals", "fig03_simplex", "fig04_bifurcation",
-           "fig05_filter", "fig06_safe_face", "fig07_finite", "fig08_hysteresis"]
+           "fig05_filter", "fig06_safe_face", "fig07_finite", "fig08_hysteresis",
+           "fig09_robustness"]
 
 
 def stage() -> None:

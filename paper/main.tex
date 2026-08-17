@@ -1,14 +1,32 @@
-\documentclass[preprint,11pt]{elsarticle}
+% --------------------------------------------------
+% Safe designs, unsafe ecosystems: deployment-layer selection in an
+% evolutionary AI race
+%
+% Venue-neutral: single column, standard article class, numbered references.
+%
+%   pdflatex main && bibtex main && pdflatex main && pdflatex main
+% --------------------------------------------------
+\documentclass[11pt,a4paper]{article}
 
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{booktabs}
-\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{authblk}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{microtype}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,fit,backgrounds}
-\usepackage[table]{xcolor}
-\usepackage{hyperref}
-\hypersetup{colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,
-            urlcolor=blue!55!black}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{xcolor}          % must precede hyperref: allcolors uses a mixed colour
+\usepackage[colorlinks=true,allcolors=blue!55!black]{hyperref}
+
+\captionsetup{font=small,labelfont=bf,width=\textwidth}
+\setlength{\parskip}{0pt}
+\renewcommand{\baselinestretch}{1.15}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}[theorem]{Proposition}
@@ -32,224 +50,242 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Simplex}{\Delta_{n}}
 
-\journal{Chaos, Solitons \& Fractals}
+\title{\bfseries Safe designs, unsafe ecosystems: deployment-layer selection
+in an evolutionary AI race}
+
+\author[1]{Author One}
+\author[1,2]{Author Two}
+\affil[1]{Affiliation One}
+\affil[2]{Affiliation Two}
+\date{}
 
 \begin{document}
-
-\begin{frontmatter}
-
-\title{Safe designs, unsafe ecosystems: deployment-layer selection\\ in an evolutionary AI race}
-
-\author{}
-\address{}
+\maketitle
 
 \begin{abstract}
+\noindent
 We study evolutionary dynamics in which the payoff earned in the game and the
 payoff that governs replication are different functions of the same
-interaction. This separation is the defining feature of an ecosystem of
+interaction. The separation is the defining feature of an ecosystem of
 deployed AI agents: an agent acts in a competitive race, but whether its
 \emph{design} is replicated is decided by a principal who does not play that
 race and who bears only a fraction $\lambda$ of the external harm the design
 causes. We call the difference between the two functionals the selection
-wedge, embed it in the reduced four-strategy AI race of
-Fern\'andez Domingos and Han, and analyse the resulting replicator and
-finite-population dynamics. The wedge collapses to a single control parameter,
-the effective liability $L=\lambda h$, and every invasion condition is affine
-in $L$, which yields closed-form thresholds. Four consequences follow. First,
-a conditionally unsafe design weakly dominates the unconditionally unsafe one
-at every $L$. A pre-deployment filter that scores designs by their behaviour
-against a safe environment therefore removes only a weakly dominated design,
-deletes only the attractor of maximal harm, which the surviving pool
-reproduces, and leaves the long-run unsafe frequency of the same ecosystem
-unchanged. Second, unconditional and conditional safety are exact payoff
-twins, so the invasion barrier of the safe face is set by a neutrally drifting
-composition variable and varies by a factor of $77.7$ along that face. Third,
-long-run harm is \emph{not monotone} in liability. On the window
-$L\in(4.27,42.77)$ liability penalises the retaliation that conditional safety
-relies on, the unsafe coexistence becomes uninvadable, and raising $L$ across
-the lower edge lifts the basin-averaged unsafe frequency from $0$ to $0.32$.
-Fourth, coupling the dynamics to a non-decreasing stock of diffused capability
-that erodes enforcement by a factor $\theta$ produces hysteresis of exact
-width $1/(1-\theta)$. The results locate the governance problem at the
-selection layer rather than at the design layer, and identify liability
-regimes that are worse than either extreme.
+wedge, embed it in the reduced four-strategy AI race of Fern\'andez Domingos
+and Han, and analyse the resulting replicator and finite-population dynamics.
+The wedge collapses to a single control parameter, the effective liability
+$L=\lambda h$, and every invasion condition is affine in $L$, which yields
+closed-form thresholds. Four consequences follow. First, a conditionally
+unsafe design weakly dominates the unconditionally unsafe one at every $L$, so
+a pre-deployment filter that scores designs against a safe environment removes
+only a weakly dominated design and, under a common start measure, leaves the
+long-run unsafe frequency unchanged. Second, unconditional and conditional
+safety are exact payoff twins, so the invasion barrier of the safe face is set
+by a neutrally drifting composition variable, and it falls by a factor of
+$77.7$ across that face. Third, long-run harm is \emph{not monotone} in
+liability: on $L\in(4.27,42.77)$ liability taxes the retaliation that
+conditional safety relies on, the unsafe coexistence becomes uninvadable, and
+crossing the lower edge from below lifts the basin-averaged unsafe frequency
+from $0$ to $0.32$. A window of this kind exists at every prize and
+private-risk level we examine, with multiplicative width between $4.2$ and
+$12.8$, and in a finite population the unsafe attractor survives between
+$10^{2}$ and $10^{13}$ generations. Fourth, coupling the dynamics to a
+non-decreasing stock of diffused capability that erodes enforcement produces
+hysteresis whose width is exactly computable and independent of the speed of
+diffusion. The results locate the governance problem at the selection layer
+rather than at the design layer, and identify liability regimes that are worse
+than either extreme.
 \end{abstract}
 
-\begin{keyword}
-evolutionary game theory \sep replicator dynamics \sep technological race \sep
-bistability \sep hysteresis \sep liability \sep AI safety
-\end{keyword}
+\noindent\textbf{Keywords:} evolutionary game theory; replicator dynamics;
+technological race; bistability; hysteresis; liability; AI safety
 
-\end{frontmatter}
+\vspace{1em}
+\noindent\textbf{Highlights}
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item Selection of AI designs by principals defines a payoff wedge that drives the dynamics.
+\item Solo safety evaluations remove a weakly dominated design and cannot move equilibrium.
+\item Conditional safety is 78 times cheaper to protect than unconditional safety.
+\item Long-run harm is non-monotone: a wide window of liability makes outcomes worse.
+\item Irreversible capability diffusion turns the transition into a hysteresis loop.
+\end{itemize}
 
 %======================================================================
 \section{Introduction}
 %======================================================================
 
-Evolutionary game theory rests on an identity that is rarely stated because it
-is rarely violated: the payoff an individual earns in the game is the same
-quantity that governs how often that individual is copied~\cite{maynardsmith1982evolution,taylor1978evolutionarily,hofbauer1998evolutionary}.
-Fitness is the game payoff. Every standard result --- the folk theorem linking
-rest points to Nash equilibria, the stability of evolutionarily stable
-strategies, the invasion analysis of finite populations --- is a statement
+Evolutionary game theory usually identifies two things that need not be the
+same: the payoff an individual earns in the game, and the quantity that
+governs how often that individual is copied~\citep{maynardsmith1982evolution,taylor1978evolutionarily,hofbauer1998evolutionary}.
+Under that identification every standard result -- the correspondence between
+rest points and Nash equilibria, the stability of evolutionarily stable
+strategies, the invasion analysis of finite populations -- is a statement
 about one payoff matrix used twice.
 
-Ecosystems of deployed AI agents break that identity. An agent negotiates,
-bids, schedules or races on behalf of a principal, and earns a payoff by doing
-so. Whether the agent's \emph{design} --- its model, its system prompt, its
-scaffold --- is replicated across further deployments is not decided by the
-agent and is not decided by the payoff the agent earned in the abstract. It is
-decided by the principal who deployed it, on the basis of what the principal
-received. The two quantities differ whenever the design imposes costs on third
-parties that the principal does not bear. The replicating unit is therefore
-selected by an agent that never plays the game, according to a functional that
-is not the social one. Selection here is artificial rather than natural, in
-the breeder's sense: the copied variant is the one that served the breeder.
+Ecosystems of deployed AI agents break the identification in a specific way.
+An agent negotiates, bids, schedules or races on behalf of a principal, and
+earns a payoff by doing so. Whether the agent's \emph{design} -- its model,
+its system prompt, its scaffold -- is replicated across further deployments
+is not decided by the agent, and is not decided by the payoff the agent earned
+in the abstract. It is decided by the principal who deployed it, on the basis
+of what the principal received. The two quantities differ whenever the design
+imposes costs on third parties that the principal does not bear. The
+replicating unit is therefore selected by an agent that never plays the game,
+according to a functional that is not the social one. Selection here is
+artificial rather than natural, in the breeder's sense: the copied variant is
+the one that served the breeder.
 
-The consequences of this decoupling are the subject of this paper. They are
+The consequences of that decoupling are the subject of this paper. They are
 not the familiar observation that individual incentives can diverge from
 collective welfare, which has been understood since Hardin's account of the
-commons~\cite{hardin1968tragedy} and is the content of every social dilemma. That divergence is not the point here. The point
-is structural and sharper: the dynamical system that describes the deployed
-population is the replicator equation of a game that nobody plays. Its rest
-points are the equilibria of the principals' selection game, and the social
-game enters only as a passive observable. Interventions therefore have very
-different effects depending on which of the two objects they touch. An
-intervention on the design pool --- safety training, capability evaluations,
-release gating --- changes the set of available strategies. An intervention on
-the selection functional --- liability, disclosure, procurement rules ---
+commons~\citep{hardin1968tragedy} and is the content of every social dilemma.
+The point is structural and sharper: the dynamical system that describes the
+deployed population is the replicator equation of a game that nobody plays.
+Its rest points are the equilibria of the principals' selection game, and the
+social game enters only as a passive observable. Interventions therefore have
+very different effects depending on which of the two objects they touch. An
+intervention on the design pool -- safety training, capability evaluations,
+release gating -- changes the set of available strategies. An intervention on
+the selection functional -- liability, disclosure, procurement rules --
 changes the vector field itself. We show that the first class can be exactly
 neutral while the second class is not, and that the second class can be
 non-monotone in a way that makes intermediate regimes worse than none.
 
+The separation itself is not new. The indirect evolutionary approach~\citep{guth1992evolutionary,guth1995evolutionary,dekel2007evolution,alger2013homo}
+studies populations in which behaviour follows subjective preferences while
+selection operates on material payoffs, and~\citet{heifetz2007maximize} show
+that in almost every game some distortion of a player's true payoff is
+beneficial and survives payoff-monotone selection. Our construction is the
+mirror image. There the distortion sits in the behaviour and is selected on
+the socially correct functional, and it is endogenous; here behaviour follows
+the material race payoff, the distortion sits in the \emph{selection}
+functional, and it is an exogenous policy parameter. What is new is not the
+existence of two functionals but the direction of the wedge and its
+consequences for governance instruments, which is why our results are
+statements about interventions rather than about which preferences survive.
+
 Concern about selection pressure over deployed AI systems has been raised
-informally~\cite{hendrycks2023natural} and appears as one of seven risk
-factors in a recent multi-agent risk taxonomy~\cite{hammond2025multiagent},
-but we are not aware of a formal treatment. Formal analyses of AI races have
-instead studied the race itself: whether speed dominates safety~\cite{armstrong2016precipice}, how regulation and heterogeneity change the
-prevalence of unsafe development~\cite{han2020regulate,cimpeanu2022heterogeneous}, and how commitments and
-delegation alter outcomes~\cite{askell2019cooperation,domingos2022delegation,terrucha2024committing}.
-Those models keep the classical identity: the racing actors are the
+informally~\citep{hendrycks2023natural} and appears as one of seven risk
+factors in a recent multi-agent risk taxonomy~\citep{hammond2025multiagent}, but we are not aware of a formal treatment.
+Formal analyses of AI races have instead studied the race itself: whether
+speed dominates safety~\citep{armstrong2016precipice}, how regulation and
+heterogeneity change the prevalence of unsafe development~\citep{han2020regulate,cimpeanu2022heterogeneous}, and how commitments and
+delegation alter outcomes~\citep{askell2019cooperation,domingos2022delegation,terrucha2024committing}.
+Those models keep the classical identification: the racing actors are the
 reproducing actors. We keep their interaction layer and change the selection
 layer.
 
 \paragraph{Contribution.}
 We formalise deployment-layer selection, embed it in the reduced AI-race game
-of Fern\'andez Domingos and Han~\cite{domingos2026falling}, and derive its
-consequences analytically and numerically. Section~\ref{sec:model} specifies
-the two layers, Section~\ref{sec:finite} checks the results in finite
-populations and Section~\ref{sec:discussion} draws out what they imply for
-governance. The five results are:
+of~\citet{domingos2026falling}, and derive its consequences analytically and
+numerically. Section~\ref{sec:model} specifies the two layers and
+Section~\ref{sec:numerics} the numerical protocol,
+Section~\ref{sec:reduction} assembles the closed forms,
+Section~\ref{sec:finite} moves to finite populations,
+Section~\ref{sec:robust} tests the thresholds against the constants of the
+race, and Section~\ref{sec:discussion} draws out what the results imply for
+governance. The four results are:
 
 \begin{enumerate}
-\item \textbf{Reduction and inertness} (Section~\ref{sec:reduction}). The
-liability pass-through $\lambda$ and the per-action external harm $h$ enter
-the dynamics only through the product $L=\lambda h$. The wedge leaves the
-replicator orbits unchanged exactly when it is column-constant, which in this
-game happens only at $\lambda=1$. Every invasion condition is affine in $L$,
-giving closed-form critical values $L^{*}=\delta a/\delta m$.
-
-\item \textbf{Solo evaluation is futile} (Section~\ref{sec:filter}). The
-conditionally antisocial design $\CAS$ weakly dominates the unconditionally
-unsafe design $\AU$ at every $L\ge 0$. A filter that rejects designs whose
-unsafe frequency against a safe environment exceeds $\varepsilon$ therefore
-rejects $\AU$ and admits $\CAS$, whose self-play unsafe frequency is $1$. The
-only attractor the filter deletes is one with maximal harm that the surviving
-pool reproduces, and on a common start measure the long-run unsafe frequency
-is unchanged.
+\item \textbf{Solo evaluation cannot move the equilibrium}
+(Section~\ref{sec:filter}). The conditionally antisocial design $\CAS$ weakly
+dominates the unconditionally unsafe design $\AU$ at every $L\ge0$. A filter
+that rejects designs whose unsafe frequency against a safe environment exceeds
+$\varepsilon$ rejects $\AU$ and admits $\CAS$, whose self-play unsafe
+frequency is $1$. The only attractor the filter deletes is one of maximal
+harm that the surviving pool reproduces.
 
 \item \textbf{The safe face is neutral and its barrier is not}
 (Section~\ref{sec:face}). Always-safe and conditionally-safe designs are exact
 payoff twins, so the safe face carries no selection gradient. Its invasion
-barrier nonetheless varies from $L^{*}=42.77$ at the unconditional vertex to
-$L^{*}=0.55$ at the conditional vertex, a factor of $77.7$. Protection is
-therefore governed by a variable that drifts.
+barrier nonetheless falls from $L^{*}=42.77$ at the unconditional vertex to
+$L^{*}=0.55$ at the conditional vertex, a factor of $77.7$; protection is
+governed by a variable that drifts.
 
 \item \textbf{Long-run harm is non-monotone in liability}
 (Section~\ref{sec:valley}). On $L\in(4.27,42.77)$ the interior rest point of
 the unsafe face becomes uninvadable by conditional safety, because liability
 also taxes retaliation. Crossing the lower edge from below raises the
-basin-averaged unsafe frequency discontinuously from $0$ to $0.32$.
+basin-averaged unsafe frequency discontinuously from $0$ to $0.32$. The
+mixture-independence of the invasion criterion behind this result
+(Lemma~\ref{lem:twin}) holds for any symmetric matrix game.
 
 \item \textbf{Irreversible diffusion makes the transition hysteretic}
 (Section~\ref{sec:ratchet}). With a monotone environmental state that erodes
-enforcement by a factor $\theta$, the liability at which a safe regime is
-recovered is $1/(1-\theta)$ times the liability at which it was lost.
+enforcement, the liability at which a safe regime is recovered exceeds the
+liability at which it was lost by a factor that is exactly computable and
+independent of the diffusion rate.
 \end{enumerate}
 
-Two limitations should be stated before the results rather than after them.
-The interaction layer is the deliberately stylised two-player race of~\cite{domingos2026falling} with four reduced strategies; it abstracts away
-many actors, gradual capability, and learning. And the external harm $h$ is a
-free parameter with no calibration; we therefore report the weight-free
-unsafe frequency as the primary observable and characterise the entire
-$L$-axis rather than committing to a point estimate.
+Three limitations should be stated before the results rather than after them.
+The interaction layer is the deliberately stylised two-player race of~\citet{domingos2026falling} with four reduced strategies; it abstracts away
+many actors, gradual capability, and learning. The external harm $h$ is a free
+parameter with no calibration, so we report the weight-free unsafe frequency
+as the primary observable, characterise the entire $L$-axis rather than
+committing to a point estimate, and normalise thresholds by the race prize.
+And the population is well mixed, so network reciprocity plays no role; we
+return to that in Section~\ref{sec:discussion}.
 
 %======================================================================
 \section{Related work}
 %======================================================================
 
-\paragraph{Evolutionary models of AI races.}
-Armstrong et al.~\cite{armstrong2016precipice} introduced a formal race model
-in which information about rivals changes the willingness to skip safety
-precautions. Han et al.~\cite{han2020regulate} embedded a race in an
-evolutionary dynamic and showed that whether regulation is beneficial depends
-on the speed advantage of unsafe development and the time horizon; Cimpeanu et
-al.~\cite{cimpeanu2022heterogeneous} extended this to heterogeneous
-populations. These models establish that competitive pressure alone can
-sustain unsafe development. They also share a modelling choice we depart from:
-the racing actor and the reproducing actor coincide, so the population dynamic
-is driven by the racing payoff itself. Our contribution is orthogonal rather
-than corrective --- we retain their race and ask what changes when the
-replication decision is made by a third party.
+\paragraph{Evolutionary models of AI races.}~\citet{armstrong2016precipice} introduced a formal race model in which
+information about rivals changes the willingness to skip safety precautions.~\citet{han2020regulate} embedded a race in an evolutionary dynamic and showed
+that whether regulation is beneficial depends on the speed advantage of unsafe
+development and on the time horizon;~\citet{cimpeanu2022heterogeneous}
+extended the analysis to heterogeneous populations. These models establish
+that competitive pressure alone can sustain unsafe development. They also
+share the modelling choice we depart from: the racing actor and the
+reproducing actor coincide, so the population dynamic is driven by the racing
+payoff itself. Our contribution is orthogonal rather than corrective -- we
+retain their race and ask what changes when the replication decision is made
+by a third party.
 
-\paragraph{Delegation and artificial agents.}
-Fern\'andez Domingos et al.~\cite{domingos2022delegation} showed
-experimentally that delegating a collective-risk decision to an artificial
-agent increases prosocial behaviour, and Terrucha et al.~\cite{terrucha2024committing} showed that committing to an imperfect delegate
-can beat acting directly. That literature treats delegation as a commitment
-device chosen once by a player inside the game. Here the principal is outside
-the game and acts repeatedly on a population of designs; the object of
-interest is not the delegate's behaviour but the selection pressure the
+\paragraph{Delegation and artificial agents.}~\citet{domingos2022delegation} showed experimentally that delegating a
+collective-risk decision to an artificial agent increases prosocial behaviour,
+and~\citet{terrucha2024committing} showed that committing to an imperfect
+delegate can beat acting directly. That literature treats delegation as a
+commitment device chosen once by a player inside the game. Here the principal
+is outside the game and acts repeatedly on a population of designs; the object
+of interest is not the delegate's behaviour but the selection pressure the
 principal exerts on the design distribution.
 
 \paragraph{Behavioural evidence on the race.}
-The interaction layer we adopt is the framed experiment of~\cite{domingos2026falling}, in which paired participants repeatedly chose
+The interaction layer we adopt is the framed experiment of~\citet{domingos2026falling}, in which paired participants repeatedly chose
 between safe and unsafe development under an uncertain horizon. Its central
 finding is that unsafe choices track the evolving strategic state of the race
---- the opponent's previous action and the progress gap --- rather than
-elicited risk preferences, which motivates the conditional strategies $\CS$
-and $\CAS$ that carry all of our results. Conditional reciprocation of this
-kind is the dominant behavioural regularity in repeated social dilemmas more
-broadly~\cite{axelrod1981evolution,nowak1993winstay,dalbo2018determinants}.
+rather than elicited risk preferences. That finding motivates the conditional
+strategies $\CS$ and $\CAS$, which carry all of our results. Conditional
+reciprocation of this kind is the dominant behavioural regularity in repeated
+social dilemmas more broadly~\citep{axelrod1981evolution,nowak1993winstay,dalbo2018determinants}.
 
 \paragraph{Environmental feedback in evolutionary games.}
 Coupling replicator dynamics to a slow environmental state produces
-oscillations and bistability~\cite{weitz2016oscillating,tilman2020feedbacks},
-and abrupt regime shifts with hysteresis are a well-studied feature of
-ecosystems with such feedbacks~\cite{scheffer2001catastrophic}. Existing
-game--environment models take the environment to be renewable: it recovers
-when exploitation stops. Deployed capability does not. Our ratchet is the
-degenerate but practically important case of a state that is monotone by
-construction, which converts a reversible parameter change into an
-irreversible regime change.
+oscillations and bistability~\citep{weitz2016oscillating,tilman2020feedbacks}, and abrupt regime shifts
+with hysteresis are a well-studied feature of ecosystems with such feedbacks~\citep{scheffer2001catastrophic}. Existing game--environment models take the
+environment to be renewable: it recovers when exploitation stops. Deployed
+capability does not. Our ratchet is the degenerate but practically important
+case of a state that is monotone by construction, which converts a reversible
+parameter change into an irreversible regime change.
 
 \paragraph{Liability.}
 The economic analysis of accident law asks when strict liability outperforms
-negligence and when liability should be combined with regulation~\cite{shavell1980strict,shavell1984model}. Both analyses are equilibrium
+negligence and when liability should be combined with regulation~\citep{shavell1980strict,shavell1984model}. Both analyses are equilibrium
 statements about a fixed population of injurers. We ask instead what a
-liability level does to an evolving distribution of designs, and find a
+liability level does to an evolving distribution of designs. The answer is a
 qualitatively different phenomenon: a window of intermediate liability that is
-worse than either bound because it taxes the retaliation on which conditional
-safety depends. That taxation of retaliation is a second-order free-rider
-problem~\cite{panchanathan2004secondorder,sigmund2010institutions} in a
-liability setting.
+worse than either bound, because the instrument taxes the retaliation on which
+conditional safety depends. That taxation of retaliation is a second-order
+free-rider problem~\citep{panchanathan2004secondorder,sigmund2010institutions} in a liability
+setting.
 
 %======================================================================
 \section{Model}\label{sec:model}
 %======================================================================
 
 We now specify the two layers. The interaction layer is taken unchanged from
-the source study~\cite{domingos2026falling} so that our results are
+the source study~\citep{domingos2026falling} so that our results are
 attributable to the selection layer alone; the selection layer is new.
 
 \subsection{Interaction layer: the reduced AI race}
@@ -265,42 +301,43 @@ action, is
 The race lasts at least five rounds and each further round ends it with
 probability $0.2$, so the horizon is $T=5+G$ with $G\sim\mathrm{Geom}(0.2)-1$
 and $\mathbb{E}[T]=9$. The agent with greater cumulative progress receives a
-prize $B=100$; equal progress splits it. A winning or tying agent suffers a
+prize $B$; equal progress splits it. A winning or tying agent suffers a
 setback with probability
 \begin{equation}
 q_i(T)=p_r^{\max}\,\frac{n_i^{U}(T)}{T},
 \label{eq:risk}
 \end{equation}
 where $n^{U}_i(T)$ counts its unsafe choices, and a setback removes its task
-payoff. We use $p_r^{\max}=0.6$ throughout and report the other two
-experimental treatments in \ref{app:treatments}.
+payoff. The baseline uses the experimental values $B=100$ and
+$p_r^{\max}=0.6$; Section~\ref{sec:robust} varies both, and
+Appendix~\ref{app:treatments} records the other two experimental treatments.
 
 The reduced strategy set is the one inferred from the experiment: $\AS$ always
 safe; $\AU$ always unsafe; $\CS$ safe in round one, then copying the
 opponent's previous action; $\CAS$ unsafe in round one, then copying.
 
-\begin{remark}[Exact evaluation]
+\begin{remark}[Exact evaluation]\label{rem:exact}
 All four designs are deterministic, so the action path of an ordered pair is
 fixed once the pair is fixed and the only stochastic primitive is $T$. We
 therefore obtain the matchup quantities by exact expectation over the horizon
-law rather than by the Monte Carlo procedure used in the source
-study~\cite{domingos2026falling}. Exactness matters here because several of
-our thresholds are ratios of small payoff differences, so sampling noise of
-order $10^{-2}$ in the payoff matrix would propagate to the third significant
-digit of those ratios.
+law rather than by the Monte Carlo procedure used in the source study~\citep{domingos2026falling}. Exactness matters here because several of our
+thresholds are ratios of small payoff differences, so sampling noise of order
+$10^{-2}$ in the payoff matrix would propagate to the third significant digit
+of those ratios.
 \end{remark}
 
-Write $a(i,j)$ for the expected task payoff of design $i$ against $j$,
-$m(i,j)$ for its expected number of unsafe actions, and $u(i,j)=
-\mathbb{E}[n^{U}/T]$ for its expected unsafe frequency. Table~\ref{tab:payoff}
-reports $a$ and Table~\ref{tab:unsafe-count} reports $m$; both are reproduced
-with the threshold table in~\ref{app:tables}.
+With the evaluation of Remark~\ref{rem:exact} in hand, write $a(i,j)$ for the
+expected task payoff of design $i$ against $j$,
+$m(i,j)$ for its expected number of unsafe actions, and
+$u(i,j)=\mathbb{E}[n^{U}/T]$ for its expected unsafe frequency.
+Table~\ref{tab:payoff} reports $a$ and Table~\ref{tab:unsafe-count} reports
+$m$; both are reproduced with the threshold table in Appendix~\ref{app:tables}.
 
 \subsection{Deployment layer: three functionals and the wedge}
 
 Each unsafe action imposes an external harm $h\ge 0$ on parties outside the
 race. Let $\lambda\in[0,1]$ be the fraction of that harm borne by the
-principal who deployed the design --- the liability pass-through. That single
+principal who deployed the design -- the liability pass-through. That single
 parameter splits the interaction into three functionals:
 \begin{align}
 \text{task payoff:}&\quad a(i,j),\\
@@ -308,7 +345,7 @@ parameter splits the interaction into three functionals:
 \label{eq:piP}\\
 \text{social functional:}&\quad \piS(i,j)=a(i,j)-h\, m(i,j).\label{eq:piS}
 \end{align}
-Only $\piP$ enters the dynamics. The social functional~\eqref{eq:piS} is an
+Only $\piP$ enters the dynamics. The social functional \eqref{eq:piS} is an
 accounting device: since each agent's harm is attributed to itself, the
 population mean of $\piS$ equals mean task payoff minus total external harm.
 
@@ -317,13 +354,15 @@ The selection wedge is
 $\Delta(i,j)=\piP(i,j)-\piS(i,j)=(1-\lambda)h\,m(i,j)$.
 \end{definition}
 
-Figure~\ref{fig:framework} summarises the construction. The wedge is the
-entire formal content of the separation between the layer at which safety is
-engineered and the layer at which designs are selected.
+Figure~\ref{fig:framework} summarises the construction, and
+Figure~\ref{fig:functionals} shows the three functionals and the wedge for the
+baseline race. The wedge is the entire formal content of the separation
+between the layer at which safety is engineered and the layer at which designs
+are selected.
 
 \begin{figure}[t]
 \centering
-\resizebox{\linewidth}{!}{%
+\resizebox{0.96\linewidth}{!}{%
 \begin{tikzpicture}[
   font=\small,
   box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt,
@@ -363,6 +402,19 @@ difference is the selection wedge $\Delta$.}
 \label{fig:framework}
 \end{figure}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig02_functionals.pdf}
+\caption{The three functionals of the baseline race ($B=100$,
+$p_r^{\max}=0.6$), rows indexed by the focal design.
+\textbf{(A)} Task payoff $a(i,j)$. \textbf{(B)} Expected number of unsafe
+actions $m(i,j)$. \textbf{(C)} Selection functional $\piP=a-Lm$ at effective
+liability $L=5$. \textbf{(D)} The wedge $\Delta=(1-\lambda)h\,m$ at
+$\lambda=0.5$, $h=10$; it varies down the columns, which by
+Lemma~\ref{lem:column} is exactly why it deforms the dynamics.}
+\label{fig:functionals}
+\end{figure}
+
 \subsection{Dynamics}
 
 Let $x\in\Simplex$ be the frequency distribution over the $n$ available
@@ -374,10 +426,10 @@ equation of the selection functional,
 \label{eq:replicator}
 \end{equation}
 In a finite population of size $Z$ we use the pairwise-comparison process with
-Fermi imitation~\cite{traulsen2006stochastic}: a design $B$ adopts $A$ with
+Fermi imitation~\citep{traulsen2006stochastic}: a design $B$ adopts $A$ with
 probability $\big(1+\exp[-\beta(f_A-f_B)]\big)^{-1}$, where $\beta$ is the
 intensity of selection and $f$ is computed from $\piP$, with mutation
-probability $\mu$. We report both the full chain and its small-mutation limit~\cite{fudenberg2006imitation}. All computations use EGTtools~\cite{domingos2023egttools}.
+probability $\mu$. We report both the full chain and its small-mutation limit~\citep{fudenberg2006imitation}. All computations use EGTtools~\citep{domingos2023egttools}.
 
 The primary observable is the population unsafe frequency
 \begin{equation}
@@ -387,13 +439,34 @@ U(x)=\sum_{i,j} x_i x_j\, u(i,j),
 which requires no welfare weights and is therefore independent of the
 uncalibrated harm parameter.
 
+\subsection{Numerical methods}\label{sec:numerics}
+
+Replicator trajectories are integrated with an adaptive LSODA solver at
+relative tolerance $10^{-10}$ and absolute tolerance $10^{-12}$, to
+$t=2\,000$, which is two orders of magnitude beyond the slowest relaxation we
+observe. Basin averages are taken over initial conditions drawn uniformly from
+the simplex, with $110$ draws per parameter value in
+Figure~\ref{fig:bifurcation} and $100$ in Figure~\ref{fig:filter}, from a
+fixed seed; doubling the number of draws changes the reported averages by less
+than $0.01$. Where pools of different size are compared
+(Figure~\ref{fig:filter}) initial conditions are drawn on the common
+$\{\AS,\CS,\CAS\}$ simplex and the extra design is seeded at a fixed share, so
+that the comparison is between one ecosystem with and without that design
+rather than between two different sampling measures; the reported curves use a
+$5\%$ seed, and Section~\ref{sec:robust} reports the sensitivity to that
+choice. Finite-population stationary distributions are obtained by solving the
+singular linear system for the stationary vector of the sparse transition
+matrix, since densifying it is infeasible at the state-space sizes used here.
+Every number quoted in the text is regenerated by the released code.
+
 %======================================================================
 \section{Reduction, inertness and invasion thresholds}\label{sec:reduction}
 %======================================================================
 
-This section establishes the analytical scaffolding: the two-parameter family
-$(\lambda,h)$ collapses to one parameter, the wedge is dynamically inert only
-in a degenerate case, and all invasion conditions are affine.
+This section assembles the analytical scaffolding. The first two statements
+are immediate or classical and are recalled rather than claimed; the closed
+forms in Lemma~\ref{lem:affine} and the general criterion in
+Lemma~\ref{lem:twin} do the work later.
 
 \begin{proposition}[Reduction to the effective liability]\label{prop:reduction}
 The dynamics \eqref{eq:replicator} and the Fermi process depend on
@@ -401,16 +474,16 @@ $(\lambda,h)$ only through the product $L=\lambda h$.
 \end{proposition}
 
 \begin{proof}
-Both dynamics depend on $\piP$ only, and by \eqref{eq:piP}
-$\piP=a-L\,m$.
+Both dynamics depend on $\piP$ only, and by \eqref{eq:piP} $\piP=a-L\,m$.
 \end{proof}
 
 We call $L$ the \emph{effective liability}, measured in payoff units per
 unsafe action. It is the only policy variable in what follows; a regulator can
 move it by raising the pass-through $\lambda$ at fixed harm, and the same
-outcome obtains for any $(\lambda,h)$ on the hyperbola $\lambda h=L$.
+outcome obtains for any $(\lambda,h)$ on the hyperbola $\lambda h=L$. Because
+$L$ inherits the scale of the race, we also report $L/B$.
 
-\begin{lemma}[Column-constant invariance]\label{lem:column}
+\begin{lemma}[Column-constant invariance; classical]\label{lem:column}
 Let $A'=A+\mathbf{1}c^{\top}$ for some $c\in\R^{n}$. Then $A$ and $A'$ induce
 the same replicator field on $\Simplex$ and have the same symmetric Nash set.
 \end{lemma}
@@ -419,17 +492,17 @@ the same replicator field on $\Simplex$ and have the same symmetric Nash set.
 $(A'x)_i=(Ax)_i+c^{\top}x$ for every $i$, so all fitnesses shift by the same
 state-dependent constant and the differences $(A'x)_i-x^{\top}A'x$ are
 unchanged; likewise every pairwise payoff comparison at a fixed opponent
-distribution is unchanged.
+distribution is unchanged~\citep{hofbauer1998evolutionary}.
 \end{proof}
 
 \begin{definition}
 A wedge $\Delta$ is \emph{strategically inert} if $\Delta=\mathbf{1}c^{\top}$,
-i.e.\ $\Delta(i,j)$ does not depend on the focal design $i$.
+that is, if $\Delta(i,j)$ does not depend on the focal design $i$.
 \end{definition}
 
 \begin{proposition}[Inertness only at full pass-through]\label{prop:inert}
 In the reduced race game, $\Delta=(1-\lambda)h\,m$ is strategically inert if
-and only if $\lambda=1$ or $h=0$. Consequently the deployment dynamics is
+and only if $\lambda=1$ or $h=0$. The deployment dynamics is therefore
 orbit-equivalent to the dynamics of the social functional exactly at full
 liability pass-through.
 \end{proposition}
@@ -441,12 +514,15 @@ $m(\AS,\AS)=0\neq 9=m(\AU,\AS)$, so $m$ depends on the focal design and
 inertness requires $(1-\lambda)h=0$.
 \end{proof}
 
-Proposition~\ref{prop:inert} is a negative result with a practical reading:
-there is no cheap partial liability that reproduces the socially correct
-dynamics. Any $\lambda<1$ deforms the vector field, and the deformation is
-proportional to $1-\lambda$. It does not, however, follow that the deformation
-is harmful in proportion to its size; Section~\ref{sec:valley} shows the
-opposite for a range of $L$.
+Proposition~\ref{prop:inert} has a practical reading: there is no cheap
+partial liability that reproduces the socially correct dynamics. Any
+$\lambda<1$ deforms the vector field, and the deformation is proportional to
+$1-\lambda$. It does not follow that the deformation is harmful in proportion
+to its size; Section~\ref{sec:valley} shows the opposite over a wide range of
+$L$. The proposition also identifies, by contraposition, the one liability
+rule that would be dynamically harmless: a rule whose charge depends on the
+counterparty's behaviour rather than on one's own is column-constant and,
+by Lemma~\ref{lem:column}, leaves the replicator field untouched.
 
 \begin{lemma}[Affine invasion conditions]\label{lem:affine}
 A rare design $i$ in a resident population of $j$ has positive growth rate
@@ -461,8 +537,8 @@ under \eqref{eq:replicator} if and only if
 \end{equation}
 If $\delta m\neq 0$ the critical effective liability is
 $L^{*}=\delta a/\delta m$; the invader is favoured for $L<L^{*}$ when
-$\delta m>0$ and for $L>L^{*}$ when $\delta m<0$. If $\delta m=0$ the
-outcome does not depend on $L$.
+$\delta m>0$ and for $L>L^{*}$ when $\delta m<0$. If $\delta m=0$ the outcome
+does not depend on $L$.
 \end{lemma}
 
 \begin{proof}
@@ -472,8 +548,8 @@ solving a linear inequality.
 \end{proof}
 
 Applying Lemma~\ref{lem:affine} to every ordered pair gives
-Table~\ref{tab:thresholds}, which lists all twelve thresholds. Four of them
-organise the rest of the paper:
+Table~\ref{tab:thresholds}. Four of the twelve thresholds organise the rest of
+the paper:
 \begin{equation}
 \begin{aligned}
 &\underbrace{L^{*}_{\CS\to\CAS}=0.116}_{\text{conditional safety enters}}
@@ -483,8 +559,9 @@ organise the rest of the paper:
 \end{aligned}
 \label{eq:four}
 \end{equation}
-The spread of~\eqref{eq:four} over more than two orders of magnitude is the
-quantitative signature of the results below.
+The spread of \eqref{eq:four} over a factor of $368$ is the quantitative
+signature of the results below. In units of the prize the outer thresholds are
+$L^{*}_{\CAS\to\CS}/B=0.0055$ and $L^{*}_{\CAS\to\AS}/B=0.428$.
 
 %======================================================================
 \section{Solo evaluation cannot move the equilibrium}\label{sec:filter}
@@ -492,7 +569,7 @@ quantitative signature of the results below.
 
 Pre-deployment safety evaluation probes a model in isolation and admits it
 when its behaviour is acceptable. We formalise this as a filter on the design
-pool and show that it is exactly neutral.
+pool and show that it is dynamically inert.
 
 \begin{definition}[Solo-evaluation filter]
 The solo score of design $i$ is $s(i)=u(i,\AS)$, its unsafe frequency against
@@ -507,14 +584,13 @@ s(\CAS)=\mathbb{E}\!\left[\tfrac{1}{T}\right]
 =\sum_{g\ge 0}\frac{0.2\cdot 0.8^{g}}{5+g}=0.132 .
 \label{eq:solo}
 \end{equation}
-Any filter with $\varepsilon\in[0.132,1)$ therefore admits
-$\{\AS,\CS,\CAS\}$ and rejects only $\AU$. The next result says that the
-rejection is dynamically empty.
+Any filter with $\varepsilon\in[0.132,1)$ therefore admits $\{\AS,\CS,\CAS\}$
+and rejects only $\AU$. The next result says that the rejection is
+dynamically empty.
 
 \begin{theorem}[Weak dominance of $\CAS$ over $\AU$]\label{thm:dominance}
-For every $L\ge 0$ and every opponent $j$,
-$\piP(\CAS,j)\ge\piP(\AU,j)$, with strict inequality for
-$j\in\{\AS,\CS\}$.
+For every $L\ge 0$ and every opponent $j$, $\piP(\CAS,j)\ge\piP(\AU,j)$, with
+strict inequality for $j\in\{\AS,\CS\}$.
 \end{theorem}
 
 \begin{proof}
@@ -547,14 +623,12 @@ $\Theta_{\varepsilon}=\{\AS,\CS,\CAS\}$. Then, for every $L\ge 0$:
 \item[(i)] along every interior solution of \eqref{eq:replicator} the ratio
 $x_{\AU}/x_{\CAS}$ is non-increasing, and strictly decreasing whenever
 $x_{\AS}+x_{\CS}>0$;
-\item[(ii)] any attractor of $\Theta$ that is removed by the filter carries
-the maximal unsafe frequency $U=1$; the filter therefore cannot delete an
-attractor with lower harm than one it leaves behind;
-\item[(iii)] under a start measure that is common to both pools --- initial
-conditions drawn on $\Theta_{\varepsilon}$ with a fixed small admixture of
-$\AU$ --- the basin-averaged long-run unsafe frequencies of $\Theta$ and
-$\Theta_{\varepsilon}$ agree to within $1.2\times10^{-3}$ across the whole
-$L$-axis.
+\item[(ii)] any attractor of $\Theta$ that the filter removes carries the
+maximal unsafe frequency $U=1$, so the filter cannot delete an attractor with
+lower harm than one it leaves behind;
+\item[(iii)] under a start measure common to both pools, the basin-averaged
+long-run unsafe frequencies of $\Theta$ and $\Theta_{\varepsilon}$ agree to
+within $1.2\times10^{-3}$ across the whole $L$-axis.
 \end{enumerate}
 \end{corollary}
 
@@ -569,22 +643,20 @@ point is a rest point, and $u\equiv 1$. Part (iii) is numerical and reported
 in Figure~\ref{fig:filter}A.
 \end{proof}
 
-Part (ii) is worth stating plainly, because it is weaker than one might hope
-and that weakness is itself informative. Filtering $\AU$ does delete an
-attractor: for $L<L^{*}_{\AS\to\AU}=2.422$ an $\AU$-dominated population is
-neutrally stable, and removing $\AU$ removes it. But that attractor has
-$U=1$, exactly the unsafe frequency of the $\CAS$ vertex that the filter
-leaves in place whenever $L<L^{*}_{\CS\to\CAS}=0.116$. The filter changes
-which design occupies the all-unsafe state, not whether the state exists, and
-it is reachable only from populations already dominated by $\AU$.
+Part (ii) is weaker than one might hope, and the weakness is itself
+informative. Filtering $\AU$ does delete an attractor: for
+$L<L^{*}_{\AS\to\AU}=2.422$ an $\AU$-dominated population is neutrally stable,
+and removing $\AU$ removes it. But that attractor has $U=1$, exactly the
+unsafe frequency of the $\CAS$ vertex that the filter leaves in place whenever
+$L<L^{*}_{\CS\to\CAS}=0.116$. The filter changes which design occupies the
+all-unsafe state, not whether the state exists, and the state is reachable
+only from populations already dominated by $\AU$.
 
-Figure~\ref{fig:filter} makes the comparison on a common start measure, so
-that the two pools describe the same ecosystem with and without a small
-admixture of the filtered design rather than two different sampling measures.
-On that comparison the curves coincide over the whole $L$-axis. Panel~B shows
+Figure~\ref{fig:filter} makes the comparison on a common start measure. On
+that comparison the curves coincide over the whole $L$-axis. Panel~B shows
 why. A solo evaluation sees $s(\CAS)=0.132$ and cannot distinguish $\CAS$ from
 a safe design at any threshold that admits reciprocation at all, while $\CAS$
-in self-play produces $u=1$ --- the same equilibrium harm as the design the
+in self-play produces $u=1$ -- the same equilibrium harm as the design the
 filter did remove.
 
 \begin{figure}[t]
@@ -593,29 +665,29 @@ filter did remove.
 \caption{Solo evaluation filters are dynamically empty.
 \textbf{(A)} Long-run unsafe frequency of the unfiltered pool
 $\{\AS,\AU,\CS,\CAS\}$ and of the pools admitted at $\varepsilon=0.2$ and
-$\varepsilon=0.05$, as a function of the effective liability. Initial
-conditions are drawn on the $\{\AS,\CS,\CAS\}$ simplex for every pool, with
-$\AU$ seeded at a fixed $5\%$ where it is present, so that the three curves
-describe the same ecosystem. The first two coincide everywhere, as
-Corollary~\ref{cor:filter}(iii) requires.
+$\varepsilon=0.05$. Initial conditions are drawn on the $\{\AS,\CS,\CAS\}$
+simplex for every pool, with $\AU$ seeded at a fixed $5\%$ where it is
+present, so that the three curves describe the same ecosystem. The first two
+coincide everywhere, as Corollary~\ref{cor:filter}(iii) requires.
 \textbf{(B)} What the evaluation sees. Blue: unsafe frequency against a safe
-environment, the quantity the filter measures. Red: unsafe frequency in
-self-play, the quantity that determines equilibrium harm. The two orderings
-disagree precisely for $\CAS$.}
+environment, the quantity the filter measures; the $\AS$ and $\CS$ bars are
+zero. Red: unsafe frequency in self-play, the quantity that determines
+equilibrium harm. The two orderings disagree precisely for $\CAS$.}
 \label{fig:filter}
 \end{figure}
 
 A strict filter with $\varepsilon<0.132$ does remove $\CAS$, leaving the pool
 $\{\AS,\CS\}$ on which $U^{*}=0$ for every $L$. Two caveats make this less
 reassuring than it looks. First, that pool is exactly the neutral safe face of
-Section~\ref{sec:face}, so its protection lasts only as long as no $\CAS$-like
-design re-enters, and Theorem~\ref{thm:barrier} bounds how much liability is
-needed when one does. Second, the strict threshold is only achievable because
-the probe environment in~\eqref{eq:solo} is fully safe: measured against an
-unsafe opponent the conditionally safe design scores $u(\CS,\CAS)=0.461$ and
-would be rejected by the same rule. A filter strict enough to exclude conditional aggression in a
-mixed environment also excludes conditional safety, which
-Theorem~\ref{thm:barrier} identifies as the cheapest design to protect.
+Section~\ref{sec:face}, so its protection lasts only as long as no
+$\CAS$-like design re-enters, and Theorem~\ref{thm:barrier} bounds how much
+liability is needed when one does. Second, the strict threshold is only
+achievable because the probe environment in \eqref{eq:solo} is fully safe:
+measured against an unsafe opponent the conditionally safe design scores
+$u(\CS,\CAS)=0.461$ and would be rejected by the same rule. A filter strict
+enough to exclude conditional aggression in a mixed environment also excludes
+conditional safety, which Theorem~\ref{thm:barrier} identifies as the cheapest
+design to protect.
 
 %======================================================================
 \section{A neutral safe face with a drifting barrier}\label{sec:face}
@@ -623,8 +695,8 @@ Theorem~\ref{thm:barrier} identifies as the cheapest design to protect.
 
 \begin{proposition}[Payoff twins]\label{prop:twins}
 Restricted to $\{\AS,\CS\}$, the selection functional is constant:
-$\piP(i,j)=a(\AS,\AS)=59$ for all $i,j\in\{\AS,\CS\}$ and all $L$.
-Consequently the $\AS$--$\CS$ edge is a set of rest points of
+$\piP(i,j)=a(\AS,\AS)$ for all $i,j\in\{\AS,\CS\}$ and all $L$. The
+$\AS$--$\CS$ edge is therefore a set of rest points of
 \eqref{eq:replicator}, and in the finite-population process it evolves by
 neutral drift.
 \end{proposition}
@@ -639,9 +711,11 @@ Neutrality does not make the composition irrelevant, because $\AS$ and $\CS$
 differ against an invader.
 
 \begin{theorem}[Composition-dependent invasion barrier]\label{thm:barrier}
-Let the resident population be the mixture $(1-x)\AS+x\CS$ on the safe face.
-A rare $\CAS$ invader has positive growth rate if and only if $L<L^{*}(x)$,
-where
+Let the resident population be the mixture $(1-x)\AS+x\CS$ on the safe face,
+and write
+$\delta a_{k}=a(\CAS,k)-a(\AS,\AS)$ and $\delta m_{k}=m(\CAS,k)$ for
+$k\in\{\AS,\CS\}$. A rare $\CAS$ invader has positive growth rate if and only
+if $L<L^{*}(x)$, where
 \begin{equation}
 L^{*}(x)=\frac{(1-x)\,\delta a_{\AS}+x\,\delta a_{\CS}}
                {(1-x)\,\delta m_{\AS}+x\,\delta m_{\CS}},
@@ -652,37 +726,35 @@ L^{*}(x)=\frac{(1-x)\,\delta a_{\AS}+x\,\delta a_{\CS}}
 \end{aligned}
 \label{eq:barrier}
 \end{equation}
-$L^{*}$ is strictly decreasing on $[0,1]$, with
-$L^{*}(0)=42.765$ and $L^{*}(1)=0.551$, a ratio of $77.7$.
+$L^{*}$ is strictly decreasing on $[0,1]$, with $L^{*}(0)=42.765$ and
+$L^{*}(1)=0.551$, a ratio of $77.7$.
 \end{theorem}
 
 \begin{proof}
-By Proposition~\ref{prop:twins} the resident fitness is $59$ for every $x$, so
-the invader's growth rate is
-$(1-x)[\piP(\CAS,\AS)-59]+x[\piP(\CAS,\CS)-59]
-=(1-x)(\delta a_{\AS}-L\delta m_{\AS})+x(\delta a_{\CS}-L\delta m_{\CS})$,
+By Proposition~\ref{prop:twins} the resident fitness is $a(\AS,\AS)$ for every
+$x$, so the invader's growth rate is
+$(1-x)(\delta a_{\AS}-L\delta m_{\AS})+x(\delta a_{\CS}-L\delta m_{\CS})$,
 which is positive exactly when $L<L^{*}(x)$. Differentiating the ratio of the
 two affine functions, the sign of $\frac{d}{dx}L^{*}$ is that of
-$\delta a_{\CS}\delta m_{\AS}-\delta a_{\AS}\delta m_{\CS}
-=2.631-204.34<0$.
+$\delta a_{\CS}\delta m_{\AS}-\delta a_{\AS}\delta m_{\CS}=2.631-204.34<0$.
 \end{proof}
 
 Inverting \eqref{eq:barrier} gives the critical share of conditional safety
 $x^{*}(L)$ that a given liability level requires: $x^{*}(1)=0.951$,
 $x^{*}(2)=0.855$, $x^{*}(5)=0.640$, $x^{*}(20)=0.197$. A population that is
-90\% unconditionally safe is invadable at any $L<28.1$, whereas the same
+$90\%$ unconditionally safe is invadable at any $L<28.1$, whereas the same
 population with the shares reversed is already protected at $L=1.6$.
 
-The combination of Proposition~\ref{prop:twins} and Theorem~\ref{thm:barrier}
-is the substantive point. The variable that determines whether a safe
-population can be invaded carries no selection gradient of its own, so it is
-free to drift. Figure~\ref{fig:face}C shows the stationary distribution of the
-neutral edge in a finite population: for small mutation the mass concentrates
-at the two vertices, so the population spends long stretches near pure $\AS$,
-which is the maximally vulnerable composition. Protection obtained by
-mandating unconditional safety is therefore not durable --- not because the
-mandate is violated, but because the direction it protects against is
-selectively invisible.
+The combination of Proposition~\ref{prop:twins} and
+Theorem~\ref{thm:barrier} is the substantive point. The variable that
+determines whether a safe population can be invaded carries no selection
+gradient of its own, so it is free to drift. Figure~\ref{fig:face}C shows the
+stationary distribution of the neutral edge in a finite population: for small
+mutation the mass concentrates at the two vertices, so the population spends
+long stretches near pure $\AS$, which is the maximally vulnerable composition.
+Protection obtained by mandating unconditional safety is therefore not
+durable -- not because the mandate is violated, but because the direction it
+protects against is selectively invisible.
 
 \begin{figure}[t]
 \centering
@@ -693,8 +765,8 @@ scale. \textbf{(B)} The critical share of conditional safety $x^{*}(L)$
 separating vulnerable from protected compositions. \textbf{(C)} Stationary
 density of the neutral $\AS$--$\CS$ edge in a finite population ($Z=100$,
 $\beta=0.05$) for three mutation rates, with the vulnerability threshold at
-$L=5$ marked. Small mutation concentrates the mass at the vertices, half of
-it on the vulnerable side.}
+$L=5$ marked. Small mutation concentrates the mass at the vertices, half of it
+on the vulnerable side.}
 \label{fig:face}
 \end{figure}
 
@@ -724,16 +796,36 @@ Direct computation of the two-strategy replicator rest point, followed by
 substitution of $\alpha=42.765-L$ and $\gamma=9L-18.6$.
 \end{proof}
 
-\begin{theorem}[Mixture-free invasion criterion]\label{thm:guard}
-At any interior rest point of the $\{\AS,\CAS\}$ face, the growth rate of a
-rare $\CS$ is
-\begin{equation}
-p^{*}\Big[\big(a(\CS,\CAS)-a(\AS,\CAS)\big)
--L\big(m(\CS,\CAS)-m(\AS,\CAS)\big)\Big],
-\label{eq:guard}
-\end{equation}
-whose sign does not depend on $p^{*}$. Hence $\CS$ invades the unsafe
-coexistence if and only if
+The next statement is the mathematical core of the section, and it is not
+specific to the race game.
+
+\begin{lemma}[Mixture-free invasion at a twin face]\label{lem:twin}
+Let $M$ be a symmetric matrix game, let $i,j$ span a face with an interior
+rest point at frequency $p\in(0,1)$ of $j$, and let $k$ be a third strategy
+that is a payoff twin of $i$ against $i$, that is $M_{ki}=M_{ii}$. Then the
+growth rate of a rare $k$ at that rest point equals
+$p\,(M_{kj}-M_{ij})$. Its sign is therefore independent of $p$, and $k$
+invades the interior rest point if and only if $M_{kj}>M_{ij}$.
+\end{lemma}
+
+\begin{proof}
+At an interior rest point of the face the two residents have equal fitness
+$f=(1-p)M_{ii}+pM_{ij}$. The growth rate of a rare $k$ is
+$(1-p)M_{ki}+pM_{kj}-f=(1-p)(M_{ki}-M_{ii})+p(M_{kj}-M_{ij})$, and the first
+term vanishes by hypothesis.
+\end{proof}
+
+Lemma~\ref{lem:twin} says that whenever a candidate entrant is behaviourally
+indistinguishable from an incumbent against that incumbent, whether it can
+enter a mixed equilibrium involving the incumbent is decided by a single
+pairwise comparison, with no dependence on the equilibrium mixture. Applied to
+our game with $i=\AS$, $j=\CAS$, $k=\CS$ -- the hypothesis is exactly
+Proposition~\ref{prop:twins} -- it yields the threshold that governs the
+valley.
+
+\begin{theorem}[Guard threshold]\label{thm:guard}
+$\CS$ invades the interior rest point of the $\{\AS,\CAS\}$ face if and only
+if
 \begin{equation}
 L<L^{\dagger}:=\frac{a(\CS,\CAS)-a(\AS,\CAS)}{m(\CS,\CAS)-m(\AS,\CAS)}
 =\frac{26.644-8.600}{4.222-0}=4.274 .
@@ -742,10 +834,10 @@ L<L^{\dagger}:=\frac{a(\CS,\CAS)-a(\AS,\CAS)}{m(\CS,\CAS)-m(\AS,\CAS)}
 \end{theorem}
 
 \begin{proof}
-At the rest point $\AS$ and $\CAS$ have equal fitness $f$, so the growth rate
-of $\CS$ is $\piP(\CS,x)-f=\piP(\CS,x)-\piP(\AS,x)$. Expanding and using
-$\piP(\CS,\AS)=\piP(\AS,\AS)$ from Proposition~\ref{prop:twins}, the terms
-proportional to $1-p^{*}$ cancel and \eqref{eq:guard} remains.
+Apply Lemma~\ref{lem:twin} with $M=\piP$, $i=\AS$, $j=\CAS$, $k=\CS$; the twin
+hypothesis $\piP(\CS,\AS)=\piP(\AS,\AS)$ is Proposition~\ref{prop:twins}. The
+criterion $\piP(\CS,\CAS)>\piP(\AS,\CAS)$ is affine in $L$ by \eqref{eq:piP},
+and solving it gives \eqref{eq:Ldagger}.
 \end{proof}
 
 The interpretation of $L^{\dagger}$ is the crux of the paper. A conditionally
@@ -756,22 +848,21 @@ exceeds the tax the retaliation imposes on the aggressor, the guard loses its
 advantage, and the unsafe coexistence becomes uninvadable.
 
 \begin{corollary}[Liability valley]\label{cor:valley}
-For $L\in(L^{\dagger},L^{*}_{\CAS\to\AS})=(4.274,\,42.765)$, with
-$L^{\dagger}$ from~\eqref{eq:Ldagger}, the dynamics on
+For $L\in(L^{\dagger},L^{*}_{\CAS\to\AS})=(4.274,\,42.765)$ the dynamics on
 $\{\AS,\CS,\CAS\}$ has two attractors: the neutral safe face with $U=0$, and
-the interior rest point~\eqref{eq:pstar} of Proposition~\ref{prop:face} with
+the interior rest point \eqref{eq:pstar} with
 $U=p^{*}(1-p^{*})u(\CAS,\AS)+(p^{*})^{2}>0$. At the lower edge the unsafe
 attractor carries $U=0.465$; weighting the two attractors by the volume of
-their basins, the long-run unsafe frequency is discontinuous at
-$L^{\dagger}$, rising from $0$ to $0.32$ as $L$ crosses it from below.
+their basins, the long-run unsafe frequency is discontinuous at $L^{\dagger}$,
+rising from $0$ to $0.32$ as $L$ crosses it from below.
 \end{corollary}
 
-Corollary~\ref{cor:valley} is the sharpest policy statement available from
-the model: over an interval spanning a factor of ten in $L$, more liability
-means more harm. A regulator moving $L$ upward from a protected regime passes
+Corollary~\ref{cor:valley} is the sharpest policy statement available from the
+model: over an interval spanning a factor of ten in $L$, more liability means
+more harm. A regulator moving $L$ upward from a protected regime passes
 through a range in which the protection it was relying on disappears. It does
 not recover that protection until $L$ exceeds $42.765$, a level at which the
-external harm of a single unsafe development step is worth more than 42\% of
+external harm of a single unsafe development step is worth more than $42\%$ of
 the prize for winning the race.
 
 Figure~\ref{fig:bifurcation} assembles the analytic branches and the two
@@ -780,14 +871,15 @@ basin-averaged replicator tracks the analytic $\CS$--$\CAS$ branch on
 $(0.116,0.551)$ and the analytic $\AS$--$\CAS$ branch inside the valley,
 lying slightly below it because a fraction of initial conditions still reaches
 the safe attractor. Figure~\ref{fig:simplex} shows the corresponding phase
-portraits.
+portraits; the thick dashed edge visible in every panel is the neutral safe
+face of Proposition~\ref{prop:twins}, drawn as a continuum of rest points.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.92\linewidth]{figures/fig04_bifurcation.pdf}
+\includegraphics[width=0.82\linewidth]{figures/fig04_bifurcation.pdf}
 \caption{Bifurcation diagram in the effective liability. Thick curves are the
 analytic branches; markers are the basin-averaged replicator attractor over
-$150$ uniform interior initial conditions; the thin line is the stationary
+$110$ uniform interior initial conditions; the thin line is the stationary
 unsafe frequency of the finite-population process ($Z=50$, small-mutation
 limit). The shaded band is the bistability window
 $(L^{\dagger},L^{*}_{\CAS\to\AS})$ of Corollary~\ref{cor:valley}, on which
@@ -799,11 +891,12 @@ raising liability raises expected harm.}
 \centering
 \includegraphics[width=\linewidth]{figures/fig03_simplex.pdf}
 \caption{Replicator phase portraits on the $\{\AS,\CS,\CAS\}$ simplex at four
-liability levels. Trajectories start from random interior points; the star
-marks the analytic interior rest point of Proposition~\ref{prop:face}. In the
-valley (C) the flow separates into two basins; at high liability (D) every
-trajectory reaches the neutral safe face, where it stops at a
-history-dependent composition.}
+liability levels, drawn with the EGTtools simplex utilities~\citep{domingos2023egttools}. Colour encodes the local speed of selection,
+scaled within each panel; the thick dashed $\AS$--$\CS$ edge is the neutral
+face. The star marks the analytic interior rest point of
+Proposition~\ref{prop:face}. In the valley (C) the flow separates into two
+basins; at high liability (D) every trajectory reaches the neutral safe face,
+where it stops at a history-dependent composition.}
 \label{fig:simplex}
 \end{figure}
 
@@ -812,11 +905,10 @@ history-dependent composition.}
 %======================================================================
 
 The deterministic picture assumes an infinite population and no exploration.
-Figure~\ref{fig:finite} reports the stationary value of the
-observable~\eqref{eq:U} for the Fermi process over the $(L,\beta)$ and
-$(L,Z)$ planes; by Proposition~\ref{prop:reduction} the horizontal axis is
-again the effective liability alone. Three features survive and one is
-modified.
+Figure~\ref{fig:finite} reports the stationary value of the observable
+\eqref{eq:U} for the Fermi process over the $(L,\beta)$ and $(L,Z)$ planes; by
+Proposition~\ref{prop:reduction} the horizontal axis is again the effective
+liability alone.
 
 The two thresholds $L^{*}_{\CAS\to\CS}$ and $L^{*}_{\CAS\to\AS}$ remain
 visible as the boundaries of the transition region for all $\beta$ and $Z$
@@ -827,16 +919,41 @@ value implied by a uniform design mixture rather than by any equilibrium.
 Increasing $Z$ sharpens the transition, consistent with the deterministic
 limit.
 
-The modification concerns the valley. Stochasticity supplies the transitions
-between the two attractors of Corollary~\ref{cor:valley} that the
-deterministic flow forbids, so the finite-population $U^{*}$ inside the
-window is a weighted average of the two rather than a basin-selected branch,
-and the discontinuity at $L^{\dagger}$ becomes a steep but finite rise.
-Bistability is therefore a statement about time scales in a finite population:
-the valley is an escape-time phenomenon, not an absorbing one. It does not
-disappear --- the residence time in the unsafe attractor grows with $Z$ and
-$\beta$ --- but the correct reading is that liability in the valley range
-buys a slower, not a permanent, protection.
+Stochasticity also supplies the transitions between the two attractors of
+Corollary~\ref{cor:valley} that the deterministic flow forbids, so
+bistability becomes a statement about time scales. Table~\ref{tab:escape}
+quantifies it at $L=10$, in the middle of the valley: starting from the
+unsafe rest point, the mean number of generations needed to reach a state free
+of $\CAS$ ranges from $65$ at $Z=30,\beta=0.02$ to $3.9\times10^{13}$ at
+$Z=100,\beta=0.2$, and the stationary mass on states in which $\CAS$ exceeds a
+quarter of the population rises from $0.29$ to $0.997$ over the same range.
+The valley is therefore not an artefact of the deterministic limit. It is a
+long-lived trapping region whose residence time grows steeply in both the
+population size and the intensity of selection, and it is only at weak
+selection in small populations that liability inside the window buys a
+protection that is merely slower rather than absent.
+
+\begin{table}[t]
+\centering
+\caption{Escape from the unsafe attractor inside the liability valley
+($L=10$, pool $\{\AS,\CS,\CAS\}$, $\mu=1/Z$). Mean exit time is the expected
+number of generations to reach a state free of $\CAS$, starting from the
+interior rest point of Proposition~\ref{prop:face}. Unsafe mass is the
+stationary probability that $\CAS$ exceeds a quarter of the population.}
+\label{tab:escape}
+\begin{tabular}{llrr}
+\toprule
+$Z$ & $\beta$ & mean exit (generations) & stationary unsafe mass \\
+\midrule
+30  & 0.02 & $6.5\times10^{1}$  & 0.291 \\
+30  & 0.20 & $2.1\times10^{4}$  & 0.942 \\
+50  & 0.05 & $5.9\times10^{2}$  & 0.636 \\
+80  & 0.05 & $5.4\times10^{3}$  & 0.768 \\
+100 & 0.05 & $2.5\times10^{4}$  & 0.833 \\
+100 & 0.20 & $3.9\times10^{13}$ & 0.997 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}[t]
 \centering
@@ -847,6 +964,58 @@ comparison process on $\{\AS,\CS,\CAS\}$ in the small-mutation limit.
 population size at $\beta=0.05$. Dashed lines mark $L^{*}_{\CAS\to\CS}$ and
 $L^{*}_{\CAS\to\AS}$.}
 \label{fig:finite}
+\end{figure}
+
+%======================================================================
+\section{Robustness to the constants of the race}\label{sec:robust}
+%======================================================================
+
+Every threshold in \eqref{eq:four} is a ratio of payoff differences and
+therefore inherits the scale of the prize $B$ and the shape of the private
+risk $p_r^{\max}$. Figure~\ref{fig:robust} recomputes them over
+$B\in[10,400]$ and $p_r^{\max}\in\{0.1,0.3,0.6,0.9\}$. Three findings.
+
+First, the liability that protects unconditional safety is a roughly constant
+fraction of the prize: $L^{*}_{\CAS\to\AS}/B$ lies between $0.38$ and $0.61$
+across the whole grid, decreasing weakly in $B$ and in $p_r^{\max}$. The
+requirement is therefore not an artefact of the particular value $B=100$; it
+says that deterring a single unsafe step in a winner-take-all race costs
+around half the prize, whatever the prize is.
+
+Second, the advantage of conditional over unconditional safety is robust and
+grows with the prize, from a factor of $4.4$ at $B=10$ to $90$ at $B=400$ for
+$p_r^{\max}=0.6$. At $p_r^{\max}=0.9$ the comparison degenerates in the
+direction that strengthens the message: $L^{*}_{\CAS\to\CS}$ becomes negative,
+meaning that a conditionally safe population repels $\CAS$ with \emph{no}
+liability at all, while unconditional safety still requires
+$L^{*}_{\CAS\to\AS}=38.4$. That $\CS$ becomes uninvadable at high private risk
+also reproduces, from the selection layer, the treatment ordering reported for
+the interaction layer in the source study~\citep{domingos2026falling}.
+
+Third, the bistability window exists at every one of the $24$ grid points,
+with multiplicative width between $4.19$ and $12.79$, widening in both $B$ and
+$p_r^{\max}$. The liability valley is thus a structural feature of this class
+of races rather than a coincidence of the baseline parameters.
+
+We also checked the sensitivity of Corollary~\ref{cor:filter}(iii) to the
+share at which the filtered design is seeded. The gap between the filtered and
+unfiltered curves stays below $4.2\times10^{-3}$ for seeds up to $20\%$ at
+every $L$ except $L=0.3$, where it reaches $1.2\times10^{-2}$ at a $20\%$ seed
+and $0.12$ at a $35\%$ seed. The equivalence is a statement about an ecosystem
+into which the filtered design enters as a minority, which is the case of
+interest; it is not claimed for a population already dominated by that design.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig09_robustness.pdf}
+\caption{Thresholds across the constants of the race.
+\textbf{(A)} Liability protecting unconditional safety, in units of the prize.
+\textbf{(B)} Ratio $L^{*}_{\CAS\to\AS}/L^{*}_{\CAS\to\CS}$, the factor by
+which unconditional safety is cheaper to invade; the $p_r^{\max}=0.9$ curve is
+absent because its denominator is negative, meaning conditional safety needs
+no liability at all. \textbf{(C)} Multiplicative width of the bistability
+window, which is greater than one at every grid point.}
+\label{fig:robust}
 \end{figure}
 
 %======================================================================
@@ -862,42 +1031,54 @@ a principal decays. The coupled system is
 \dot{x}=\mathrm{Rep}\big(x;\,a-L_{\mathrm{eff}}(z)\,m\big),
 \qquad
 \dot{z}=\varepsilon\,U(x)\,(1-z),
-\qquad
-L_{\mathrm{eff}}(z)=L\,(1-\theta z),
 \label{eq:coupled}
 \end{equation}
-with $\varepsilon\ll 1$ separating the time scales and $\theta\in[0,1)$ the
-maximal erosion. The construction differs from renewable game--environment
-models~\cite{weitz2016oscillating,tilman2020feedbacks} in that $\dot z\ge 0$
-identically: the environmental state is a ratchet.
+with $\varepsilon\ll 1$ separating the time scales and $L_{\mathrm{eff}}$ an
+erosion channel. The construction differs from renewable game--environment
+models~\citep{weitz2016oscillating,tilman2020feedbacks} in that
+$\dot z\ge 0$ identically: the environmental state is a ratchet.
 
 \begin{theorem}[Hysteresis width]\label{thm:hysteresis}
-Assume the safe attractor has $U=0$ exactly, as in Proposition~\ref{prop:twins}.
-Consider a quasi-static sweep of $L$ that starts in the protected regime.
-The protected regime is lost at $L_{\downarrow}=L^{*}_{\CAS\to\CS}$, after
-which $z\to 1$; it is recovered on the return sweep only at
+Assume the safe attractor has $U=0$ exactly, as in
+Proposition~\ref{prop:twins}, and consider a quasi-static sweep of $L$ that
+starts in the protected regime. The protected regime is lost at
+$L_{\downarrow}=L^{*}_{\CAS\to\CS}$, after which $z\to 1$; it is recovered on
+the return sweep at $L_{\uparrow}=L^{*}_{\CAS\to\CS}/\rho$, where
+$\rho=L_{\mathrm{eff}}(1)/L$ is the residual fraction of enforcement at full
+diffusion. In particular
 \begin{equation}
-L_{\uparrow}=\frac{L^{*}_{\CAS\to\CS}}{1-\theta},
-\qquad\text{so}\qquad
-\frac{L_{\uparrow}}{L_{\downarrow}}=\frac{1}{1-\theta}.
+\frac{L_{\uparrow}}{L_{\downarrow}}=\frac{1}{\rho}
+=\begin{cases}
+\dfrac{1}{1-\theta}, & L_{\mathrm{eff}}=L(1-\theta z),\\[8pt]
+1+\kappa, & L_{\mathrm{eff}}=L/(1+\kappa z),
+\end{cases}
 \label{eq:width}
 \end{equation}
+independently of the diffusion rate $\varepsilon$.
 \end{theorem}
 
 \begin{proof}
-On the protected branch $U(x)=0$, so the second equation of
-\eqref{eq:coupled} gives $\dot z=0$ and $L_{\mathrm{eff}}=L$; the branch is
-lost exactly when $\CAS$ can invade the resident safe face, i.e.\ at
-$L=L^{*}_{\CAS\to\CS}$ by Lemma~\ref{lem:affine} and~\eqref{eq:invasion}. On
-the unsafe branch $U>0$, so $z\to1$ and $L_{\mathrm{eff}}\to L(1-\theta)$;
-recovery requires $L_{\mathrm{eff}}>L^{*}_{\CAS\to\CS}$, which
-gives~\eqref{eq:width}.
+On the protected branch $U(x)=0$, so the second equation of \eqref{eq:coupled}
+gives $\dot z=0$ and $L_{\mathrm{eff}}=L$; the branch is lost exactly when
+$\CAS$ can invade the resident safe face, i.e.\ at $L=L^{*}_{\CAS\to\CS}$ by
+Lemma~\ref{lem:affine} and \eqref{eq:invasion}. On the unsafe branch $U>0$, so
+$z\to1$ and $L_{\mathrm{eff}}\to\rho L$; recovery requires
+$L_{\mathrm{eff}}>L^{*}_{\CAS\to\CS}$, which gives \eqref{eq:width}. Neither
+step uses $\varepsilon$.
 \end{proof}
+
+The non-trivial ingredient is not the erosion channel but
+Proposition~\ref{prop:twins}: because the protected branch has $U=0$
+\emph{exactly}, the ratchet variable is frozen there, so the loss threshold is
+the bare invasion threshold and the width depends on the channel only through
+the single number $\rho$. Two different channels with the same residual
+fraction give the same width, as \eqref{eq:width} shows for $\theta=0.9$ and
+$\kappa=9$.
 
 Figure~\ref{fig:hysteresis} confirms the prediction numerically at
 $\theta=0.9$: the descending branch loses protection between $L=0.62$ and
 $L=0.54$, bracketing $L^{*}_{\CAS\to\CS}=0.551$, and the ascending branch
-recovers it at $L=5.55$, against the predicted $5.51$. The loop width is the
+recovers it at $L=5.55$ against the predicted $5.51$. The loop width is the
 predicted factor of ten.
 
 \begin{figure}[t]
@@ -912,10 +1093,10 @@ times the loss threshold, as Theorem~\ref{thm:hysteresis} predicts.}
 \end{figure}
 
 The practical content is a timing asymmetry. Because $L_{\uparrow}$ exceeds
-$L_{\downarrow}$ by $1/(1-\theta)$, the cost of preventing a transition is
-smaller than the cost of reversing one by exactly the factor by which
-enforcement erodes, and the required overshoot is known in closed form once
-$\theta$ is estimated.
+$L_{\downarrow}$ by $1/\rho$, the cost of preventing a transition is smaller
+than the cost of reversing one by exactly the factor by which enforcement
+erodes, and the required overshoot is known in closed form once $\rho$ is
+estimated.
 
 %======================================================================
 \section{Discussion}\label{sec:discussion}
@@ -925,64 +1106,82 @@ $\theta$ is estimated.
 The results are statements about a specific stylised race with four
 deterministic designs. They are not predictions about frontier AI systems, and
 the external harm $h$ has no calibration, which is why every result is stated
-on the whole $L$-axis. What does transfer is the structure. Whenever the
-entity that selects a design is not the entity that plays the game, and
-internalises only part of the harm, the population dynamics is the replicator
-equation of the selector's functional. The four mechanisms identified here ---
-dominance of conditional over unconditional aggression, neutrality of the safe
-face, taxation of retaliation, and irreversibility --- then follow from
-qualitative features of the payoff structure rather than from the particular
-numbers. The first requires only that a conditional design imitate the
-unconditional one against unsafe opponents. The second requires only that safe
-designs be behaviourally indistinguishable against safe opponents. The third
-requires only that retaliation be classified as harmful by the liability rule.
+on the whole $L$-axis and normalised by the prize. What does transfer is the
+structure. Whenever the entity that selects a design is not the entity that
+plays the game, and internalises only part of the harm, the population
+dynamics is the replicator equation of the selector's functional. The four
+mechanisms identified here -- dominance of conditional over unconditional
+aggression, neutrality of the safe face, taxation of retaliation, and
+irreversibility -- then follow from qualitative features of the payoff
+structure rather than from the particular numbers. The first requires only
+that a conditional design imitate the unconditional one against unsafe
+opponents. The second requires only that safe designs be behaviourally
+indistinguishable against safe opponents. The third, by Lemma~\ref{lem:twin},
+requires only that the second hold and that retaliation be classified as
+harmful by the liability rule.
 
 \paragraph{Evaluations measure the wrong object.}
 Corollary~\ref{cor:filter} says that a filter defined on solo behaviour
 removes a weakly dominated design. That statement is a formal counterpart of a
 known practical worry, that a model may behave acceptably when probed and
-unacceptably in
-deployment~\cite{vanderweij2024sandbagging,hammond2025multiagent}. The
-mechanism here requires no deception: $\CAS$ is not hiding anything. It is simply
+unacceptably in deployment~\citep{vanderweij2024sandbagging,hammond2025multiagent}. The mechanism here
+requires no deception: $\CAS$ is not hiding anything. It is simply
 conditional, and a solo probe cannot elicit the condition. The corrective
 suggested by the model is not stricter thresholds but a different measurement:
 score designs by $u(i,i)$, the self-play frequency, or more generally against
 the environment the design will actually meet. Panel B of
-Figure~\ref{fig:filter} is the whole argument --- the two orderings disagree
+Figure~\ref{fig:filter} is the whole argument -- the two orderings disagree
 on exactly one design, and it is the one that governs the equilibrium.
 
 \paragraph{Do not mandate unconditional safety.}
 Theorem~\ref{thm:barrier} inverts a natural intuition. Unconditional safety
-looks like the strictest possible design, and it is the most fragile: it has
-the highest invasion barrier requirement of any safe composition, by a factor
-of $77.7$. Conditional safety is cheap to protect because it makes exploiting
-it unprofitable. Because the safe face is neutral, a policy that fixes the
-composition is not self-sustaining; it must be maintained against drift.
+looks like the strictest possible design, and it is the most fragile: it
+demands the highest liability of any safe composition, by a factor of $77.7$
+at the baseline and up to $90$ at large prizes. Conditional safety is cheap to
+protect because it makes exploiting it unprofitable, and at high private risk
+it needs no liability at all. Because the safe face is neutral, a policy that
+fixes the composition is not self-sustaining; it must be maintained against
+drift.
 
 \paragraph{Liability has a valley, and it is wide.}
 Corollary~\ref{cor:valley} is the result most likely to matter outside the
 model. Liability instruments are usually assumed to be monotone: more
 internalisation, less harm. Here an entire decade of $L$ is worse than the
 lower end of the range, because the instrument does not distinguish unsafe
-behaviour that initiates from unsafe behaviour that retaliates. Theorem~\ref{thm:guard} locates the boundary exactly. The distinction between
-initiating and retaliating unsafe behaviour is available in principle --- it
-is a matter of conditioning the rule on the counterparty's prior action, which
-is exactly the column-constant structure that Proposition~\ref{prop:inert}
-identifies as inert. A liability
-rule assessed on the counterparty's behaviour rather than one's own would not
-deform the dynamics at all. Designing an implementable approximation of that
-rule is the natural next question.
+behaviour that initiates from unsafe behaviour that retaliates.
+Theorem~\ref{thm:guard} locates the boundary exactly, and
+Section~\ref{sec:robust} shows that a window of this kind exists across the
+whole range of prizes and risk levels we examined. The distinction between
+initiating and retaliating is available in principle -- it is a matter of
+conditioning the rule on the counterparty's prior action, which is exactly the
+column-constant structure that Proposition~\ref{prop:inert} identifies as
+inert. Designing an implementable approximation of that rule is the natural
+next question.
+
+\paragraph{Structured populations.}
+The analysis is well mixed. Network reciprocity generally favours
+conditionally cooperative strategies by clustering them~\citep{ohtsuki2006simple,santos2006structured}, and we expect it to act
+unevenly on our four mechanisms. The weak dominance of $\CAS$ over $\AU$
+(Theorem~\ref{thm:dominance}) is a pointwise payoff comparison and survives
+any matching structure. The neutrality of the $\AS$--$\CS$ face
+(Proposition~\ref{prop:twins}) is likewise a statement about identical payoffs
+and survives, although the drift dynamics on it does not. By contrast the
+valley depends on the balance between two invasion conditions and should
+narrow under assortment, since clustering raises the payoff a conditionally
+safe design obtains from its own kind without raising the retaliation it must
+pay for. Establishing whether it closes is left open.
 
 \paragraph{Limitations.}
 Four are material. The interaction layer has two players and a fixed pool of
 four designs, so entry of new designs is modelled only as mutation. The
 principals are homogeneous and passive: they select on $\piP$ but do not
 strategise about each other, which rules out the enforcement-avoidance
-behaviour that a richer model would include. The ratchet channel is one of
-several plausible couplings; erosion of harm attribution is assumed rather
-than derived. Finally, the analysis is deterministic in $h$ and $\lambda$,
-whereas real liability arrives with probability and delay --- an expected-value
-reading of $L$ is a first approximation only.
+behaviour a richer model would include. The ratchet channel is assumed rather
+than derived; Theorem~\ref{thm:hysteresis} isolates what does not depend on
+that assumption, but the assumption of erosion itself remains. Finally, the
+analysis is deterministic in $h$ and $\lambda$, whereas real liability arrives
+with probability and delay, so an expected-value reading of $L$ is a first
+approximation only.
 
 %======================================================================
 \section{Conclusion}
@@ -994,15 +1193,16 @@ parameters. Working through that separation in the reduced AI race yields four
 results that are invisible when the two payoffs are identified. Pre-deployment
 solo evaluation cannot change the equilibrium, because it removes a weakly
 dominated design. The invasion barrier protecting a safe population is
-controlled by a neutrally drifting composition, and varies by a factor of
+controlled by a neutrally drifting composition, and falls by a factor of
 $77.7$ along it. Long-run harm is non-monotone in liability, with a bistable
-window spanning $L\in(4.27,42.77)$. And irreversible capability diffusion
-makes the loss of a protected regime cost $1/(1-\theta)$ times less than its
-recovery.
+window that exists at every prize and risk level we examined and traps the
+population for up to $10^{13}$ generations. And irreversible capability
+diffusion makes the loss of a protected regime cost a known factor less than
+its recovery.
 
 Each result points at the same target. Governing an ecosystem of deployed
-agents by acting on the designs --- filtering them, training them, mandating
-them --- addresses the layer that does not carry the selection gradient.
+agents by acting on the designs -- filtering them, training them, mandating
+them -- addresses the layer that does not carry the selection gradient.
 Acting on the functional that principals select by does carry it, but the
 instrument is not monotone, and the range in which it backfires is precisely
 the range in which it is strong enough to punish retaliation and too weak to
@@ -1013,18 +1213,23 @@ strengthened.
 Two extensions follow directly. Estimating the payoff and harm matrices of
 real agent designs empirically, rather than from a stylised race, would place
 an actual deployment ecosystem on the $L$-axis. And enriching the principals
---- letting them anticipate liability, compete, or share it --- turns the
+-- letting them anticipate liability, compete, or share it -- turns the
 selection functional itself into a strategic object, which is the natural
 second layer of the problem.
 
 %======================================================================
-\section*{Code and data availability}
+\section*{Declarations}
 %======================================================================
 
+\paragraph{Code and data availability.}
 All code, tables and figures are reproducible from a public repository
 released under the MIT licence,
 \sloppy\url{https://github.com/trungkiet2005/deployment-layer-selection}.
-Evolutionary computations use EGTtools~\cite{domingos2023egttools}.
+Evolutionary computations use EGTtools~\citep{domingos2023egttools}.
+
+\paragraph{Competing interests.} The authors declare no competing interests.
+
+\paragraph{Funding.} To be completed.
 
 \appendix
 
@@ -1039,18 +1244,20 @@ Evolutionary computations use EGTtools~\cite{domingos2023egttools}.
 %======================================================================
 
 The source experiment manipulates the maximum private setback risk
-$p_r^{\max}\in\{0.1,0.6,0.9\}$ in~\eqref{eq:risk}. The unsafe counts $m(i,j)$
+$p_r^{\max}\in\{0.1,0.6,0.9\}$ in \eqref{eq:risk}. The unsafe counts $m(i,j)$
 are identical across treatments, because $p_r^{\max}$ scales the realised
-payoff but leaves the stage matrix~\eqref{eq:stage} and hence the action paths
-untouched; only $a(i,j)$ changes. Evaluating the interaction game without liability
-($L=0$) reproduces the qualitative ordering reported in~\cite{domingos2026falling}: the neutrally stable set is $\{\AU,\CAS\}$ at
-$p_r^{\max}=0.1$ and $0.6$, and $\{\CS\}$ at $p_r^{\max}=0.9$, so high private
-risk favours conditional safety even before any external liability is applied.
-Our analysis uses $p_r^{\max}=0.6$, the intermediate treatment, because it is
-the one in which the conditional designs are both present and neither is
-trivially dominant.
+payoff but leaves the stage matrix \eqref{eq:stage} and hence the action paths
+untouched; only $a(i,j)$ changes. Evaluating the interaction game without
+liability ($L=0$) reproduces the qualitative ordering reported in the source
+study~\citep{domingos2026falling}: the neutrally stable set is
+$\{\AU,\CAS\}$ at $p_r^{\max}=0.1$ and $0.6$, and $\{\CS\}$ at
+$p_r^{\max}=0.9$, so high private risk favours conditional safety even before
+any external liability is applied. Our main analysis uses $p_r^{\max}=0.6$,
+the intermediate treatment, because it is the one in which the conditional
+designs are both present and neither is trivially dominant;
+Section~\ref{sec:robust} reports every threshold for the other treatments.
 
-\bibliographystyle{elsarticle-num}
+\bibliographystyle{unsrtnat}
 \bibliography{refs}
 
 \end{document}

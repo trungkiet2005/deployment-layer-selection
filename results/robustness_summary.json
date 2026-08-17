@@ -1,0 +1,21 @@
+{
+  "baseline": {
+    "L_CAS_to_AS": 42.76531580048176,
+    "L_CAS_to_CS": 0.5505918167206086,
+    "L_guard": 4.273684210526316,
+    "window_width": 10.006662564152135,
+    "barrier_ratio": 77.67154269599781,
+    "L_CAS_to_AS_over_B": 0.42765315800481757,
+    "L_CAS_to_CS_over_B": 0.005505918167206086
+  },
+  "window_exists_fraction": 1.0,
+  "barrier_ratio_min": -16.34867854817406,
+  "barrier_ratio_max": 90.35870263118332,
+  "window_width_min": 4.1928059441965795,
+  "window_width_max": 12.794317902208713,
+  "hysteresis_width_linear_theta0.9": 10.000000000000002,
+  "hysteresis_width_saturating_kappa9": 10.0,
+  "escape_generations_min": 65.39797046297662,
+  "escape_generations_max": 38823826365288.04,
+  "seed_sensitivity_max_gap": 0.11928780117935378
+}
