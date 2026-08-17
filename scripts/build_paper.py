@@ -41,14 +41,34 @@ def stage() -> None:
     print("staged", len(FIGURES), "figures and the generated tables")
 
 
-def compile_pdf() -> None:
-    cmd = ["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", "main.tex"]
+def _run(cmd: list[str], allow_fail: bool = False) -> subprocess.CompletedProcess:
     proc = subprocess.run(cmd, cwd=ROOT / "paper", capture_output=True, text=True)
-    sys.stdout.write(proc.stdout[-4000:])
-    if proc.returncode != 0:
-        sys.stderr.write(proc.stderr[-4000:])
-        raise SystemExit(f"latexmk failed with code {proc.returncode}")
+    if proc.returncode != 0 and not allow_fail:
+        sys.stdout.write(proc.stdout[-6000:])
+        sys.stderr.write(proc.stderr[-2000:])
+        raise SystemExit(f"{cmd[0]} failed with code {proc.returncode}")
+    return proc
+
+
+def compile_pdf() -> None:
+    """pdflatex/bibtex passes; latexmk needs perl, which MiKTeX may lack."""
+    tex = ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "main.tex"]
+    _run(tex)
+    _run(["bibtex", "main"], allow_fail=True)
+    _run(tex)
+    proc = _run(tex)
+
+    log = (ROOT / "paper" / "main.log").read_text(encoding="utf-8", errors="ignore")
+    warnings = [
+        line for line in log.splitlines()
+        if "Warning" in line and "Font" not in line and "hyperref" not in line.lower()
+    ]
+    for line in warnings[:25]:
+        print("  ", line.strip())
+    if not (ROOT / "paper" / "main.pdf").exists():
+        raise SystemExit("no PDF produced")
     print("built", ROOT / "paper" / "main.pdf")
+    _ = proc
 
 
 if __name__ == "__main__":

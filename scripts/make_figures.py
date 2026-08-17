@@ -49,25 +49,30 @@ def figure_functionals(base, outdir: Path) -> None:
         (build_selection_matrix(base, 5.0), r"selection functional $\pi_P$, $L=5$", "viridis"),
         (fun.wedge, r"wedge $\Delta=(1-\lambda)h\,m$", "cividis"),
     ]
-    fig, axes = plt.subplots(1, 4, figsize=(11.0, 2.9))
-    for ax, (mat, title, cmap), lab in zip(axes, panels, "ABCD"):
+    fig, axes = plt.subplots(1, 4, figsize=(11.6, 3.0))
+    fig.subplots_adjust(wspace=0.55)
+    for k, (ax, (mat, title, cmap), lab) in enumerate(zip(axes, panels, "ABCD")):
         im = ax.imshow(mat, cmap=cmap, aspect="equal")
-        ax.set_xticks(range(len(STRATEGIES)), STRATEGIES, fontsize=7.5)
-        ax.set_yticks(range(len(STRATEGIES)), STRATEGIES, fontsize=7.5)
-        ax.set_title(title, fontsize=8.6, pad=6)
+        ax.set_xticks(range(len(STRATEGIES)), STRATEGIES, fontsize=7.2)
+        if k == 0:
+            ax.set_yticks(range(len(STRATEGIES)), STRATEGIES, fontsize=7.2)
+            ax.set_ylabel("focal design $i$", fontsize=8.4)
+        else:
+            ax.set_yticks(range(len(STRATEGIES)), [""] * len(STRATEGIES))
+        ax.set_xlabel("opponent design $j$", fontsize=8.4)
+        ax.set_title(title, fontsize=8.4, pad=6)
         ax.grid(False)
+        span = float(mat.max() - mat.min())
         for i in range(mat.shape[0]):
             for j in range(mat.shape[1]):
                 v = mat[i, j]
-                rel = (v - mat.min()) / (mat.ptp() + 1e-12)
+                rel = (v - mat.min()) / (span + 1e-12)
                 ax.text(
-                    j, i, f"{v:.1f}", ha="center", va="center", fontsize=6.6,
+                    j, i, f"{v:.1f}", ha="center", va="center", fontsize=6.4,
                     color="white" if rel < 0.55 else "black",
                 )
-        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.03).ax.tick_params(labelsize=6.5)
-        panel_label(ax, lab, dx=-0.22, dy=1.20)
-    axes[0].set_ylabel("focal design $i$")
-    fig.text(0.5, -0.03, "opponent design $j$", ha="center", fontsize=9)
+        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04).ax.tick_params(labelsize=6.2)
+        panel_label(ax, lab, dx=-0.28 if k == 0 else -0.16, dy=1.22)
     save(fig, outdir / "fig02_functionals")
 
 
@@ -383,10 +388,11 @@ def figure_finite(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
         for c, L in enumerate(ls):
             heat_z[a, c] = longrun_unsafe_sml(sub, L, population_size=int(Z), beta=0.05)
 
-    fig, axes = plt.subplots(1, 2, figsize=(9.8, 3.5))
-    for ax, data, yvals, ylabel, lab in [
-        (axes[0], heat, betas, r"selection intensity $\beta$", "A"),
-        (axes[1], heat_z, zs, r"population size $Z$", "B"),
+    fig, axes = plt.subplots(1, 2, figsize=(10.2, 3.5))
+    fig.subplots_adjust(wspace=0.42)
+    for ax, data, yvals, ylabel, lab, show_cbar_label in [
+        (axes[0], heat, betas, r"selection intensity $\beta$", "A", False),
+        (axes[1], heat_z, zs, r"population size $Z$", "B", True),
     ]:
         mesh = ax.pcolormesh(ls, yvals, data, cmap="RdYlBu_r", vmin=0, vmax=1,
                              shading="nearest")
@@ -398,9 +404,11 @@ def figure_finite(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
         for L in (invasion_threshold(base, "CAS", "CS").critical_liability,
                   invasion_threshold(base, "CAS", "AS").critical_liability):
             ax.axvline(L, color="k", lw=0.7, ls="--", alpha=0.6)
-        fig.colorbar(mesh, ax=ax, fraction=0.046, pad=0.03,
-                     label=r"stationary $U^{*}$").ax.tick_params(labelsize=6.5)
-        panel_label(ax, lab)
+        cbar = fig.colorbar(mesh, ax=ax, fraction=0.046, pad=0.03)
+        cbar.ax.tick_params(labelsize=6.5)
+        if show_cbar_label:
+            cbar.set_label(r"stationary $U^{*}$", fontsize=8)
+        panel_label(ax, lab, dx=-0.20)
     axes[0].set_title(r"$Z=50$, varying selection intensity", fontsize=8.8)
     axes[1].set_title(r"$\beta=0.05$, varying population size", fontsize=8.8)
     save(fig, outdir / "fig07_finite")
