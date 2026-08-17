@@ -1,0 +1,6 @@
+lambda,harm,effective_liability,wedge_frobenius_norm,strategically_inert
+0.0,10.0,0.0,243.23945423956846,False
+0.25,10.0,2.5,182.42959067967635,False
+0.5,10.0,5.0,121.61972711978423,False
+0.75,10.0,7.5,60.809863559892136,False
+1.0,10.0,10.0,0.0,True

@@ -1,0 +1,75 @@
+{
+  "expected_horizon": 8.999999999999826,
+  "baseline_p_max": 0.6,
+  "safe_face_is_neutral": true,
+  "interaction_game_nss": {
+    "0.1": [
+      "AU",
+      "CAS"
+    ],
+    "0.6": [
+      "AU",
+      "CAS"
+    ],
+    "0.9": [
+      "CS"
+    ]
+  },
+  "interaction_game_strict_nash": {
+    "0.1": [],
+    "0.6": [],
+    "0.9": []
+  },
+  "wedge_inert_only_at_full_liability": true,
+  "L_CAS_invades_AS": 42.76531580048175,
+  "L_CAS_invades_CS": 0.550591816720619,
+  "L_CS_invades_CAS": 0.11627906976745546,
+  "L_AS_invades_CAS": 2.066666666666711,
+  "barrier_ratio_AS_over_CS": 77.67154269599635,
+  "critical_cs_fraction": {
+    "1.0": 0.9511033758803633,
+    "2.0": 0.854793214874827,
+    "5.0": 0.639834171771468,
+    "10.0": 0.42053997432402224,
+    "20.0": 0.19677814379488057
+  },
+  "guard_invasion_threshold": 4.273684210526398,
+  "bistability_window": [
+    4.273684210526398,
+    42.76531580048175
+  ],
+  "unsafe_at_valley_entry": 0.46474151663903124,
+  "cas_fraction_at_valley_entry": 0.6596138149575896,
+  "solo_evaluation_scores": {
+    "AS": 0.0,
+    "AU": 1.0,
+    "CS": 0.0,
+    "CAS": 0.13206252793422468
+  },
+  "filters": {
+    "0.0": [
+      "AS",
+      "CS"
+    ],
+    "0.05": [
+      "AS",
+      "CS"
+    ],
+    "0.2": [
+      "AS",
+      "CS",
+      "CAS"
+    ],
+    "0.5": [
+      "AS",
+      "CS",
+      "CAS"
+    ],
+    "1.0": [
+      "AS",
+      "AU",
+      "CS",
+      "CAS"
+    ]
+  }
+}
