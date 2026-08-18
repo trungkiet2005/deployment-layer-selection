@@ -35,10 +35,19 @@ from .race import RaceTables
 
 @dataclass(frozen=True)
 class RatchetParams:
-    """Parameters of the coupled eco-evolutionary system."""
+    """Parameters of the coupled eco-evolutionary system.
+
+    ``channel`` selects the erosion law.  Both admissible laws are continuous,
+    non-increasing in ``z`` and equal to ``L`` at ``z = 0``; they differ only in
+    shape, and the hysteresis width depends on them through the single number
+    :attr:`residual_fraction`.
+    """
 
     theta: float = 0.9
-    """Maximum fractional erosion of the effective liability at full diffusion."""
+    """Fractional erosion of the effective liability at full diffusion (linear channel)."""
+
+    kappa: float = 9.0
+    """Saturation constant of the ``L / (1 + kappa z)`` channel."""
 
     epsilon: float = 0.05
     """Time-scale separation between design selection and capability diffusion."""
@@ -46,8 +55,25 @@ class RatchetParams:
     mutation: float = 1e-4
     """Uniform design mutation, so a rare design can always re-enter."""
 
+    channel: str = "linear"
+    """``"linear"`` for ``L (1 - theta z)``, ``"saturating"`` for ``L / (1 + kappa z)``."""
+
+    @property
+    def residual_fraction(self) -> float:
+        """``rho = L_eff(1) / L``, the enforcement that survives full diffusion."""
+        if self.channel == "linear":
+            return float(max(1.0 - self.theta, 0.0))
+        if self.channel == "saturating":
+            return float(1.0 / (1.0 + self.kappa))
+        raise ValueError("unknown erosion channel %r" % self.channel)
+
     def effective_liability(self, base_liability: float, z: float) -> float:
-        return float(max(base_liability * (1.0 - self.theta * z), 0.0))
+        z = float(np.clip(z, 0.0, 1.0))
+        if self.channel == "linear":
+            return float(max(base_liability * (1.0 - self.theta * z), 0.0))
+        if self.channel == "saturating":
+            return float(base_liability / (1.0 + self.kappa * z))
+        raise ValueError("unknown erosion channel %r" % self.channel)
 
 
 def coupled_field(

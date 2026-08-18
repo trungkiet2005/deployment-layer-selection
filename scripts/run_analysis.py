@@ -296,6 +296,14 @@ def main(outdir: Path) -> None:
     # write outputs
     # ------------------------------------------------------------------
     (tables_dir / "tables.tex").write_text("\n".join(tex_blocks), encoding="utf-8")
+    # the two matchup tables belong in the main text and the threshold table in
+    # the appendix, so they are also emitted separately
+    (tables_dir / "tables_matchup.tex").write_text(
+        "\n".join(tex_blocks[:2]), encoding="utf-8"
+    )
+    (tables_dir / "tables_thresholds.tex").write_text(
+        "\n".join(tex_blocks[2:]), encoding="utf-8"
+    )
     (outdir / "key_numbers.json").write_text(
         json.dumps(key, indent=2, default=float), encoding="utf-8"
     )

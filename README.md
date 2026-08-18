@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![EGTtools](https://img.shields.io/badge/built%20with-EGTtools-brightgreen.svg)](https://github.com/Socrats/EGTTools)
-[![tests](https://img.shields.io/badge/tests-39%20passing-success.svg)](tests/)
+[![tests](https://img.shields.io/badge/tests-68%20passing-success.svg)](tests/)
 
 Reproduction code for a study of what happens when the layer at which an AI
 design *acts* is separated from the layer at which it is *selected*.
@@ -31,6 +31,8 @@ AS / AU / CS / CAS.
 | **4** | **Long-run harm is not monotone in liability.** For `L ∈ (4.27, 42.77)` the system is bistable: liability taxes the retaliation that conditional safety relies on. Raising `L` from 4.2 to 4.5 raises the basin-averaged unsafe frequency from 0 to ≈ 0.32. A window of this kind exists at **every** prize and risk level tested (24/24 grid points), with multiplicative width 4.2–12.8. |
 | **5** | **The valley is long-lived, not an artefact of the deterministic limit.** In a finite population the mean escape time from the unsafe attractor at `L = 10` ranges from 65 generations (`Z=30, β=0.02`) to `3.9e13` generations (`Z=100, β=0.2`). |
 | **6** | **The ratchet makes it worse.** Coupling to a non-decreasing stock of diffused capability that erodes enforcement to a residual fraction `ρ` produces hysteresis of width exactly `1/ρ`, independent of the diffusion rate — a factor of 10 at `ρ = 0.1`. |
+| **7** | **The mechanisms are not artefacts of the modelling choices.** They are inherited by any imitative payoff-monotone dynamics, and the best-response bifurcation sits at the same threshold. They survive four non-linear liability schedules, three further conditional designs, and execution noise up to about 5%; the valley closes at 7.5% error, but only because a conditionally safe population stops being safe. Two of the four carry over exactly to arbitrary population structure. |
+| **8** | **Probe your agent against a reciprocating counterpart.** Over all fifteen probe sets the separating margin takes exactly two values: 0.539 when the probe set contains a conditional design and no always-unsafe one, and 0.132 otherwise. A hostile probe is *worse* than a gentle one, because conditional safety retaliates against it in 87% of rounds and is scored as unsafe. |
 
 ## Installation
 
@@ -48,9 +50,11 @@ Requires Python ≥ 3.10, `numpy`, `scipy`, `matplotlib`, `pandas` and
 ```bash
 python scripts/run_analysis.py --outdir results    # tables + every quoted number
 python scripts/run_robustness.py --outdir results  # prize/risk sweep, escape times
-python scripts/make_figures.py                     # Figures 2-9
+python scripts/run_extensions.py                   # noise, pools, dynamics, charges
+python scripts/emit_extensions.py                  # their tables and fig10_generality
+python scripts/make_figures.py                     # the other figures
 python scripts/build_paper.py                      # stage figures, run pdflatex/bibtex
-pytest                                             # 39 checks of the analytics
+pytest                                             # 68 checks of the analytics
 ```
 
 `scripts/make_figures.py --quick` runs a coarser sweep in about a minute, and
@@ -66,6 +70,7 @@ Outputs:
 ```text
 results/key_numbers.json         every scalar quoted in the manuscript
 results/robustness_summary.json  prize/risk sweep, escape times, seed sensitivity
+results/extensions.json          noise, pools, dynamics, charges, probes, ratchet
 results/tables/*.csv             payoff, harm, threshold and sweep tables
 results/tables/tables.tex        LaTeX tables included by the manuscript
 results/figures/fig0*.pdf        publication figures
@@ -82,6 +87,10 @@ src/dls/
   theory.py       closed-form thresholds, face equilibria, evaluation filters
   ratchet.py      coupled (x, z) eco-evolutionary system and hysteresis sweeps
   robustness.py   thresholds across prize and risk, escape times, erosion channels
+  noisy.py        stochastic finite-state designs under trembling-hand noise
+  altdynamics.py  logit, best-response and aspiration dynamics
+  charges.py      non-linear liability schedules and their thresholds
+  probes.py       probe-set evaluation filters and their separating margins
   plotting.py     figure style: one saved width and one font scale for all
 ```
 
@@ -94,6 +103,13 @@ over the horizon distribution** instead of Monte Carlo sampling. This removes
 simulation noise from the payoff matrix entirely, which matters here because
 several thresholds are ratios of small payoff differences.
 `tests/test_race.py` checks the exact values against a 200 000-draw simulation.
+
+The same exactness is kept when designs are made stochastic. `noisy.py`
+propagates the joint chain over the two internal states against the horizon
+law, carrying the progress difference and the unsafe count as state and the
+accumulated stage payoff as a first moment, which the setback probability
+requires because it multiplies the kept payoff. At zero noise it reproduces
+the deterministic tables to `1.1e-6`, which is the horizon truncation.
 
 ## Citing
 

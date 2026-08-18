@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FIGURES = ["fig02_functionals", "fig03_simplex", "fig04_bifurcation",
            "fig05_filter", "fig06_safe_face", "fig07_finite", "fig08_hysteresis",
-           "fig09_robustness"]
+           "fig09_robustness", "fig10_generality"]
 
 
 def stage() -> None:
@@ -32,13 +32,31 @@ def stage() -> None:
         shutil.copy2(src, dest / f"{name}.pdf")
     if missing:
         raise SystemExit(
-            "missing figures: " + ", ".join(missing) + "\nrun scripts/make_figures.py first"
+            "missing figures: "
+            + ", ".join(missing)
+            + "\nrun scripts/make_figures.py first"
+            " (fig10_generality comes from scripts/emit_extensions.py)"
         )
 
-    tables = ROOT / "results" / "tables" / "tables.tex"
-    if not tables.exists():
-        raise SystemExit("missing results/tables/tables.tex; run scripts/run_analysis.py first")
-    shutil.copy2(tables, ROOT / "paper" / "tables_generated.tex")
+    emitted = {
+        "tables.tex": "tables_generated.tex",
+        "tables_matchup.tex": "tables_matchup.tex",
+        "tables_thresholds.tex": "tables_thresholds.tex",
+        # written by scripts/emit_extensions.py
+        "tab_noise.tex": "tab_noise.tex",
+        "tab_charges.tex": "tab_charges.tex",
+        "tab_hysteresis.tex": "tab_hysteresis.tex",
+    }
+    for name, target in emitted.items():
+        src = ROOT / "results" / "tables" / name
+        if not src.exists():
+            producer = (
+                "scripts/emit_extensions.py"
+                if name.startswith("tab_")
+                else "scripts/run_analysis.py"
+            )
+            raise SystemExit(f"missing results/tables/{name}; run {producer} first")
+        shutil.copy2(src, ROOT / "paper" / target)
     print("staged", len(FIGURES), "figures and the generated tables")
 
 
