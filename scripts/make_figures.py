@@ -94,7 +94,7 @@ def figure_simplex(base, outdir: Path) -> None:
     ]
 
     fig, axes = plt.subplots(2, 2, figsize=(7.4, 6.2))
-    fig.subplots_adjust(wspace=0.02, hspace=0.02, bottom=0.06, top=0.95)
+    fig.subplots_adjust(wspace=0.30, hspace=0.00, bottom=0.05, top=0.95)
 
     for ax, L, subtitle, letter in zip(axes.ravel(), liabilities, subtitles, "ABCD"):
         pi_p = np.ascontiguousarray(build_selection_matrix(sub, L))
@@ -106,7 +106,7 @@ def figure_simplex(base, outdir: Path) -> None:
             .draw_triangle()
             .draw_gradients(zorder=0, linewidth=0.7, density=1.1, arrowsize=0.9)
             .draw_stationary_points(roots_xy, stability, zorder=5)
-            .add_vertex_labels(POOL3, epsilon_bottom=0.15, epsilon_top=0.09, fontsize=11)
+            .add_vertex_labels(POOL3, epsilon_bottom=0.13, epsilon_top=0.07, fontsize=11)
         )
 
         # the analytic interior rest point of the AS-CAS edge, for comparison
@@ -123,7 +123,7 @@ def figure_simplex(base, outdir: Path) -> None:
         ax.set_aspect("equal")
         # widen the view box so the vertex labels sit inside their own panel
         ax.set_xlim(-0.20, 1.20)
-        ax.set_ylim(-0.19, 0.94)
+        ax.set_ylim(-0.17, 0.92)
         panel_title(ax, letter, subtitle, size=9.6, pad=6.0)
 
     handles = [
