@@ -19,7 +19,7 @@ import pandas as pd
 
 from dls.dynamics import stationary_analysis
 from dls.functionals import build_selection_matrix
-from dls.plotting import PALETTE, panel_title, save, use_paper_style
+from dls.plotting import FS, PALETTE, new_figure, panel_title, save, use_paper_style
 from dls.race import RaceParams, build_race_tables
 from dls.robustness import (
     hysteresis_width,
@@ -60,8 +60,7 @@ def prize_and_risk_sweep(outdir: Path) -> pd.DataFrame:
 
 
 def figure_robustness(df: pd.DataFrame, outdir: Path) -> None:
-    fig, axes = plt.subplots(1, 3, figsize=(11.6, 3.5))
-    fig.subplots_adjust(wspace=0.36, top=0.84, bottom=0.18)
+    fig, axes = new_figure(2.55, nrows=1, ncols=3)
 
     styles = {0.1: "-o", 0.3: "-s", 0.6: "-^", 0.9: "-d"}
     colours = {0.1: PALETTE["AS"], 0.3: PALETTE["CS"],
@@ -75,8 +74,9 @@ def figure_robustness(df: pd.DataFrame, outdir: Path) -> None:
     ax.set_xscale("log")
     ax.set_xlabel(r"race prize $B$")
     ax.set_ylabel(r"$L^{*}_{\mathrm{CAS}\to\mathrm{AS}}/B$")
-    panel_title(ax, "A", "protecting unconditional safety", size=8.4)
-    ax.legend(fontsize=7.0, ncol=2, columnspacing=0.9)
+    panel_title(ax, "A", "protecting AS")
+    ax.legend(fontsize=FS["legend"], ncol=2, columnspacing=0.7,
+              handlelength=1.4)
 
     ax = axes[1]
     for p, sub in df.groupby("p_max"):
@@ -90,12 +90,15 @@ def figure_robustness(df: pd.DataFrame, outdir: Path) -> None:
     ax.set_yscale("log")
     ax.set_xlabel(r"race prize $B$")
     ax.set_ylabel(r"$L^{*}_{\mathrm{CAS}\to\mathrm{AS}}\,/\,L^{*}_{\mathrm{CAS}\to\mathrm{CS}}$")
-    ax.text(10.5, 1.5,
-            "at $p_r^{\\max}=0.9$ the ratio is undefined:\n"
-            "$L^{*}_{\\mathrm{CAS}\\to\\mathrm{CS}}<0$, so conditional\n"
-            "safety is protected at zero liability",
-            fontsize=6.4, color=PALETTE["CAS"], va="bottom")
-    panel_title(ax, "B", "how much cheaper unconditional safety is", size=8.4)
+    # chr(10) rather than an escape, so the source survives shell round-trips
+    note = chr(10).join([
+        r"at $p_r^{\max}=0.9$ the ratio is",
+        r"undefined: $L^{*}_{\mathrm{CAS}\to\mathrm{CS}}<0$,",
+        r"CS protected at zero liability",
+    ])
+    ax.text(10.5, 1.25, note, fontsize=FS["tiny"], color=PALETTE["CAS"],
+            va="bottom")
+    panel_title(ax, "B", "CS is cheaper")
 
     ax = axes[2]
     for p, sub in df.groupby("p_max"):
@@ -103,12 +106,12 @@ def figure_robustness(df: pd.DataFrame, outdir: Path) -> None:
         ax.plot(sub["prize"], sub["window_width"], styles[p], ms=3.4,
                 color=colours[p], label=rf"$p_r^{{\max}}={p}$")
     ax.axhline(1.0, color=PALETTE["neutral"], lw=0.7, ls="--")
-    ax.text(11, 1.06, "no window", fontsize=6.8, color=PALETTE["neutral"])
+    ax.text(11, 1.06, "no window", fontsize=FS["annot"], color=PALETTE["neutral"])
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xlabel(r"race prize $B$")
     ax.set_ylabel(r"width of the bistability window")
-    panel_title(ax, "C", "the liability valley across the race", size=8.4)
+    panel_title(ax, "C", "the valley across $B$")
 
     save(fig, outdir / "figures" / "fig09_robustness")
 

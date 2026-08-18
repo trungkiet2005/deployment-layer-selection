@@ -54,7 +54,10 @@ pytest                                             # 39 checks of the analytics
 ```
 
 `scripts/make_figures.py --quick` runs a coarser sweep in about a minute, and
-`--only 4 5` rebuilds a subset. Everything is deterministic: the only
+`--only 4 5` rebuilds a subset. Every figure is saved at the same width
+(`dls.plotting.FIG_WIDTH`) with an uncropped bounding box and is included at
+`\linewidth`, so all figures are reduced by the same factor on the page and
+their text renders at the same size; `tests/test_figures.py` enforces this. Everything is deterministic: the only
 randomness is the choice of initial conditions for basin averaging, which is
 seeded.
 
@@ -79,7 +82,7 @@ src/dls/
   theory.py       closed-form thresholds, face equilibria, evaluation filters
   ratchet.py      coupled (x, z) eco-evolutionary system and hysteresis sweeps
   robustness.py   thresholds across prize and risk, escape times, erosion channels
-  plotting.py     figure style
+  plotting.py     figure style: one saved width and one font scale for all
 ```
 
 ### A note on the interaction layer
