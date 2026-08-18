@@ -8,6 +8,7 @@ single scale in :data:`FS` rather than chosen per panel.
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 
 import matplotlib as mpl
@@ -111,6 +112,29 @@ def save(fig: plt.Figure, path: Path | str, also_png: bool = True) -> None:
     if also_png:
         fig.savefig(path.with_suffix(".png"))
     plt.close(fig)
+
+
+def fitted_legend(ax: plt.Axes, **kwargs):
+    """Draw a legend inside `ax` and warn if it overhangs the axes box.
+
+    A legend wider than its panel spills over the neighbouring axis, which is
+    easy to miss in a multi-panel figure and impossible to see in the vector
+    output until it is on the page.
+    """
+    kwargs.setdefault("fontsize", FS["legend"])
+    legend = ax.legend(**kwargs)
+    fig = ax.get_figure()
+    fig.canvas.draw()
+    box = legend.get_window_extent()
+    frame = ax.get_window_extent()
+    overhang = max(frame.x0 - box.x0, box.x1 - frame.x1)
+    if overhang > 1.0:
+        warnings.warn(
+            f"legend overhangs its axes by {overhang:.0f} px; "
+            "reduce ncol, handlelength or columnspacing",
+            stacklevel=2,
+        )
+    return legend
 
 
 def panel_label(ax: plt.Axes, text: str, dx: float = -0.16, dy: float = 1.06) -> None:

@@ -27,6 +27,7 @@ from dls.plotting import (
     FS,
     PALETTE,
     new_figure,
+    fitted_legend,
     panel_title,
     save,
     use_paper_style,
@@ -294,7 +295,7 @@ def figure_filter(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     ax.set_xlabel(r"effective liability $L$")
     ax.set_ylabel(r"long-run Unsafe frequency $U^{*}$")
     ax.set_ylim(-0.04, 1.06)
-    ax.legend(loc="upper right", fontsize=FS["legend"], handlelength=1.8)
+    fitted_legend(ax, loc="upper right", handlelength=1.8)
     panel_title(ax, "A", "solo evaluation removes designs")
 
     ax = axes[1]
@@ -316,8 +317,8 @@ def figure_filter(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     ax.set_xticks(xpos, STRATEGIES)
     ax.set_ylabel("Unsafe frequency")
     ax.set_ylim(0, 1.38)
-    ax.legend(loc="upper center", ncol=2, fontsize=FS["legend"], columnspacing=1.0,
-              handlelength=1.4)
+    fitted_legend(ax, loc="upper center", ncol=2, columnspacing=1.0,
+                  handlelength=1.4)
     panel_title(ax, "B", "what the evaluation sees")
 
     save(fig, outdir / "fig05_filter")
@@ -386,8 +387,8 @@ def figure_safe_face(base, outdir: Path) -> pd.DataFrame:
     # headroom for the legend: the blue curve spikes to 1 at both ends
     ax.set_ylim(0, 1.62)
     panel_title(ax, "C", "neutral drift")
-    ax.legend(fontsize=FS["legend"], loc="upper center", ncol=3, columnspacing=0.8,
-              handlelength=1.2, borderpad=0.2)
+    fitted_legend(ax, loc="upper center", ncol=3, columnspacing=0.55,
+                  handlelength=0.9, handletextpad=0.35, borderpad=0.15)
 
     save(fig, outdir / "fig06_safe_face")
     return pd.DataFrame(rows)

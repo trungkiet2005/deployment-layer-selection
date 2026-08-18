@@ -19,7 +19,8 @@ import pandas as pd
 
 from dls.dynamics import stationary_analysis
 from dls.functionals import build_selection_matrix
-from dls.plotting import FS, PALETTE, new_figure, panel_title, save, use_paper_style
+from dls.plotting import (FS, PALETTE, fitted_legend, new_figure, panel_title, save,
+                          use_paper_style)
 from dls.race import RaceParams, build_race_tables
 from dls.robustness import (
     hysteresis_width,
@@ -75,8 +76,7 @@ def figure_robustness(df: pd.DataFrame, outdir: Path) -> None:
     ax.set_xlabel(r"race prize $B$")
     ax.set_ylabel(r"$L^{*}_{\mathrm{CAS}\to\mathrm{AS}}/B$")
     panel_title(ax, "A", "protecting AS")
-    ax.legend(fontsize=FS["legend"], ncol=2, columnspacing=0.7,
-              handlelength=1.4)
+    fitted_legend(ax, ncol=2, columnspacing=0.7, handlelength=1.4)
 
     ax = axes[1]
     for p, sub in df.groupby("p_max"):
