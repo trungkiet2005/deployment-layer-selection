@@ -1,0 +1,109 @@
+%% Abstract variants, one per target venue.
+%%
+%% main.tex carries the PRIMARY version below.  To retarget the manuscript,
+%% replace the body of its abstract environment with one of the others and
+%% re-run scripts/../abswc against the stated limit.
+%%
+%% This file is reference material and is not \input by main.tex.
+
+%% ------------------------------------------------------------------------
+%% PRIMARY -- Journal of the Royal Society Interface
+%% limit 200 words, this version 198
+%% ------------------------------------------------------------------------
+\noindent
+Evolutionary game theory usually identifies the payoff an individual earns with
+the quantity that governs how often it is copied. Ecosystems of deployed
+artificial agents break that identification: an agent competes in a development
+race, but whether its design spreads is decided by a principal who does not play
+it and who bears only a fraction of the harm the design causes. We call the
+difference between the two payoff functionals the selection wedge, embed it in a
+four-strategy model of an artificial intelligence race, and analyse the
+replicator and finite-population dynamics. The wedge collapses to one control
+parameter, an effective liability, in which every invasion condition is affine,
+so all thresholds are closed form. Three consequences follow. Screening designs
+before deployment removes only a weakly dominated design and leaves the long-run
+unsafe frequency unchanged. That frequency is not monotone in liability: over an
+intermediate window liability taxes the retaliation on which conditional safety
+depends, the unsafe state becomes uninvadable, and crossing the window's lower
+edge lifts unsafe behaviour from zero to about a third of encounters. Coupling
+enforcement to diffusing capability produces hysteresis of exactly computable
+width. Governance binds at the selection layer, not the design layer.
+
+%% ------------------------------------------------------------------------
+%% FALLBACK -- PNAS Nexus / Dynamic Games and Applications
+%% limit 250 words, this version 249
+%% ------------------------------------------------------------------------
+\noindent
+Evolutionary game theory usually identifies the payoff an individual earns with
+the quantity that governs how often it is copied. Ecosystems of deployed
+artificial agents break that identification: an agent competes in a development
+race, but whether its design spreads is decided by a principal who does not play
+it and bears only a fraction of the harm the design causes. We call the
+difference between the two payoff functionals the selection wedge, embed it in a
+four-strategy model of an artificial intelligence race, and analyse the
+replicator and finite-population dynamics. The wedge collapses to one control
+parameter, an effective liability $L$, in which every invasion condition is
+affine, so all thresholds are closed form. Four consequences follow. First,
+screening designs before deployment removes only a weakly dominated design and
+leaves the long-run unsafe frequency unchanged. Second, unconditional and
+conditional safety are exact payoff twins, so the barrier protecting safe play
+is set by a neutrally drifting composition variable and falls there by a factor
+of $77.7$. Third, long-run harm is not monotone in $L$: over an intermediate
+window liability taxes the retaliation conditional safety depends on, the unsafe
+state becomes uninvadable, and crossing its lower edge lifts the unsafe
+frequency from $0$ to $0.32$. Fourth, coupling enforcement to diffusing
+capability produces hysteresis of computable width. Assortative matching narrows
+the window and closes it; misattributed blame widens it as $1/(1-q)$. Governance
+binds at the selection layer, not the design layer, and some liability regimes
+are worse than either extreme.
+
+%% ------------------------------------------------------------------------
+%% ORIGINAL -- technical-report version, no venue
+%% limit none words, this version 503
+%% ------------------------------------------------------------------------
+\noindent
+We study evolutionary dynamics in which the payoff earned in the game and the
+payoff that governs replication are different functions of the same
+interaction. The separation is the defining feature of an ecosystem of
+deployed AI agents: an agent acts in a competitive race, but whether its
+\emph{design} is replicated is decided by a principal who does not play that
+race and who bears only a fraction $\lambda$ of the external harm the design
+causes. We call the difference between the two functionals the selection
+wedge, embed it in the reduced four-strategy AI race of Fern\'andez Domingos
+and Han, and analyse the resulting replicator and finite-population dynamics.
+The wedge collapses to a single control parameter, the effective liability
+$L=\lambda h$, and every invasion condition is affine in $L$, which yields
+closed-form thresholds. Four consequences follow. First, a conditionally
+unsafe design weakly dominates the unconditionally unsafe one at every $L$, so
+a pre-deployment filter that scores designs against a safe environment removes
+only a weakly dominated design and, under a common start measure, leaves the
+long-run unsafe frequency unchanged. Second, unconditional and conditional
+safety are exact payoff twins, so the invasion barrier of the safe face is set
+by a neutrally drifting composition variable, and it falls by a factor of
+$77.7$ across that face. Third, long-run harm is \emph{not monotone} in
+liability: on $L\in(4.27,42.77)$ liability taxes the retaliation that
+conditional safety relies on, the unsafe coexistence becomes uninvadable, and
+crossing the lower edge from below lifts the basin-averaged unsafe frequency
+from $0$ to $0.32$. A window of this kind exists at every prize and
+private-risk level we examine, with multiplicative width between $4.2$ and
+$12.8$, and in a finite population the unsafe attractor survives between $65$ and
+$3.9\times10^{13}$ generations. Fourth, coupling the dynamics to a
+non-decreasing stock of diffused capability that erodes enforcement produces
+hysteresis whose width is exactly computable and depends on the erosion
+channel only through the enforcement that survives full diffusion, not on the
+speed of diffusion. We then test how far the mechanisms travel: they are
+inherited by any selection dynamics driven by the sign of a payoff difference,
+they survive non-linear liability schedules and richer conditional designs,
+and the valley closes only when execution error exceeds about $7.5\%$ -- at
+which point the protected state has stopped being safe. Two features of the
+environment then move the valley in opposite directions by computable amounts.
+Assortative matching shrinks it entirely from above, because the lower edge is
+exactly independent of assortment, and closes it at an assortment of $0.354$.
+Booking a fraction $q$ of the blame for an interaction against the wrong party
+widens it as $1/(1-q)$, because the design that a first strike exploits is by
+construction the one with a spotless record; every other measurement error we
+consider, including zero-mean noise, flat charges and systematic
+under-reporting, is absorbed exactly. The results locate the
+governance problem at the selection layer rather than at the design layer, and
+identify liability regimes that are worse than either extreme.
+

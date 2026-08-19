@@ -74,50 +74,23 @@ in an evolutionary AI race}
 
 \begin{abstract}
 \noindent
-We study evolutionary dynamics in which the payoff earned in the game and the
-payoff that governs replication are different functions of the same
-interaction. The separation is the defining feature of an ecosystem of
-deployed AI agents: an agent acts in a competitive race, but whether its
-\emph{design} is replicated is decided by a principal who does not play that
-race and who bears only a fraction $\lambda$ of the external harm the design
-causes. We call the difference between the two functionals the selection
-wedge, embed it in the reduced four-strategy AI race of Fern\'andez Domingos
-and Han, and analyse the resulting replicator and finite-population dynamics.
-The wedge collapses to a single control parameter, the effective liability
-$L=\lambda h$, and every invasion condition is affine in $L$, which yields
-closed-form thresholds. Four consequences follow. First, a conditionally
-unsafe design weakly dominates the unconditionally unsafe one at every $L$, so
-a pre-deployment filter that scores designs against a safe environment removes
-only a weakly dominated design and, under a common start measure, leaves the
-long-run unsafe frequency unchanged. Second, unconditional and conditional
-safety are exact payoff twins, so the invasion barrier of the safe face is set
-by a neutrally drifting composition variable, and it falls by a factor of
-$77.7$ across that face. Third, long-run harm is \emph{not monotone} in
-liability: on $L\in(4.27,42.77)$ liability taxes the retaliation that
-conditional safety relies on, the unsafe coexistence becomes uninvadable, and
-crossing the lower edge from below lifts the basin-averaged unsafe frequency
-from $0$ to $0.32$. A window of this kind exists at every prize and
-private-risk level we examine, with multiplicative width between $4.2$ and
-$12.8$, and in a finite population the unsafe attractor survives between $65$ and
-$3.9\times10^{13}$ generations. Fourth, coupling the dynamics to a
-non-decreasing stock of diffused capability that erodes enforcement produces
-hysteresis whose width is exactly computable and depends on the erosion
-channel only through the enforcement that survives full diffusion, not on the
-speed of diffusion. We then test how far the mechanisms travel: they are
-inherited by any selection dynamics driven by the sign of a payoff difference,
-they survive non-linear liability schedules and richer conditional designs,
-and the valley closes only when execution error exceeds about $7.5\%$ -- at
-which point the protected state has stopped being safe. Two features of the
-environment then move the valley in opposite directions by computable amounts.
-Assortative matching shrinks it entirely from above, because the lower edge is
-exactly independent of assortment, and closes it at an assortment of $0.354$.
-Booking a fraction $q$ of the blame for an interaction against the wrong party
-widens it as $1/(1-q)$, because the design that a first strike exploits is by
-construction the one with a spotless record; every other measurement error we
-consider, including zero-mean noise, flat charges and systematic
-under-reporting, is absorbed exactly. The results locate the
-governance problem at the selection layer rather than at the design layer, and
-identify liability regimes that are worse than either extreme.
+Evolutionary game theory usually identifies the payoff an individual earns with
+the quantity that governs how often it is copied. Ecosystems of deployed
+artificial agents break that identification: an agent competes in a development
+race, but whether its design spreads is decided by a principal who does not play
+it and who bears only a fraction of the harm the design causes. We call the
+difference between the two payoff functionals the selection wedge, embed it in a
+four-strategy model of an artificial intelligence race, and analyse the
+replicator and finite-population dynamics. The wedge collapses to one control
+parameter, an effective liability, in which every invasion condition is affine,
+so all thresholds are closed form. Three consequences follow. Screening designs
+before deployment removes only a weakly dominated design and leaves the long-run
+unsafe frequency unchanged. That frequency is not monotone in liability: over an
+intermediate window liability taxes the retaliation on which conditional safety
+depends, the unsafe state becomes uninvadable, and crossing the window's lower
+edge lifts unsafe behaviour from zero to about a third of encounters. Coupling
+enforcement to diffusing capability produces hysteresis of exactly computable
+width. Governance binds at the selection layer, not the design layer.
 \end{abstract}
 
 \noindent\textbf{Keywords:} evolutionary game theory; replicator dynamics;
@@ -498,43 +471,17 @@ are selected.
 
 \begin{figure}[!ht]
 \centering
-\resizebox{0.96\linewidth}{!}{%
-\begin{tikzpicture}[
-  font=\small,
-  box/.style={draw, rounded corners=2pt, align=center, inner sep=5pt,
-              minimum height=9mm, line width=0.5pt},
-  ar/.style={-{Latex[length=2mm]}, line width=0.6pt}
-]
-\node[box, fill=black!3, minimum width=42mm] (game)
-  {\textbf{interaction layer}\\ repeated race, $\pi,\sigma,T,B,p_r^{\max}$};
-\node[box, right=17mm of game, fill=black!3, minimum width=30mm] (out)
-  {$a(i,j)$ \quad $m(i,j)$};
-\node[box, above right=9mm and 16mm of out, fill=cAS!12, minimum width=44mm] (prin)
-  {\textbf{deployment layer} (principal)\\ $\piP=a-\lambda h\,m$};
-\node[box, below right=9mm and 16mm of out, fill=cAU!12, minimum width=44mm] (soc)
-  {\textbf{society}\\ $\piS=a-h\,m$};
-\node[box, right=14mm of prin, fill=cCS!14, minimum width=32mm] (dyn)
-  {replicator / Fermi\\ selection on designs};
-\node[box, right=14mm of soc, fill=black!3, minimum width=32mm] (obs)
-  {observed only:\\ $U(x)$, $\bar{\piS}(x)$};
-
-\draw[ar] (game) -- (out);
-\draw[ar] (out) -- (prin);
-\draw[ar] (out) -- (soc);
-\draw[ar] (prin) -- (dyn);
-\draw[ar] (soc) -- (obs);
-\draw[ar, dashed] (dyn.east) -- ++(4mm,0) |- (obs.east);
-\draw[{Latex[length=1.6mm]}-{Latex[length=1.6mm]}, line width=0.6pt,
-      cAU!70!black] (prin.south) -- node[right=1mm, font=\footnotesize,
-      align=left] {wedge $\Delta=(1-\lambda)h\,m$} (soc.north);
-\end{tikzpicture}}
-\caption{Deployment-layer selection. The interaction layer produces a task
-payoff $a$ and an externality intensity $m$. The principal selects designs on
-$\piP$, which internalises a fraction $\lambda$ of the harm; society is scored
-by $\piS$, which internalises all of it. Only the upper path feeds back into
-the population dynamics, so the social functional and the unsafe frequency
-$U(x)$ are observables of a system that does not optimise them. Their
-difference is the selection wedge $\Delta$.}
+\includegraphics[width=\linewidth]{figures/fig01_overview.pdf}
+\caption{Deployment-layer selection. \textbf{(A)} The interaction layer is a
+repeated race between two designs; it produces a task payoff $a(i,j)$ and an
+externality intensity $m(i,j)$, the expected number of unsafe actions.
+\textbf{(B)} The deployment layer scores those two outputs twice. The principal
+selects on $\piP=a-\lambda h\,m$, which internalises a fraction $\lambda$ of the
+harm; society is scored by $\piS=a-h\,m$, which internalises all of it. The gap
+between the two functionals is the selection wedge $\Delta=(1-\lambda)h\,m$.
+\textbf{(C)} Only the principal's score feeds back into the selection of
+designs, so the social functional and the unsafe frequency $U(x)$ are
+observables of a system that does not optimise them.}
 \label{fig:framework}
 \end{figure}
 
