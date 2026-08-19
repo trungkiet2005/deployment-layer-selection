@@ -130,7 +130,7 @@ technological race; bistability; hysteresis; liability; AI safety
 
 Evolutionary game theory usually identifies two things that need not be the
 same: the payoff an individual earns in the game, and the quantity that
-governs how often that individual is copied~\citep{maynardsmith1982evolution,taylor1978evolutionarily,hofbauer1998evolutionary}.
+governs how often that individual is copied~\citep{maynardsmith1982evolution,taylor1978evolutionarily,hofbauer1998evolutionary,hofbauer2003evolutionary,nowak2006evolutionary}.
 Under that identification every standard result -- the correspondence between
 rest points and Nash equilibria, the stability of evolutionarily stable
 strategies, the invasion analysis of finite populations -- is a statement
@@ -138,7 +138,14 @@ about one payoff matrix used twice.
 
 Ecosystems of deployed AI agents break the identification in a specific way.
 An agent negotiates, bids, schedules or races on behalf of a principal, and
-earns a payoff by doing so. Whether the agent's \emph{design} -- its model,
+earns a payoff by doing so. Such populations already exist in narrow form:
+autonomous pricing algorithms deployed by competing sellers converge on
+supra-competitive outcomes without any communication or intent to
+collude~\citep{calvano2020collusion}, and when many deployers select from the
+same small pool of designs the resulting correlation is itself a source of
+social loss~\citep{kleinberg2021monoculture}. In both cases the object that
+propagates is a design chosen by a deployer, not a behaviour chosen by the
+system that plays. Whether the agent's \emph{design} -- its model,
 its system prompt, its scaffold -- is replicated across further deployments
 is not decided by the agent, and is not decided by the payoff the agent earned
 in the abstract. It is decided by the principal who deployed it, on the basis
@@ -152,16 +159,19 @@ the one that served the breeder.
 The consequences of that decoupling are the subject of this paper. They are
 not the familiar observation that individual incentives can diverge from
 collective welfare, which has been understood since Hardin's account of the
-commons~\citep{hardin1968tragedy} and is the content of every social dilemma.
+commons~\citep{hardin1968tragedy,ostrom1990governing} and is the content of
+every social dilemma.
 The point is structural and sharper: the dynamical system that describes the
 deployed population is the replicator equation of a game that nobody plays.
 Its rest points are the equilibria of the principals' selection game, and the
 social game enters only as a passive observable. Interventions therefore have
 very different effects depending on which of the two objects they touch. An
 intervention on the design pool -- safety training, capability evaluations,
-release gating -- changes the set of available strategies. An intervention on
-the selection functional -- liability, disclosure, procurement rules --
-changes the vector field itself. We show that the first class can be exactly
+release gating, which is where most current frontier-AI regulation
+sits~\citep{anderljung2023frontier,euaiact2024} -- changes the set of
+available strategies. An intervention on the selection functional --
+liability, disclosure, procurement rules -- changes the vector field itself.
+We show that the first class can be exactly
 neutral while the second class is not, and that the second class can be
 non-monotone in a way that makes intermediate regimes worse than none.
 
@@ -179,8 +189,10 @@ consequences for governance instruments, which is why our results are
 statements about interventions rather than about which preferences survive.
 
 Concern about selection pressure over deployed AI systems has been raised
-informally~\citep{hendrycks2023natural} and appears as one of seven risk
-factors in a recent multi-agent risk taxonomy~\citep{hammond2025multiagent}, but we are not aware of a formal treatment.
+informally~\citep{hendrycks2023natural,bengio2024managing} and appears as one
+of seven risk factors in a recent multi-agent risk
+taxonomy~\citep{hammond2025multiagent}, but we are not aware of a formal
+treatment.
 Formal analyses of AI races have instead studied the race itself: whether
 speed dominates safety~\citep{armstrong2016precipice}, how regulation and
 heterogeneity change the prevalence of unsafe development~\citep{han2020regulate,cimpeanu2022heterogeneous}, and how commitments and
@@ -260,11 +272,20 @@ find them sorted in Table~\ref{tab:scope}.
 \subsection{Related work}
 %======================================================================
 
-\paragraph{Evolutionary models of AI races.}~\citet{armstrong2016precipice} introduced a formal race model in which
+\paragraph{Evolutionary models of AI races.}
+The economics of technology races is older than the AI framing: patent races
+reward speed over quality and can dissipate the rents they
+compete for~\citep{loury1979market}, and preemption incentives push adoption
+earlier than is jointly optimal~\citep{fudenberg1985preemption}, while the
+specifically strategic rhetoric of an AI race carries risks of its
+own~\citep{cave2018race}.~\citet{armstrong2016precipice} introduced a formal
+race model in which
 information about rivals changes the willingness to skip safety precautions.~\citet{han2020regulate} embedded a race in an evolutionary dynamic and showed
 that whether regulation is beneficial depends on the speed advantage of unsafe
 development and on the time horizon;~\citet{cimpeanu2022heterogeneous}
-extended the analysis to heterogeneous populations. These models establish
+extended the analysis to heterogeneous populations; see~\citet{han2022emergent}
+for a survey of this use of evolutionary game theory in multi-agent systems.
+These models establish
 that competitive pressure alone can sustain unsafe development. They also
 share the modelling choice we depart from: the racing actor and the
 reproducing actor coincide, so the population dynamic is driven by the racing
@@ -287,7 +308,9 @@ a group-size or migration parameter.
 
 \paragraph{Incentive design in evolutionary games.}
 A related strand designs institutional rewards and punishments to steer an
-evolving population, and asks what they cost~\citep{sigmund2010institutions,wang2019optimal}. Those instruments are
+evolving population, and asks what they cost~\citep{sigmund2010institutions,wang2019optimal}; a closely related
+result is that raising the perceived risk of collective failure can by itself
+select for cooperation~\citep{santos2011risk}. Those instruments are
 added to the payoffs of the players themselves and are typically monotone in
 their budget. The instrument here acts one level up, on a principal who is not
 a player, and Section~\ref{sec:valley} shows that it is not monotone. The
@@ -334,7 +357,11 @@ finding is that unsafe choices track the evolving strategic state of the race
 rather than elicited risk preferences. That finding motivates the conditional
 strategies $\CS$ and $\CAS$, which carry all of our results. Conditional
 reciprocation of this kind is the dominant behavioural regularity in repeated
-social dilemmas more broadly~\citep{axelrod1981evolution,nowak1993winstay,dalbo2018determinants}.
+social dilemmas more broadly~\citep{axelrod1981evolution,nowak1993winstay,fischbacher2001conditionally,dalbo2018determinants},
+and when execution is noisy the reciprocators that survive are the forgiving
+ones rather than the strict~\citep{molander1985optimal,fudenberg2012slow},
+which is why Section~\ref{sec:noise} enlarges the design pool along the
+severity-of-punishment axis in both directions at once.
 
 \paragraph{Environmental feedback in evolutionary games.}
 Coupling replicator dynamics to a slow environmental state produces
@@ -347,7 +374,12 @@ parameter change into an irreversible regime change.
 
 \paragraph{Liability.}
 The economic analysis of accident law asks when strict liability outperforms
-negligence and when liability should be combined with regulation~\citep{shavell1980strict,shavell1984model}. Both analyses are equilibrium
+negligence, when liability should be combined with regulation, and how
+insurance redistributes the incentive to take
+care~\citep{shavell1980strict,shavell1984model,shavell1982insurance}; the
+same apparatus has recently been brought to bear on harms caused by AI
+systems specifically~\citep{buiten2023liability}. All of these analyses are
+equilibrium
 statements about a fixed population of injurers. We ask instead what a
 liability level does to an evolving distribution of designs. The answer is a
 qualitatively different phenomenon: a window of intermediate liability that is
@@ -508,10 +540,14 @@ equation of the selection functional,
 \label{eq:replicator}
 \end{equation}
 In a finite population of size $Z$ we use the pairwise-comparison process with
-Fermi imitation~\citep{traulsen2006stochastic}: a design $B$ adopts $A$ with
+Fermi imitation~\citep{traulsen2006stochastic,traulsen2007pairwise}: a design
+$B$ adopts $A$ with
 probability $\big(1+\exp[-\beta(f_A-f_B)]\big)^{-1}$, where $\beta$ is the
 intensity of selection and $f$ is computed from $\piP$, with mutation
-probability $\mu$. We report both the full chain and its small-mutation limit~\citep{fudenberg2006imitation}. All computations use EGTtools~\citep{domingos2023egttools}.
+probability $\mu$. We report both the full chain and its small-mutation limit~\citep{fudenberg2006imitation,imhof2005cycles}, in which the population is
+almost always monomorphic and the dynamics reduces to an embedded chain on the
+vertices~\citep{traulsen2009stochastic}. All computations use
+EGTtools~\citep{domingos2023egttools}.
 
 The primary observable is the population unsafe frequency
 \begin{equation}
@@ -523,7 +559,9 @@ uncalibrated harm parameter.
 
 \subsection{Numerical methods}
 
-Replicator trajectories are integrated with an adaptive LSODA solver at
+Replicator trajectories are integrated with the adaptive LSODA
+solver~\citep{petzold1983lsoda} as supplied by
+SciPy~\citep{virtanen2020scipy}, at
 relative tolerance $10^{-10}$ and absolute tolerance $10^{-12}$, to
 $t=2\,000$, which is two orders of magnitude beyond the slowest relaxation we
 observe. Basin averages are taken over initial conditions drawn uniformly from
@@ -710,7 +748,7 @@ pairwise-proportional imitation and imitation of the better all qualify. Then:
 gains share on the design that dominates it, a face on which $\piP$ is
 constant is a set of rest points, and a rare third design at a rest point of a
 two-design face grows exactly under the affine condition \eqref{eq:invasion};
-\item[(ii)] for the best-response dynamics $\dot{x}=\mathrm{BR}(x)-x$, whose
+\item[(ii)] for the best-response dynamics $\dot{x}=\mathrm{BR}(x)-x$~\citep{gilboa1991social,matsui1992best}, whose
 rest points are the symmetric Nash equilibria, the interior rest point of the
 $\{\AS,\CAS\}$ face is a Nash equilibrium of the three-design game if and only
 if $L\ge L^{\dagger}$, so the bistable window opens at the same threshold.
@@ -733,8 +771,9 @@ advantage is $p^{*}\big(\piP(\CS,\CAS)-\piP(\AS,\CAS)\big)$, positive exactly
 for $L<L^{\dagger}$ by Theorem~\ref{thm:guard}.
 \end{proof}
 
-The restriction to imitative dynamics in (i) is not cosmetic. Under the logit
-and best-response dynamics a design at vanishing frequency is replenished at a
+The restriction to imitative dynamics in (i) is not cosmetic. Under the
+logit~\citep{blume1993statistical} and best-response dynamics a design at
+vanishing frequency is replenished at a
 rate that does not vanish with its frequency, so the neutral safe face is not
 a rest set: both contract it to its barycentre. Neutrality of the face is a
 property of the payoffs, but the drift story of Section~\ref{sec:face}
@@ -955,7 +994,8 @@ Restricted to $\{\AS,\CS\}$, the selection functional is constant:
 $\piP(i,j)=a(\AS,\AS)$ for all $i,j\in\{\AS,\CS\}$ and all $L$. The
 $\AS$--$\CS$ edge is therefore a set of rest points of
 \eqref{eq:replicator}, and in the finite-population process it evolves by
-neutral drift.
+neutral drift, with the fixation probability of either design equal to the
+neutral value $1/Z$~\citep{nowak2004emergence}.
 \end{proposition}
 
 \begin{proof}
@@ -1291,7 +1331,10 @@ The four designs are deterministic, which is what makes the matchup tables
 exact and the safe face an exact twin face. Both properties are knife-edge, so
 we now break them. A design is promoted to a stochastic finite-state machine
 and every intended action is inverted with probability $\eta$ before it is
-played and before the opponent observes it. The joint chain over the two
+played and before the opponent observes it, which is the trembling-hand
+perturbation of~\citet{selten1975reexamination} applied at the level of the
+executed action rather than of the equilibrium concept. The joint chain over
+the two
 internal states is propagated exactly against the horizon law, carrying the
 progress difference and the unsafe count as state and the accumulated stage
 payoff as a first moment, so the evaluation remains free of sampling noise; at
@@ -1428,7 +1471,8 @@ reduced game. What is robust is that a dangerous range exists, and the harsh
 punisher shrinks it rather than removing it.
 
 \paragraph{A design that never forgives.}
-The extreme point of the retaliation axis is a grim trigger $\mathsf{GRIM}$,
+The extreme point of the retaliation axis is a grim
+trigger $\mathsf{GRIM}$~\citep{friedman1971supergames},
 which answers one observed unsafe action with unsafe play for the remainder of
 the interaction; it is the limit of $\mathsf{PUN}k$ as the punishment outlasts
 the horizon, and it is the strongest guard this action space admits, earning
@@ -1448,6 +1492,11 @@ $\eta=0.05$ the valley in every enlarged pool has vanished, for the reason
 that is by now familiar: the state that liability was protecting has stopped
 being safe. Longer punishment is a better guard in a clean ecosystem and a
 worse citizen in a noisy one, and the error rate decides which effect wins.
+This reproduces, at the selection layer, the classical finding that noise
+penalises unforgiving reciprocators and rewards generous
+ones~\citep{molander1985optimal,fudenberg2012slow}; what is new here is that
+the penalty is paid in liability charges levied on a principal rather than in
+forgone payoff to the player.
 
 %======================================================================
 \subsection{Non-linear liability, other dynamics, and structure}\label{sec:general}
@@ -1493,7 +1542,10 @@ but that it loses traction, which is a distinct and equally unwelcome
 possibility.
 
 \paragraph{Structured populations.}
-The results above assume random matching. Under weak selection and rare
+The results above assume random matching, whereas evolutionary games on graphs
+and lattices behave differently in
+general~\citep{szabo2007graphs,perc2017statistical}. Under weak selection and
+rare
 mutation, the comparison of any two designs in a structured population is
 governed by a single structure coefficient $\sigma\ge1$: $k$ is favoured over
 $i$ -- in the sense that its fixation probability is the larger -- if and only
@@ -1760,7 +1812,11 @@ liability sits, and it does not accumulate into a change of regime.
 \subsection{An eco-evolutionary ratchet}\label{sec:ratchet}
 %======================================================================
 
-Deployed capability does not disappear. We couple the deployment dynamics to a
+Deployed capability does not disappear. Once model weights are released they
+cannot be withdrawn, and the resulting irreversibility is the feature that
+distinguishes open release from every other deployment
+decision~\citep{seger2023opensourcing,kapoor2024societal}. We couple the
+deployment dynamics to a
 state $z\in[0,1]$ measuring the stock of diffused unsafe capability, which
 enters through enforcement: as a capability proliferates, attributing harm to
 a particular principal becomes harder, so the liability that actually reaches
@@ -2024,7 +2080,10 @@ because saturation spares the retaliator, whose incident count is high, more
 than it spares the initiator, whose count is one. Deductible-and-cap
 structures in insurance have exactly this shape, which is a reason to prefer
 liability that is mediated by insurers to liability that is assessed per
-incident. The second is to condition the charge on an observable proxy for who
+incident; that insurance reshapes rather than merely transfers the incentive
+to take care is the standard reading of~\citet{shavell1982insurance}, and the
+present model adds that the reshaping is what narrows the dangerous range. The
+second is to condition the charge on an observable proxy for who
 moved first -- an incident report that records the counterparty's prior
 action, which is what an audit log of an agent interaction already contains.
 The third is certification of the response rule itself rather than of the
@@ -2050,7 +2109,13 @@ against the wrong party, and at $q=0.5$ -- a record that establishes an
 interaction went wrong but not who started it -- the dangerous range has
 doubled. The instruction to a designer of an incident-reporting standard is
 therefore to spend the budget on identifying the initiator and not on
-measuring severity, which inverts the usual emphasis.
+measuring severity, which inverts the usual emphasis. It is also actionable
+now: existing incident repositories record what happened and how badly, but
+not which party in a multi-agent interaction acted
+first~\citep{mcgregor2021incident}, and the serious-incident reporting duties
+of the EU AI Act are drafted around a single provider and its system rather
+than around an interaction between two deployed
+agents~\citep{euaiact2024,buiten2023liability}.
 
 One caveat belongs with the counterparty-indexed charge that
 Proposition~\ref{prop:inert} recommends, and it is the reason we call it an
