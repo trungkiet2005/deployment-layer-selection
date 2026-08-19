@@ -13,8 +13,23 @@ from .functionals import (
     strategic_distortion,
 )
 from .altdynamics import basin_average_unsafe, best_response_field, logit_field
+from .assortment import assorted_tables, assortment_thresholds, closing_assortment
 from .charges import CHANNELS, charge_thresholds, charged_matrices
-from .noisy import REDUCED_DESIGNS, NoisyDesign, build_noisy_tables, generous, punisher
+from .noisy import (
+    REDUCED_DESIGNS,
+    NoisyDesign,
+    build_noisy_tables,
+    generous,
+    grim,
+    punisher,
+)
+from .observation import (
+    MeasurementModel,
+    attribution_thresholds,
+    delayed_replicator,
+    measured_tables,
+    measurement_is_inert,
+)
 from .probes import probe_filter, probe_scores
 from .race import (
     STRATEGIES,
@@ -27,14 +42,18 @@ from .race import (
 
 __all__ = [
     "CHANNELS",
-    "REDUCED_DESIGNS",
-    "STRATEGIES",
     "Functionals",
     "MatchupOutcome",
+    "MeasurementModel",
+    "NoisyDesign",
+    "REDUCED_DESIGNS",
     "RaceParams",
     "RaceTables",
-    "NoisyDesign",
+    "STRATEGIES",
     "aggregate_unsafe_frequency",
+    "assorted_tables",
+    "assortment_thresholds",
+    "attribution_thresholds",
     "basin_average_unsafe",
     "best_response_field",
     "build_functionals",
@@ -42,15 +61,20 @@ __all__ = [
     "build_race_tables",
     "charge_thresholds",
     "charged_matrices",
+    "closing_assortment",
+    "delayed_replicator",
     "evaluate_matchup",
     "generous",
+    "grim",
     "is_column_constant",
     "logit_field",
     "mean_social_payoff",
+    "measured_tables",
+    "measurement_is_inert",
     "probe_filter",
     "probe_scores",
     "punisher",
     "strategic_distortion",
 ]
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"

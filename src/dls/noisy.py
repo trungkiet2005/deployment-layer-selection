@@ -40,6 +40,7 @@ __all__ = [
     "NoisyDesign",
     "REDUCED_DESIGNS",
     "generous",
+    "grim",
     "punisher",
     "evaluate_noisy_matchup",
     "build_noisy_tables",
@@ -93,6 +94,21 @@ def generous(base: str, forgive: float) -> NoisyDesign:
         raise ValueError("base must be CS or CAS")
     first = 1.0 if base == "CAS" else 0.0
     return _copier(first, "G%s%g" % (base, forgive), forgive=forgive)
+
+
+def grim(first_unsafe: float = 0.0, name: str | None = None) -> NoisyDesign:
+    """Answer one observed Unsafe with Unsafe for the rest of the interaction.
+
+    Internal state ``0`` is untriggered, state ``1`` is the absorbing triggered
+    state and state ``2`` is the first round.  The design is the limit of
+    :func:`punisher` as the punishment length grows past the horizon, and it is
+    the design for which execution noise is most destructive: a single tremble
+    by either party removes safety permanently, so the trigger fires with
+    probability approaching one as the horizon grows.
+    """
+    unsafe_prob = np.array([0.0, 1.0, first_unsafe])
+    transition = np.array([[0, 1], [1, 1], [0, 1]])
+    return NoisyDesign(name or "GRIM", unsafe_prob, transition, initial=2)
 
 
 def punisher(rounds: int, first_unsafe: float = 0.0, name: str | None = None) -> NoisyDesign:

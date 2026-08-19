@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![EGTtools](https://img.shields.io/badge/built%20with-EGTtools-brightgreen.svg)](https://github.com/Socrats/EGTTools)
-[![tests](https://img.shields.io/badge/tests-68%20passing-success.svg)](tests/)
+[![tests](https://img.shields.io/badge/tests-91%20passing-success.svg)](tests/)
 
 Reproduction code for a study of what happens when the layer at which an AI
 design *acts* is separated from the layer at which it is *selected*.
@@ -32,7 +32,9 @@ AS / AU / CS / CAS.
 | **5** | **The valley is long-lived, not an artefact of the deterministic limit.** In a finite population the mean escape time from the unsafe attractor at `L = 10` ranges from 65 generations (`Z=30, β=0.02`) to `3.9e13` generations (`Z=100, β=0.2`). |
 | **6** | **The ratchet makes it worse.** Coupling to a non-decreasing stock of diffused capability that erodes enforcement to a residual fraction `ρ` produces hysteresis of width exactly `1/ρ`, independent of the diffusion rate — a factor of 10 at `ρ = 0.1`. |
 | **7** | **The mechanisms are not artefacts of the modelling choices.** They are inherited by any imitative payoff-monotone dynamics, and the best-response bifurcation sits at the same threshold. They survive four non-linear liability schedules, three further conditional designs, and execution noise up to about 5%; the valley closes at 7.5% error, but only because a conditionally safe population stops being safe. Two of the four carry over exactly to arbitrary population structure. |
-| **8** | **Probe your agent against a reciprocating counterpart.** Over all fifteen probe sets the separating margin takes exactly two values: 0.539 when the probe set contains a conditional design and no always-unsafe one, and 0.132 otherwise. A hostile probe is *worse* than a gentle one, because conditional safety retaliates against it in 87% of rounds and is scored as unsafe. |
+| **8** | **Probe your agent against a reciprocating counterpart.** Over all fifteen probe sets the separating margin takes exactly two values: 0.539 when the probe set contains a conditional design and no always-unsafe one, and 0.132 otherwise. A hostile probe is *worse* than a gentle one, because conditional safety retaliates against it in 87% of rounds and is scored as unsafe. At equal confidence the reciprocating probe needs 7 evaluation episodes where the solo probe needs 111. |
+| **9** | **Network reciprocity shrinks the valley, entirely from above.** Under assortative matching at level `r` the guard threshold is *exactly* independent of `r`, because the assortment correction is a self-interaction term and the two designs it compares are self-identical. The upper edge falls as `(42.765 - 74.565 r) / (1 + 8 r)`, so the window narrows from 10.0 to 1.4 at `r = 0.3` and closes at `r = 0.354`. |
+| **10** | **Only one kind of measurement error matters: who gets blamed.** Zero-mean error in counting incidents, a flat charge per deployment, and any error depending only on the counterparty are all absorbed *exactly*; systematic under-reporting merely relabels the liability axis. Booking a fraction `q` of the blame against the wrong party is the exception: `L*` for protecting unconditional safety scales as `1/(1-q)`, because the design a first strike exploits has by construction a spotless record. At `q = 0.5` the dangerous range doubles. |
 
 ## Installation
 
@@ -52,6 +54,8 @@ python scripts/run_analysis.py --outdir results    # tables + every quoted numbe
 python scripts/run_robustness.py --outdir results  # prize/risk sweep, escape times
 python scripts/run_extensions.py                   # noise, pools, dynamics, charges
 python scripts/emit_extensions.py                  # their tables and fig10_generality
+python scripts/run_round4.py                       # attribution, assortment, lag, grim
+python scripts/emit_round4.py                      # their tables and fig11_observation
 python scripts/make_figures.py                     # the other figures
 python scripts/build_paper.py                      # stage figures, run pdflatex/bibtex
 pytest                                             # 68 checks of the analytics
@@ -71,6 +75,7 @@ Outputs:
 results/key_numbers.json         every scalar quoted in the manuscript
 results/robustness_summary.json  prize/risk sweep, escape times, seed sensitivity
 results/extensions.json          noise, pools, dynamics, charges, probes, ratchet
+results/round4.json              measurement channel, assortment, lag, grim trigger
 results/tables/*.csv             payoff, harm, threshold and sweep tables
 results/tables/tables.tex        LaTeX tables included by the manuscript
 results/figures/fig0*.pdf        publication figures
@@ -91,6 +96,8 @@ src/dls/
   altdynamics.py  logit, best-response and aspiration dynamics
   charges.py      non-linear liability schedules and their thresholds
   probes.py       probe-set evaluation filters and their separating margins
+  observation.py  imperfect measurement of the externality; lagged enforcement
+  assortment.py   assortative matching and what it does to the bistable window
   plotting.py     figure style: one saved width and one font scale for all
 ```
 

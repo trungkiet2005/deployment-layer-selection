@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FIGURES = ["fig02_functionals", "fig03_simplex", "fig04_bifurcation",
            "fig05_filter", "fig06_safe_face", "fig07_finite", "fig08_hysteresis",
-           "fig09_robustness", "fig10_generality"]
+           "fig09_robustness", "fig10_generality", "fig11_observation"]
 
 
 def stage() -> None:
@@ -35,7 +35,8 @@ def stage() -> None:
             "missing figures: "
             + ", ".join(missing)
             + "\nrun scripts/make_figures.py first"
-            " (fig10_generality comes from scripts/emit_extensions.py)"
+            " (fig10_generality comes from scripts/emit_extensions.py,"
+            " fig11_observation from scripts/emit_round4.py)"
         )
 
     emitted = {
@@ -46,6 +47,9 @@ def stage() -> None:
         "tab_noise.tex": "tab_noise.tex",
         "tab_charges.tex": "tab_charges.tex",
         "tab_hysteresis.tex": "tab_hysteresis.tex",
+        # written by scripts/emit_round4.py
+        "tab_attribution.tex": "tab_attribution.tex",
+        "tab_assortment.tex": "tab_assortment.tex",
     }
     for name, target in emitted.items():
         src = ROOT / "results" / "tables" / name
