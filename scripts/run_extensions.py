@@ -276,9 +276,13 @@ def charge_analysis() -> dict:
         a, _, u = _subset(tables, ("AS", "CS", "CAS"))
         idx = [tables.strategies.index(s) for s in ("AS", "CS", "CAS")]
         rng = np.random.default_rng(20260818)
-        starts = [rng.dirichlet(np.ones(3)) for _ in range(40)]
-        grid = np.array([0.0, 0.5, 1.0, 2.0, 3.0, 5.0, 7.0, 10.0, 15.0, 20.0, 30.0,
-                         40.0, 50.0, 70.0, 100.0])
+        starts = [rng.dirichlet(np.ones(3)) for _ in range(48)]
+        # Valley depth is a largest-increase-over-a-grid statistic, so it is
+        # only comparable across sections when the grid, the number of starts
+        # and the lower cut are the same.  Use L_GRID, as the noise and
+        # assortment sweeps do, extended to the range the convex charge needs:
+        # its upper edge sits at L = 384.9, well beyond the common grid.
+        grid = np.unique(np.concatenate([L_GRID, np.geomspace(60.0, 600.0, 12)]))
         curve = np.empty(grid.size)
         for k, lam in enumerate(grid):
             payoff = charged_matrices(tables, name, lam)[np.ix_(idx, idx)]
@@ -296,7 +300,7 @@ def charge_analysis() -> dict:
             "description": CHANNELS[name].description,
             "thresholds": thr,
             "window_width": window,
-            "valley": valley_depth(grid, curve, l_min=0.5),
+            "valley": valley_depth(grid, curve),
             "liabilities": [float(v) for v in grid],
             "curve": [float(v) for v in curve],
         }

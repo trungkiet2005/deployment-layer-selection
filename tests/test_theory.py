@@ -229,6 +229,54 @@ def test_long_run_harm_is_not_monotone_in_the_liability():
     assert after > before + 0.1
 
 
+def test_basin_average_scores_each_attractor_rather_than_their_mean():
+    """The observable is averaged, not evaluated at the average end state.
+
+    Inside the bistability window the two differ, because ``U`` is quadratic
+    and the mean end state is a mixture the flow never visits.  Averaging first
+    is the easy mistake, so pin the difference rather than only the value.
+    """
+    window = bistability_window_exact(BASE)
+    assert window is not None
+    lo, _ = window
+    L = lo * 1.05
+    sub = BASE.subset(POOL3)
+    payoff = build_selection_matrix(sub, L)
+
+    reported = longrun_unsafe_replicator(BASE, L, pool=POOL3, n_starts=400,
+                                         seed=1234)
+    mean_state = average_replicator_attractor(payoff, n_starts=400, seed=1234)
+    scored_mean = float(mean_state @ sub.unsafe_frequency @ mean_state)
+
+    assert reported == pytest.approx(0.30, abs=0.04)
+    assert scored_mean > reported + 0.01
+
+    # the two attractors it averages over: the protected face and the interior
+    # rest point of the {AS, CAS} face
+    values = attractor_unsafe_values(BASE, L, pool=POOL3, n_starts=200)
+    assert min(values) == pytest.approx(0.0, abs=1e-3)
+    assert max(values) == pytest.approx(face_equilibrium(sub, "AS", "CAS", L)
+                                        .unsafe_frequency, abs=2e-3)
+
+
+def test_basin_average_is_converged_at_the_default_horizon():
+    """A horizon tuned to the bulk of the axis still reaches the attractor.
+
+    Close to a threshold the transverse eigenvalue vanishes and the relaxation
+    time diverges, so the offset used for grid points that sit on a threshold
+    has to keep the flow inside the horizon.
+    """
+    window = bistability_window_exact(BASE)
+    assert window is not None
+    lo, _ = window
+    L = lo * (1 + 1e-3)
+    short = longrun_unsafe_replicator(BASE, L, pool=POOL3, n_starts=200,
+                                      seed=99, t_end=20_000.0)
+    long = longrun_unsafe_replicator(BASE, L, pool=POOL3, n_starts=200,
+                                     seed=99, t_end=200_000.0)
+    assert short == pytest.approx(long, abs=5e-3)
+
+
 # --------------------------------------------------------------------------
 # integration sanity
 # --------------------------------------------------------------------------

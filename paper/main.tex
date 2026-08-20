@@ -389,7 +389,12 @@ can themselves be punished~\citep{herrmann2008antisocial,nikiforakis2008counterp
 
 We now specify the two layers. The interaction layer is taken unchanged from
 the source study~\citep{domingos2026falling} so that our results are
-attributable to the selection layer alone; the selection layer is new.
+attributable to the selection layer alone; the selection layer is new. That
+source is at preprint stage, and we depend on it only for a payoff matrix and
+an unsafe-action matrix. Every threshold below is a closed form in those two
+matrices, so a revision of its constants would move the numbers we report and
+not the structure that produces them; Table~\ref{tab:scope} says which is
+which for each claim.
 
 \subsection{Interaction layer: the reduced AI race}
 
@@ -457,6 +462,10 @@ parameter splits the interaction into three functionals:
 Only $\piP$ enters the dynamics. The social functional \eqref{eq:piS} is an
 accounting device: since each agent's harm is attributed to itself, the
 population mean of $\piS$ equals mean task payoff minus total external harm.
+We do not report that mean as an observable, because it is linear in the
+uncalibrated harm $h$ and so would carry a scale the model cannot supply; the
+unsafe frequency \eqref{eq:U} is the same information without the weight, and
+$\piS$ appears below only through the wedge it defines.
 
 \begin{definition}[Selection wedge]
 The selection wedge is
@@ -526,24 +535,52 @@ U(x)=\sum_{i,j} x_i x_j\, u(i,j),
 which requires no welfare weights and is therefore independent of the
 uncalibrated harm parameter.
 
-\subsection{Numerical methods}
+\subsection{Numerical methods}\label{sec:numerics}
 
 Replicator trajectories are integrated with the adaptive LSODA
 solver~\citep{petzold1983lsoda} as supplied by
 SciPy~\citep{virtanen2020scipy}, at
 relative tolerance $10^{-10}$ and absolute tolerance $10^{-12}$, to
-$t=2\,000$, which is two orders of magnitude beyond the slowest relaxation we
-observe. Basin averages are taken over initial conditions drawn uniformly from
-the simplex, with $110$ draws per parameter value in
-Figure~\ref{fig:bifurcation} and $100$ in Figure~\ref{fig:filter}, from a
-fixed seed; doubling the number of draws changes the reported averages by less
-than $0.01$. Where pools of different size are compared
+$t=2\times10^{4}$, which clears the slowest relaxation on the grids we sweep by
+more than two orders of magnitude. The horizon is not a free choice near a
+threshold: the transverse eigenvalue vanishes there, so the relaxation time
+diverges and any fixed horizon reports a transient. Grid points placed at a
+threshold are therefore offset by a relative $10^{-3}$ into the regime whose
+long-run value is being read, which brings the relaxation time back to about
+$10^{2}$ and so two orders of magnitude inside the horizon; doubling the
+horizon then moves the reported value by less than $5\times10^{-3}$.
+
+Basin averages are averages of the observable over initial conditions, not the
+observable of the average end state: each start is integrated to its
+attractor, $U$ is evaluated there, and the values are averaged. The
+distinction is not cosmetic where it matters, because $U$ is quadratic in $x$
+and the mean end state of a bistable flow is a composition the dynamics never
+visits. Initial conditions are drawn uniformly from the simplex, with $110$
+draws per parameter value in Figure~\ref{fig:bifurcation} and $100$ in
+Figure~\ref{fig:filter}, from a fixed seed. That is enough to resolve the
+shape of a curve but not its level to three digits: the Monte-Carlo standard
+error of a single point inside the bistability window is about $2\times
+10^{-2}$, since the draw is essentially a coin flip between two attractors.
+Scalars quoted in the text that depend on a basin volume are therefore
+recomputed with $2\times10^{4}$ draws and quoted with their standard error.
+Curves that are compared with one another use the same draws, so the paired
+difference is far better determined than either level: this is why
+Corollary~\ref{cor:filter}(iii) can bound a gap well below the
+Monte-Carlo error on the curves it compares.
+
+Where pools of different size are compared
 (Figure~\ref{fig:filter}) initial conditions are drawn on the common
 $\{\AS,\CS,\CAS\}$ simplex and the extra design is seeded at a fixed share, so
 that the comparison is between one ecosystem with and without that design
 rather than between two different sampling measures; the reported curves use a
 $5\%$ seed, and Section~\ref{sec:robust} reports the sensitivity to that
-choice. Finite-population stationary distributions are obtained by solving the
+choice. Valley depths are largest-increase-along-the-axis statistics and so
+depend on the grid they are read from; every one reported in this paper is
+computed on the same liability grid, with the same number of starts and the
+same lower cut, so that the rows of
+Tables~\ref{tab:noise},~\ref{tab:charges} and~\ref{tab:assortment} are
+comparable with one another and all three agree at the baseline.
+Finite-population stationary distributions are obtained by solving the
 singular linear system for the stationary vector of the sparse transition
 matrix, since densifying it is infeasible at the state-space sizes used here.
 The best-response dynamics of Section~\ref{sec:general} has a discontinuous
@@ -604,7 +641,8 @@ Prop.~\ref{prop:probe}
     designs \\
 Prop.~\ref{prop:rate}
   & exact, this race & neutrality breaks at first order in any
-    perturbation; the coefficients $379.8$ and $8$ are this race's \\
+    perturbation, and the composition noise selects stays inside the
+    barrier; the four coefficients of \eqref{eq:rate} are this race's \\
 Prop.~\ref{prop:misattr}, eq.~\eqref{eq:assortupper}
   & exact, this race & closed forms in $q$ and $r$; the constants are
     this race's \\
@@ -735,9 +773,10 @@ point of a two-design face the residents have equal fitness, so the entrant's
 $g$ has the sign of its fitness difference from theirs, which is
 \eqref{eq:invasion}. For (ii): $p^{*}$ is a symmetric Nash equilibrium of the
 three-design game iff no design does strictly better against it than the
-residents; by Lemma~\ref{lem:twin} the only candidate is $\CS$, whose
-advantage is $p^{*}\big(\piP(\CS,\CAS)-\piP(\AS,\CAS)\big)$, positive exactly
-for $L<L^{\dagger}$ by Theorem~\ref{thm:guard}.
+residents; $\AS$ and $\CAS$ are in the support and so tie with it by
+construction, leaving $\CS$ as the only candidate, and its advantage is
+$p^{*}\big(\piP(\CS,\CAS)-\piP(\AS,\CAS)\big)$ by Lemma~\ref{lem:twin},
+positive exactly for $L<L^{\dagger}$ by Theorem~\ref{thm:guard}.
 \end{proof}
 
 The restriction to imitative dynamics in (i) is not cosmetic. Under the
@@ -832,7 +871,7 @@ maximal unsafe frequency $U=1$, so the filter cannot delete an attractor with
 lower harm than one it leaves behind;
 \item[(iii)] under a start measure common to both pools, the basin-averaged
 long-run unsafe frequencies of $\Theta$ and $\Theta_{\varepsilon}$ agree to
-within $1.2\times10^{-3}$ across the whole $L$-axis.
+within $6.2\times10^{-3}$ across the whole $L$-axis.
 \end{enumerate}
 \end{corollary}
 
@@ -1026,9 +1065,9 @@ Exact twinning is of course a knife-edge, and the reader is entitled to ask
 how much of this survives an approximate one. Proposition~\ref{prop:rate}
 answers that: neutrality is lost at first order in any perturbation, the face
 is then crossed in a time proportional to the inverse of the perturbation, and
-under execution noise the induced gradient points at the vertex that is cheap
-to protect. This section is therefore the worst case rather than the typical
-one, which is the right way to read it.
+under execution noise the composition it settles at lies inside the barrier
+$x^{*}(L)$ at every liability. This section is therefore the worst case rather
+than the typical one, which is the right way to read it.
 
 \begin{figure}[!ht]
 \centering
@@ -1123,13 +1162,47 @@ advantage, and the unsafe coexistence becomes uninvadable.
 
 \begin{corollary}[Liability valley]\label{cor:valley}
 For $L\in(L^{\dagger},L^{*}_{\CAS\to\AS})=(4.274,\,42.765)$ the dynamics on
-$\{\AS,\CS,\CAS\}$ has two attractors: the neutral safe face with $U=0$, and
-the interior rest point \eqref{eq:pstar} with
-$U=p^{*}(1-p^{*})u(\CAS,\AS)+(p^{*})^{2}>0$. At the lower edge the unsafe
-attractor carries $U=0.465$; weighting the two attractors by the volume of
-their basins, the long-run unsafe frequency is discontinuous at $L^{\dagger}$,
-rising from $0$ to $0.32$ as $L$ crosses it from below.
+$\{\AS,\CS,\CAS\}$ has two attractors. One is the protected part of the
+neutral safe face, the segment $x\ge x^{*}(L)$ of Theorem~\ref{thm:barrier},
+which carries $U=0$; the compositions below $x^{*}(L)$ are on the face but
+not protected, since a rare $\CAS$ grows there. The other is the interior rest
+point \eqref{eq:pstar} of the $\{\AS,\CAS\}$ face, with
+$U=p^{*}(1-p^{*})u(\CAS,\AS)+(p^{*})^{2}>0$, which is now uninvadable by
+$\CS$. At the lower edge the unsafe attractor carries $U=0.465$ and, under a
+uniform start measure, a basin of volume $0.687\pm0.003$, so the
+basin-weighted long-run unsafe frequency is discontinuous at $L^{\dagger}$,
+rising from $0$ to $0.319\pm0.002$ as $L$ crosses it from below.
 \end{corollary}
+
+\begin{proof}
+Both statements are invasion conditions already established. A rare $\CAS$ at
+the face composition $(1-x)\AS+x\CS$ grows exactly when $L<L^{*}(x)$ by
+Theorem~\ref{thm:barrier}, and $L^{*}$ is strictly decreasing, so the
+protected segment is $x\ge x^{*}(L)$ with $x^{*}=(L^{*})^{-1}$; a rare $\CS$
+at the interior rest point of the $\{\AS,\CAS\}$ face grows exactly when
+$L<L^{\dagger}$ by Theorem~\ref{thm:guard}, and $\AS$ and $\CAS$ have equal
+fitness there, so above $L^{\dagger}$ the rest point is asymptotically stable
+in the full simplex. The two numbers are computed in
+Section~\ref{sec:numerics}.
+\end{proof}
+
+The protected attractor is a segment rather than a point, and which point of
+it a trajectory reaches is history-dependent, so the safe state of this system
+is not a composition but an interval of them. That is the same fact as
+Theorem~\ref{thm:barrier}, seen from the valley: the safe face is not
+uniformly safe, and how much of it is safe shrinks as $L$ falls.
+
+The two quantities in the corollary should be read differently. The value
+$U=0.465$ on the unsafe attractor is exact and carries no measure with it. The
+jump to $0.319$ is the product of that value with a basin volume, and a basin
+volume is only defined relative to a distribution over initial compositions:
+ours is uniform on the simplex, which is a statement of ignorance and not an
+empirical claim about how deployment ecosystems start. What does not depend on
+the measure is that the jump is upward and that its size is of the order of
+the attractor value, since the unsafe basin occupies about two thirds of the
+simplex at the edge. We therefore report the two factors separately wherever
+the distinction matters, and quote the Monte-Carlo standard error with the
+product.
 
 Corollary~\ref{cor:valley} is the sharpest policy statement available from the
 model: over an interval spanning a factor of ten in $L$, more liability means
@@ -1250,7 +1323,7 @@ risk $p_r^{\max}$. Figure~\ref{fig:robust} recomputes them over
 $B\in[10,400]$ and $p_r^{\max}\in\{0.1,0.3,0.6,0.9\}$. Three findings.
 
 First, the liability that protects unconditional safety is a roughly constant
-fraction of the prize: $L^{*}_{\CAS\to\AS}/B$ lies between $0.38$ and $0.61$
+fraction of the prize: $L^{*}_{\CAS\to\AS}/B$ lies between $0.38$ and $0.62$
 across the whole grid, decreasing weakly in $B$ and in $p_r^{\max}$. The
 requirement is therefore not an artefact of the particular value $B=100$; it
 says that deterring a single unsafe step in a winner-take-all race costs
@@ -1258,7 +1331,8 @@ around half the prize, whatever the prize is.
 
 Second, the advantage of conditional over unconditional safety is robust and
 grows with the prize: at $p_r^{\max}=0.6$ the ratio rises from $31.7$ at $B=10$
-to $90.4$ at $B=400$, and over the whole grid it ranges from $4.4$ to $90.4$. At $p_r^{\max}=0.9$ the comparison degenerates in the
+to $90.4$ at $B=400$, and over the eighteen grid points at which it is defined
+it ranges from $4.4$ to $90.4$. At $p_r^{\max}=0.9$ the comparison degenerates in the
 direction that strengthens the message: $L^{*}_{\CAS\to\CS}$ becomes negative,
 meaning that a conditionally safe population repels $\CAS$ with \emph{no}
 liability at all, while unconditional safety still requires
@@ -1273,7 +1347,7 @@ of races rather than a coincidence of the baseline parameters.
 
 We also checked the sensitivity of Corollary~\ref{cor:filter}(iii) to the
 share at which the filtered design is seeded. The gap between the filtered and
-unfiltered curves stays below $4.2\times10^{-3}$ for seeds up to $20\%$ at
+unfiltered curves stays below $2.8\times10^{-3}$ for seeds up to $20\%$ at
 every $L$ except $L=0.3$, where it reaches $1.2\times10^{-2}$ at a $20\%$ seed
 and $0.12$ at a $35\%$ seed. The equivalence is a statement about an ecosystem
 into which the filtered design enters as a minority, which is the case of
@@ -1323,53 +1397,97 @@ strictly invades an $\AS$ resident for every $L$ below $44.3$ at $\eta=0.01$,
 $41.4$ at $0.02$, $34.4$ at $0.05$ and $26.4$ at $0.10$, and the reverse
 holds above. Since the entire policy-relevant range lies below those values,
 noise converts the neutrality of Theorem~\ref{thm:barrier} into a strict
-gradient pointing at the cheap-to-protect vertex. The drift argument of
-Section~\ref{sec:face} is therefore the worst case, not the typical one --
-but the direction reverses at high liability, which is one more way in which
-a strong instrument selects for the fragile composition.
+gradient out of the fragile vertex. Where that gradient stops is a second
+question, because the fitness difference it creates is not constant along the
+face: a tremble between two copiers starts a retaliation cascade that a
+tremble against an unconditionally safe partner does not, so the difference
+is smaller, and taxed harder, at the conditional end than at the
+unconditional one. The next proposition gives both ends, and the composition
+they leave behind.
 
-How fast the neutrality goes is a separate question from whether it goes, and
-it has a clean answer.
-
-\begin{proposition}[The rate at which twinning breaks]\label{prop:rate}
-Perturb the safe face so that the growth rate of a rare $\CS$ in an $\AS$
-resident is $g=\delta a-L\,\delta m$ instead of zero. On the face the
-replicator equation reduces to $\dot x=x(1-x)\,g$, so the face is traversed
-from $x_{0}$ to $1-x_{0}$ in time $g^{-1}\ln\big((1-x_{0})^{2}/x_{0}^{2}\big)$
-and neutrality breaks at first order in the perturbation. Under execution
-noise the perturbation is
+\begin{proposition}[What execution noise does to the safe face]\label{prop:rate}
+Perturb the safe face so that the fitness advantage of $\CS$ over $\AS$ is
+$g_{0}=\delta a_{0}-L\,\delta m_{0}$ against a pure $\AS$ resident and
+$g_{1}=\delta a_{1}-L\,\delta m_{1}$ against a pure $\CS$ resident. On the
+face the replicator equation is
+$\dot x=x(1-x)\big[(1-x)g_{0}+xg_{1}\big]$, so neutrality breaks at first
+order in the perturbation and the face is traversed in a time proportional to
+the inverse of it. Under execution noise, to first order in $\eta$,
 \begin{equation}
-\delta m=\big(\mathbb{E}[T]-1\big)\,\eta+O(\eta^{2})=8.000\,\eta+O(\eta^{2}),
-\qquad
-\delta a=379.8\,\eta+O(\eta^{2}),
+\begin{aligned}
+\delta m_{0}&=\big(\mathbb{E}[T]-1\big)\,\eta=8.000\,\eta,
+ &\delta a_{0}&=379.8\,\eta,\\
+\delta m_{1}&=46.00\,\eta,
+ &\delta a_{1}&=287.1\,\eta,
+\end{aligned}
 \label{eq:rate}
 \end{equation}
-so $g=\eta\,(379.8-8L)+O(\eta^{2})$ and conditional safety is favoured at
-every $L<47.5$.
+each with an $O(\eta^{2})$ remainder. Hence
+\begin{enumerate}
+\item[(i)] a rare $\CS$ invades an $\AS$ resident exactly for
+$L<379.8/8.000=47.5$, and a rare $\AS$ invades a $\CS$ resident exactly for
+$L>287.1/46.00=6.24$;
+\item[(ii)] for $L<6.24$ conditional safety sweeps the face, and the crossing
+time from $x_{0}=0.05$ to $1-x_{0}$ is $\Theta(1/\eta)$: $17.8$ time units at
+$\eta=10^{-3}$ and $1.78$ at $\eta=10^{-2}$, at $L=0$;
+\item[(iii)] for $6.24<L<47.5$ the face carries instead a stable interior
+composition, at a conditional share that is independent of $\eta$ at leading
+order,
+\begin{equation}
+\hat x(L)=\frac{\delta a_{0}-L\,\delta m_{0}}
+               {(\delta a_{0}-\delta a_{1})-L\,(\delta m_{0}-\delta m_{1})}
+         =\frac{379.8-8L}{92.7+38L};
+\label{eq:xhat}
+\end{equation}
+\item[(iv)] $\hat x(L)>x^{*}(L)$ at every $L\ge0$, where $x^{*}$ is the
+critical share of Theorem~\ref{thm:barrier}: the composition execution noise
+selects always lies on the protected side of the invasion barrier.
+\end{enumerate}
 \end{proposition}
 
 \begin{proof}
 The face carries no other force, so the replicator field restricted to it is
-$x(1-x)$ times the fitness difference, which is $g$ by
-Proposition~\ref{prop:twins} applied to the unperturbed part; integrating
-gives the time. For \eqref{eq:rate}, a copier mirrors each tremble of its
-partner exactly once, in each of the $\mathbb{E}[T]-1$ rounds that follow the
-first, whereas its own trembles are counted identically for both designs;
-$\delta a$ is obtained from the exact evaluator, and both coefficients are
-confirmed to three digits by Richardson extrapolation on
-$\eta\in[10^{-4},10^{-3}]$.
+$x(1-x)$ times the fitness difference of the two residents, which is affine in
+$x$ and interpolates $g_{0}$ and $g_{1}$; integrating gives the time, and (i)
+to (iii) follow by solving linear inequalities, the interior rest point being
+stable because $g_{0}>g_{1}$ whenever it exists. For $\delta m_{0}$ in
+\eqref{eq:rate}, a copier facing an unconditionally safe partner mirrors each
+of its \emph{own} trembles exactly once, in each of the $\mathbb{E}[T]-1$
+rounds that follow the first, whereas the partner never answers; the larger
+$\delta m_{1}$ is the same count against a partner that answers back, so a
+single tremble is echoed for the remainder of the interaction. The remaining
+coefficients are obtained from the exact evaluator, and all four are confirmed
+to four digits by Richardson extrapolation on $\eta\in[10^{-4},10^{-3}]$. For
+(iv), $x^{*}(L)=(42.765-L)/(40.134+3.778L)$ by inverting \eqref{eq:barrier},
+and both denominators are positive at $L\ge0$, so the claim is the positivity
+of
+\begin{equation}
+(379.8-8L)(40.134+3.778L)-(42.765-L)(92.7+38L)
+  =7.776\,L^{2}-418.6\,L+11278.6,
+\label{eq:margin}
+\end{equation}
+whose discriminant is $-1.756\times10^{5}<0$ and whose minimum value is
+$5646$.
 \end{proof}
 
-The crossing time is thus $\Theta(1/\eta)$ with a computable constant: from a
-$5\%$ minority to a $95\%$ majority takes $15.5$ time units at $\eta=10^{-3}$
-and $1.55$ at $\eta=10^{-2}$, at $L=0$. In a finite population under Fermi
-imitation, selection dominates drift on the face once $\beta Z g\gtrsim1$,
-which at the baseline $\beta=0.05$, $Z=100$ and $L=0$ means
-$\eta\gtrsim5.3\times10^{-4}$. Exact twinning is therefore a knife-edge in the
-strict sense -- a tremble rate of one in two thousand already replaces drift
-by selection -- and the paper's neutral face should be read as the limiting
-case of a slow directed drift towards the protected vertex rather than as a
-description of an ecosystem with no execution error at all.
+Part (iv) is the substantive one, and it is stronger than the claim that the
+drift acquires a direction. Above $L=6.24$ noise does \emph{not} carry the
+face to the conditional vertex; it stops at $\hat x$, which falls from $1$
+there to $0.022$ at the upper edge of the liability valley and to $0$ at
+$L=47.5$. But it stops on the safe side of the barrier every time, and by a
+margin that is widest inside the valley: $\hat x-x^{*}$ is $0.32$ at
+$L^{\dagger}$ and $0.21$ at $L=10$, against $0.03$ at $L=30$. Recomputing
+$\hat x$ and $x^{*}$ from the exact noisy tables rather than from the
+first-order coefficients confirms this at $\eta=0.01$, $0.02$ and $0.05$ over
+$L\in[0,40]$. In a finite population under Fermi imitation, selection
+dominates drift on the face once $\beta Z\,|g|\gtrsim1$, which at the baseline
+$\beta=0.05$, $Z=100$ and $L=0$ means $\eta\gtrsim5.3\times10^{-4}$ at the
+unconditional end and $\eta\gtrsim7.0\times10^{-4}$ at the conditional one.
+Exact twinning is therefore a knife-edge in the strict sense -- a tremble rate
+of one in two thousand already replaces drift by selection -- and the paper's
+neutral face should be read as the limiting case of a slow directed motion
+towards a protected composition rather than as a description of an ecosystem
+with no execution error at all.
 
 \paragraph{The guard threshold is stable; the valley is not.}
 Table~\ref{tab:noise} recomputes the thresholds. $L^{\dagger}$ moves by less
@@ -1447,12 +1565,16 @@ which answers one observed unsafe action with unsafe play for the remainder of
 the interaction; it is the limit of $\mathsf{PUN}k$ as the punishment outlasts
 the horizon, and it is the strongest guard this action space admits, earning
 $31.88$ against $\CAS$ where $\CS$ earns $26.64$. Three things follow, and the
-first is the most useful. It moves no closed-form threshold at all: adding a
-design that is absent from the $\{\AS,\CS,\CAS\}$ submatrix leaves
+first is the most useful. It moves none of the thresholds this paper computes:
+adding a design that is absent from the $\{\AS,\CS,\CAS\}$ submatrix leaves
 $L^{\dagger}$ and $L^{*}_{\CAS\to\AS}$ exactly where they were, since both are
 computed from that submatrix alone. The thresholds of this paper are
 properties of a submatrix, and enlarging the pool moves basins rather than
-edges. Second, the basins it moves, it moves in the safe direction: the valley
+those edges. It does of course add its own invasion conditions, and the edge
+of the \emph{harm} curve is a property of the whole pool rather than of the
+submatrix, which is why that edge does move once several designs are added at
+once: between $12$ and $13$ in the full pool, as reported above. Second, the
+basins it moves, it moves in the safe direction: the valley
 depth falls from $0.299$ to $0.163$ with $\mathsf{GRIM}$ in the pool and to
 $0.109$ with a two-round punisher alongside it. Third, it is the design that
 execution noise damages most, because a single tremble is permanent: a
@@ -1712,7 +1834,12 @@ The content of the proposition is that variance is free, and that even bias is
 free when it is bias about the counterparty rather than about the agent: a
 principal may misestimate the harm of an interaction by an arbitrary amount
 without disturbing a single threshold, provided the error does not depend on
-which design is being charged. Under-reporting is not free but is harmless in
+which design is being charged. Part~(i) is a statement about the deterministic
+objects it names, and it is exactly that: the Fermi process of
+Section~\ref{sec:model} compares realised payoffs through a non-linear
+imitation probability, so a zero-mean charge error does perturb its fixation
+probabilities at second order even though it leaves the field, the Nash set
+and the thresholds alone. Under-reporting is not free but is harmless in
 a precise sense, since it only relabels the liability axis; a regime that
 books one incident in three is the regime at one third of the nominal
 liability, and none of the ratios in this paper move; scaling the charge by
@@ -1776,9 +1903,13 @@ A principal who settles on an incident window that closed $\tau$ time units
 ago charges on the composition as it was, so the fitness of design $i$ is
 $\sum_j x_j(t)\,a(i,j)-L\sum_j x_j(t-\tau)\,m(i,j)$. Every rest point of the
 undelayed flow is a rest point of the delayed one, because a constant history
-equals the current state, so \emph{no threshold in this paper moves under
-lag}: enforcement delay cannot create or destroy a protected regime, it can
-only change which one is reached. It does change that. Measuring time in units
+equals the current state, and the characteristic equation of the delayed
+linearisation reduces at $\lambda=0$ to that of the undelayed one, so
+\emph{no invasion threshold in this paper moves under lag}. What the argument
+does not exclude is an oscillatory instability at some $\tau$, which is a
+different mechanism from the transversal crossings the thresholds record; we
+see none in the sweeps below, but we do not rule one out. What the lag does do
+is change which regime is reached. Measuring time in units
 where the largest fitness difference of the selection functional is one, so
 that $\tau$ is comparable with the relaxation time of the flow, the share of
 random starts that end at the unsafe attractor at $L=6$ rises from $0.58$ at
@@ -1826,9 +1957,13 @@ on $L$.
 Let the safe attractor have $U=0$ exactly, as in
 Proposition~\ref{prop:twins}, let $L_{\mathrm{eff}}$ be any erosion channel
 with residual fraction $\rho$, and consider a quasi-static sweep of $L$ that
-starts in the protected regime with $z=0$. The protected regime is lost at
-$L_{\downarrow}=L^{*}_{\CAS\to\CS}$, after which $z\to 1$, and is recovered on
-the return sweep at $L_{\uparrow}=L^{*}_{\CAS\to\CS}/\rho$. Hence
+starts in the protected regime with $z=0$ at a safe-face composition
+$(1-x)\AS+x\CS$. Write $L^{*}(x)$ for the barrier of
+Theorem~\ref{thm:barrier} at that composition. The protected regime is lost at
+$L_{\downarrow}=L^{*}(x)$, after which $z\to 1$, and is recovered on the
+return sweep at $L_{\uparrow}=L^{*}(x')/\rho$, where $x'$ is the composition
+the safe face is re-entered at. If the two coincide, and in particular at the
+conditional vertex, where $L^{*}(1)=L^{*}_{\CAS\to\CS}$, then
 \begin{equation}
 \frac{L_{\uparrow}}{L_{\downarrow}}=\frac{1}{\rho}
 =\begin{cases}
@@ -1844,14 +1979,13 @@ for every $\varepsilon>0$ and for every channel with that $\rho$.
 On the protected branch $U(x)=0$, so the second equation of \eqref{eq:coupled}
 gives $\dot z=0$ for every $\varepsilon$; hence $z$ stays at its initial value
 $0$ and $L_{\mathrm{eff}}=L$ by the normalisation. The branch is lost exactly
-when $\CAS$ can invade the resident safe face, i.e.\ at
-$L=L^{*}_{\CAS\to\CS}$ by Lemma~\ref{lem:affine} and \eqref{eq:invasion}, and
-this is a condition on $\piP$ alone, so by
-Proposition~\ref{prop:dynfree} it does not depend on the imitation rule.
-Once lost, $U>0$ on the attractor, so $\dot z>0$ until $z=1$; since
-$\dot z\ge0$ always, $z$ cannot return. On the return sweep the population
-therefore faces $L_{\mathrm{eff}}(L,1)=\rho L$, and recovery requires
-$\rho L>L^{*}_{\CAS\to\CS}$. Both thresholds are conditions on
+when $\CAS$ can invade the resident safe face, i.e.\ at $L=L^{*}(x)$ by
+Lemma~\ref{lem:affine}, \eqref{eq:invasion} and \eqref{eq:barrier}, and this
+is a condition on $\piP$ alone, so by Proposition~\ref{prop:dynfree} it does
+not depend on the imitation rule. Once lost, $U>0$ on the attractor, so
+$\dot z>0$ until $z=1$; since $\dot z\ge0$ always, $z$ cannot return. On the
+return sweep the population therefore faces $L_{\mathrm{eff}}(L,1)=\rho L$,
+and recovery requires $\rho L>L^{*}(x')$. Both thresholds are conditions on
 $L_{\mathrm{eff}}$ evaluated at the two endpoints $z\in\{0,1\}$; the channel
 enters only through $\rho$ and $\varepsilon$ enters nowhere, since it scales
 the speed of $z$ but not its limit.
@@ -1865,14 +1999,28 @@ its endpoints is irrelevant. Everything the channel contributes is the single
 number $\rho$, and two channels sharing a $\rho$ share a width, as
 \eqref{eq:width} shows for $\theta=0.9$ and $\kappa=9$.
 
+Two remarks on the composition. The width $1/\rho$ is a ratio, so it is the
+same at every safe-face composition, but the two liabilities it relates are
+not: a population sitting at the unconditional vertex loses protection at
+$42.765$ rather than at $0.551$, and the loop is then two orders of magnitude
+higher on the $L$-axis. The loop is nevertheless self-consistent once it has
+been traversed, because the safe face is always re-entered through $\CS$: on
+the return sweep the guard invades the unsafe attractor as soon as
+$L_{\mathrm{eff}}>L^{*}_{\CS\to\CAS}$ and holds it against $\CAS$ once
+$L_{\mathrm{eff}}>L^{*}_{\CAS\to\CS}$, so $x'=1$ and $L^{*}(x')=0.551$
+whatever composition the sweep started from. The sweep below is therefore run
+from a $\CS$-dominated safe population, $x=0.96$, which is the composition the
+return branch restores and the one at which the loop is stationary under
+repetition.
+
 Figure~\ref{fig:hysteresis} confirms the prediction numerically at
 $\theta=0.9$: the descending branch loses protection between $L=0.62$ and
-$L=0.54$, bracketing $L^{*}_{\CAS\to\CS}=0.551$, and the ascending branch
-recovers it at $L=5.55$ against the predicted $5.51$. The loop width is the
-predicted factor of ten. Table~\ref{tab:hysteresis} repeats the sweep over
-both channels, two residual fractions and a factor of twenty in $\varepsilon$;
-the observed ratio tracks $1/\rho$ in every case and is unchanged by
-$\varepsilon$, as the theorem requires.
+$L=0.54$, bracketing $L^{*}(1)=L^{*}_{\CAS\to\CS}=0.551$, and the ascending
+branch recovers it at $L=5.55$ against the predicted $5.51$. The loop width is
+the predicted factor of ten. Table~\ref{tab:hysteresis} repeats the sweep over
+both channels, two residual fractions and a factor of twenty in $\varepsilon$
+on a slightly coarser grid; the observed ratio tracks $1/\rho$ in every case
+and is unchanged by $\varepsilon$, as the theorem requires.
 
 \input{tab_hysteresis}
 
@@ -1971,10 +2119,10 @@ protect because it makes exploiting it unprofitable, and at high private risk
 it needs no liability at all. Because the safe face is neutral, a policy that
 fixes the composition is not self-sustaining; it must be maintained against
 drift. Two of the robustness checks strengthen this conclusion rather than
-qualifying it. Under execution noise the face stops being neutral and the
-gradient points at conditional safety throughout the policy-relevant range
-(Section~\ref{sec:noise}), and in a structured population conditional safety
-needs no liability at all once assortment exceeds $\sigma=1.10$
+qualifying it. Under execution noise the face stops being neutral and settles
+at a composition that lies inside the invasion barrier at every liability
+(Proposition~\ref{prop:rate}), and in a structured population conditional
+safety needs no liability at all once assortment exceeds $\sigma=1.10$
 (Section~\ref{sec:general}). The one regime in which unconditional safety is
 selected for is high liability, which is also the regime in which it is
 cheapest to protect -- the instrument and the composition it induces work
@@ -2034,7 +2182,7 @@ a measured quantity. The axis can nevertheless be read in units of the prize,
 which is the one quantity a deploying firm does know. In those units the four
 thresholds of \eqref{eq:four} are $L/B=0.0012$, $0.0055$, $0.043$ and $0.428$,
 and Section~\ref{sec:robust} shows that the outer one stays between $0.38$ and
-$0.61$ across the whole grid of prizes and risk levels. The statement that
+$0.62$ across the whole grid of prizes and risk levels. The statement that
 survives is therefore a comparative one: protecting unconditional safety costs
 about half the prize per unsafe step, protecting conditional safety costs
 under one per cent of it, and the dangerous range lies between roughly four
@@ -2078,11 +2226,14 @@ Section~\ref{sec:observation} turns that reframing into a quantitative
 requirement, and in doing so tells a regulator which parts of a reporting
 regime are worth paying for. Precision is not one of them.
 Proposition~\ref{prop:inertmeasure} says that zero-mean error in counting
-incidents changes nothing at all, that a flat charge per deployment changes
-nothing at all, that any error depending only on the counterparty changes
-nothing at all, and that systematic under-reporting merely relabels the
-liability axis, so a regime that books one incident in three is the regime at
-one third of the nominal liability. Attribution is the one thing worth paying
+incidents moves no threshold, that a flat charge per deployment moves none,
+that any error depending only on the counterparty moves none, and that
+systematic under-reporting merely relabels the liability axis, so a regime
+that books one incident in three is the regime at one third of the nominal
+liability. The one qualification is that a zero-mean error is inert for the
+thresholds and the deterministic field but not for the fixation probabilities
+of a finite population, which respond to the second moment of the charge as
+well as to its mean. Attribution is the one thing worth paying
 for: by Proposition~\ref{prop:misattr} the liability that protects
 unconditional safety scales as $1/(1-q)$ in the fraction $q$ of blame booked
 against the wrong party, and at $q=0.5$ -- a record that establishes an
@@ -2117,7 +2268,7 @@ the distortion out of the design margin and into the matching margin. Whether
 that is an improvement depends on which margin the regulator can observe.
 
 \paragraph{Limitations.}
-Five are material, and Sections~\ref{sec:noise}--\ref{sec:general} bound three
+Five are material, and Sections~\ref{sec:noise}--\ref{sec:observation} bound three
 of them rather than removing them. The interaction layer has two players, so
 entry of new designs is modelled only as mutation; enriching the pool leaves
 every mechanism qualitatively intact except weak dominance, which fails once a

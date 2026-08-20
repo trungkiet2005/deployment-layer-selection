@@ -38,11 +38,22 @@ def run(cmd):
 def latex(stem, with_bib=True):
     tex = ['pdflatex', '-interaction=nonstopmode', '-output-directory=build',
            stem + '.tex']
+    bbl_here = os.path.join(HERE, stem + '.bbl')
+    bbl_build = os.path.join(BUILD, stem + '.bbl')
+    # The previous run left a .bbl beside the sources, because that file is one
+    # of the deliverables.  pdflatex searches the working directory as well as
+    # the output directory, and takes that stale copy in preference to the one
+    # bibtex is about to write, so a changed refs.bib would not reach the PDF
+    # until the *next* build.  Move it out of the way first.
+    if with_bib and os.path.exists(bbl_here):
+        os.remove(bbl_here)
     run(tex)
     if with_bib:
         # bibtex reads build/<stem>.aux and writes build/<stem>.bbl; refs.bib
         # and sn-apanum.bst are found in the working directory, which is HERE.
         run(['bibtex', 'build/' + stem])
+        if os.path.exists(bbl_build):
+            shutil.copy(bbl_build, bbl_here)
     run(tex)
     run(tex)
 

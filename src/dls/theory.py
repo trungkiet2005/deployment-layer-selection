@@ -20,7 +20,6 @@ from dataclasses import dataclass
 import numpy as np
 
 from .dynamics import (
-    average_replicator_attractor,
     replicator_attractor,
     stationary_analysis,
     stationary_analysis_sml,
@@ -353,12 +352,39 @@ def longrun_unsafe_replicator(
     pool: tuple[str, ...] | None = None,
     n_starts: int = 200,
     seed: int = 20260817,
-) -> float:
-    """Basin-averaged long-run Unsafe frequency under replicator dynamics."""
+    t_end: float = 20_000.0,
+    return_error: bool = False,
+) -> float | tuple[float, float]:
+    """Basin-averaged long-run Unsafe frequency under replicator dynamics.
+
+    The average is over *initial conditions*: each start is integrated to its
+    attractor, the observable is evaluated there, and the values are averaged.
+    Scoring the mean end state instead -- ``U`` of the average ``x`` rather
+    than the average of ``U(x)`` -- is not the same thing when the system is
+    bistable, because ``U`` is quadratic in ``x``, and it inflates the reported
+    harm inside the liability valley by mixing the two attractors into one
+    fictitious composition that the dynamics never visits.
+
+    ``t_end`` has to clear the slowest relaxation on the grid.  Close to an
+    invasion threshold the transverse eigenvalue vanishes, so a horizon tuned
+    to the bulk of the axis leaves those points short of their attractor.
+
+    With ``return_error`` the Monte-Carlo standard error of the mean is
+    returned alongside it.
+    """
     sub = tables if pool is None else tables.subset(pool)
     pi_p = build_selection_matrix(sub, effective_liability)
-    x = average_replicator_attractor(pi_p, n_starts=n_starts, seed=seed)
-    return float(x @ sub.unsafe_frequency @ x)
+    u = sub.unsafe_frequency
+    rng = np.random.default_rng(seed)
+    values = np.empty(n_starts)
+    for k in range(n_starts):
+        x0 = rng.dirichlet(np.ones(len(sub.strategies)))
+        x = replicator_attractor(pi_p, x0, t_end=t_end)
+        values[k] = x @ u @ x
+    mean = float(values.mean())
+    if return_error:
+        return mean, float(values.std(ddof=1) / np.sqrt(n_starts))
+    return mean
 
 
 def attractor_unsafe_values(
@@ -394,30 +420,39 @@ def matched_longrun_unsafe(
     extra_share: float = 0.05,
     n_starts: int = 200,
     seed: int = 20260817,
-) -> float:
+    t_end: float = 20_000.0,
+    return_error: bool = False,
+) -> float | tuple[float, float]:
     """Basin-averaged Unsafe frequency under a pool-independent start measure.
 
     Initial conditions are drawn on the simplex of ``common`` designs and any
     additional design in ``pool`` is seeded with a fixed small share, so that
     pools of different size are compared from the same ecosystem rather than
     from different sampling measures.
+
+    As in :func:`longrun_unsafe_replicator`, the observable is evaluated at
+    each attractor and then averaged, not evaluated at the average attractor.
     """
     sub = tables.subset(pool)
     pi_p = build_selection_matrix(sub, effective_liability)
+    u = sub.unsafe_frequency
     idx_common = [pool.index(s) for s in common if s in pool]
     idx_extra = [k for k in range(len(pool)) if k not in idx_common]
 
     rng = np.random.default_rng(seed)
-    total = np.zeros(len(pool))
-    for _ in range(n_starts):
+    values = np.empty(n_starts)
+    for k in range(n_starts):
         x0 = np.zeros(len(pool))
         x0[idx_common] = rng.dirichlet(np.ones(len(idx_common)))
         if idx_extra:
             x0 *= 1.0 - extra_share
             x0[idx_extra] = extra_share / len(idx_extra)
-        total += replicator_attractor(pi_p, x0)
-    x = total / n_starts
-    return float(x @ sub.unsafe_frequency @ x)
+        x = replicator_attractor(pi_p, x0, t_end=t_end)
+        values[k] = x @ u @ x
+    mean = float(values.mean())
+    if return_error:
+        return mean, float(values.std(ddof=1) / np.sqrt(n_starts))
+    return mean
 
 
 def longrun_unsafe_stationary(

@@ -189,10 +189,16 @@ def figure_bifurcation(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     assert window is not None
     l_guard, _ = window
 
+    # The extra points sit just inside each regime rather than on its boundary.
+    # Exactly at a threshold the transverse eigenvalue is zero, so the flow
+    # relaxes on a time scale of 1/|eigenvalue| and no finite integration
+    # horizon reaches the attractor: an offset of 1e-9 would plot a transient,
+    # not a long-run value.  1e-3 clears the horizon used below by three orders
+    # of magnitude while still resolving the discontinuity.
     n = 90 if quick else 200
     grid = np.unique(np.concatenate([
         np.geomspace(1e-2, 60.0, n),
-        np.array([l_cs_cas, l_cas_cs, l_as_cas, l_guard, l_cas_as]) * (1 + 1e-9),
+        np.array([l_cs_cas, l_cas_cs, l_as_cas, l_guard, l_cas_as]) * (1 + 1e-3),
     ]))
 
     rep = np.array([
@@ -297,6 +303,16 @@ def figure_filter(base, outdir: Path, quick: bool = False) -> pd.DataFrame:
     ax.set_ylim(-0.04, 1.06)
     fitted_legend(ax, loc="upper right", handlelength=1.8)
     panel_title(ax, "A", "solo evaluation removes designs")
+
+    # Corollary "filter futility" (iii) quotes the largest gap between the
+    # unfiltered pool and the one the epsilon=0.2 filter admits, on this grid.
+    # The two curves are driven by the same draws, so the paired difference is
+    # far better determined than either level is on its own.
+    df_rows = pd.DataFrame(rows)
+    wide = df_rows.pivot(index="effective_liability", columns="pool", values="unsafe")
+    gap = (wide["AS+AU+CS+CAS"] - wide["AS+CS+CAS"]).abs()
+    print("    filter-equivalence gap: max %.3e at L=%.4f over %d grid points"
+          % (gap.max(), gap.idxmax(), len(gap)), flush=True)
 
     ax = axes[1]
     scores = [base.unsafe_frequency[k, base.strategies.index("AS")] for k in range(4)]

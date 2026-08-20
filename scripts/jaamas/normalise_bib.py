@@ -70,6 +70,14 @@ def normalise(text):
             ident = m.group(1)
             d = re.search(r'doi\s*=\s*\{([^}]*)\}', body)
             doi = d.group(1) if d else '10.48550/arXiv.' + ident
+            # An entry may already carry a note, e.g. a forthcoming-in line.
+            # BibTeX keeps only the first field of a repeated name and warns,
+            # so the identifier would be dropped silently: merge instead of
+            # emitting a second note.
+            prior = re.search(r'\n\s*note\s*=\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\},?', body)
+            prior_text = prior.group(1).strip().rstrip('.') if prior else ''
+            if prior:
+                body = body[:prior.start()] + body[prior.end():]
             # drop journal, volume, number, pages, doi
             body = re.sub(r'\n\s*journal\s*=\s*\{arXiv preprint arXiv:[0-9v.]+\},?', '', body)
             body = re.sub(r'\n\s*(volume|number|pages|doi)\s*=\s*\{[^}]*\},?', '', body)
@@ -77,8 +85,8 @@ def normalise(text):
             trailing = body[close + 2:]               # comments and blank lines after it
             inner = body[:close].rstrip().rstrip(',')
             note = ('  howpublished = {arXiv},\n'
-                    '  note    = {arXiv:%s. %srefdoi{https://doi.org/%s}}\n}'
-                    % (ident, B, doi))
+                    '  note    = {%sarXiv:%s. %srefdoi{https://doi.org/%s}}\n}'
+                    % (prior_text + '. ' if prior_text else '', ident, B, doi))
             body = inner + ',\n' + note + trailing
             start = '@misc{'
             n_arxiv += 1

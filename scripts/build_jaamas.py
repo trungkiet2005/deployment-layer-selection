@@ -163,10 +163,18 @@ def main():
     raw = open(os.path.join(SRC, 'refs.bib'), encoding='utf8').read()
     newbib, n_arxiv, n_book = normalise_bib.normalise(raw)
     assert raw.count('\n@') == newbib.count('\n@'), 'bib entry count changed'
-    mas = open(os.path.join(FRAG, 'refs_mas.bib'), encoding='utf8').read()
-    n_mas = mas.count('\n@')
-    for key in re.findall(r'@[a-z]+\{([^,]+),', mas):
+    mas_raw = open(os.path.join(FRAG, 'refs_mas.bib'), encoding='utf8').read()
+    n_mas = mas_raw.count('\n@')
+    for key in re.findall(r'@[a-z]+\{([^,]+),', mas_raw):
         assert '{' + key + ',' not in raw, 'MAS key already in refs.bib: ' + key
+    # The venue-specific entries need the same APA normalisation as the master
+    # bib.  Appending them raw left three proceedings titles to be
+    # sentence-cased by the style, so AAMAS printed as "autonomous agents and
+    # multiagent systems" in the reference list.
+    mas, mas_arxiv, mas_book = normalise_bib.normalise(mas_raw)
+    assert mas_raw.count('\n@') == mas.count('\n@'), 'MAS bib entry count changed'
+    n_arxiv += mas_arxiv
+    n_book += mas_book
     open(os.path.join(DST, 'refs.bib'), 'w', encoding='utf8').write(
         newbib.rstrip() + '\n\n' + mas)
 

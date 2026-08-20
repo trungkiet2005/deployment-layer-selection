@@ -109,11 +109,18 @@ def average_replicator_attractor(
     seed: int = 20260817,
     t_end: float = 2000.0,
 ) -> np.ndarray:
-    """Basin-averaged attractor of the replicator flow.
+    """Mean end state of the replicator flow over uniform interior starts.
 
-    Interior initial conditions are drawn uniformly from the simplex; the
+    Interior initial conditions are drawn uniformly from the simplex and the
     returned vector is the mean end state, i.e. the attractor mixture weighted
     by basin volume.
+
+    Do **not** feed this vector to a non-linear observable.  When the flow is
+    multistable the mean end state is a composition the dynamics never visits,
+    so ``U`` of the mean is not the mean of ``U``; the difference is largest
+    exactly inside the bistability window, where the answer matters.  For a
+    basin-averaged observable use :func:`dls.theory.longrun_unsafe_replicator`,
+    which scores each attractor before averaging.
     """
     rng = np.random.default_rng(seed)
     n = payoff.shape[0]
