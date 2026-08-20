@@ -5,7 +5,8 @@
 
 Runs pdflatex / bibtex / pdflatex / pdflatex and then reports the things the
 journal actually checks: LaTeX errors, undefined citations and references,
-abstract word count, keyword count and page count.
+duplicate hyperref anchors, abstract word count, keyword count, page count, and
+whether every font in every figure is embedded.
 
 Every intermediate file (.aux, .log, .out, .blg) is written to build/ so that
 the package directory holds only what gets uploaded.  The four deliverables,
@@ -62,14 +63,17 @@ def latex(stem, with_bib=True):
     undef_cite = len(re.findall(r'Warning: Citation .* undefined', log))
     undef_ref = len(re.findall(r'Warning: Reference .* undefined', log))
     missing_fig = len(re.findall(r'File .* not found', log))
+    # Two floats asking hyperref for one anchor: the second is dropped and one
+    # of the two cross-reference links then lands on the wrong float.
+    dup_dest = len(re.findall(r'destination with the same identifier', log))
     # -output-directory makes pdflatex log an absolute path, which it then
     # wraps across two lines, so anchor the page count on the trailing byte
     # count rather than on "Output written on <file>".
     pages = re.search(r'\((\d+) pages?, \d+ bytes\)', log)
     print('%-22s errors=%d  undefined citations=%d  undefined refs=%d  '
-          'missing files=%d  pages=%s'
+          'missing files=%d  duplicate anchors=%d  pages=%s'
           % (stem + '.tex', len(errors), undef_cite, undef_ref, missing_fig,
-             pages.group(1) if pages else '?'))
+             dup_dest, pages.group(1) if pages else '?'))
     for e in errors[:10]:
         print('    ' + e)
 
@@ -77,7 +81,7 @@ def latex(stem, with_bib=True):
         built = os.path.join(BUILD, name)
         if os.path.exists(built):
             shutil.copy(built, os.path.join(HERE, name))
-    return len(errors) + undef_cite + undef_ref + missing_fig
+    return len(errors) + undef_cite + undef_ref + missing_fig + dup_dest
 
 
 def check_front_matter():
@@ -106,7 +110,37 @@ def check_front_matter():
           % (len(cited), len(have),
              'ok' if not lost and not spare
              else 'MISSING ' + ', '.join(lost) + ' UNUSED ' + ', '.join(spare)))
-    return len(lost)
+    return len(lost) + check_fonts()
+
+
+def check_fonts():
+    """Springer requires every font in a vector graphic to be embedded.
+
+    A figure exported from a drawing program happily references a base-14 font
+    by name instead of carrying it, and nothing in a LaTeX run complains: the
+    PDF compiles, renders on the author's machine, and reflows at the printer.
+    pdffonts reports the embedding flag directly, so ask it; when it is not
+    installed, say so rather than reporting a pass nobody checked.
+    """
+    figdir = os.path.join(HERE, 'figures')
+    if shutil.which('pdffonts') is None:
+        print('figure fonts           : pdffonts not installed, NOT CHECKED')
+        return 0
+    bad = []
+    for name in sorted(os.listdir(figdir)):
+        if not name.endswith('.pdf'):
+            continue
+        out = run(['pdffonts', os.path.join(figdir, name)]).stdout or ''
+        for line in out.split('\n')[2:]:
+            cols = line.split()
+            # name may contain spaces; the last five columns are fixed:
+            # emb sub uni <objnum> <gennum>
+            if len(cols) >= 6 and cols[-5] == 'no':
+                bad.append('%s: %s' % (name, ' '.join(cols[:-5])))
+    print('figure fonts           : %d files, %s'
+          % (len([f for f in os.listdir(figdir) if f.endswith('.pdf')]),
+             'all embedded' if not bad else 'NOT EMBEDDED ' + '; '.join(bad)))
+    return len(bad)
 
 
 if __name__ == '__main__':

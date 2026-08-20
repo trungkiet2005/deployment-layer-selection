@@ -26,7 +26,7 @@ AS / AU / CS / CAS.
 | | Result |
 |---|---|
 | **1** | Only the product `L = λh` of liability pass-through and per-action harm enters the dynamics. Every invasion condition is affine in `L`, giving closed-form thresholds `L* = δa / δm`. |
-| **2** | **Solo safety evaluations are dynamically empty.** CAS weakly dominates AU at every `L`, so a filter that rejects designs by their behaviour against a safe environment removes only a weakly dominated design. The one attractor it deletes carries the maximal harm `U = 1`, which the surviving pool reproduces; on a common start measure the long-run unsafe frequency is unchanged to within `1.2e-3`. |
+| **2** | **Solo safety evaluations are dynamically empty.** CAS weakly dominates AU at every `L`, so a filter that rejects designs by their behaviour against a safe environment removes only a weakly dominated design. The one attractor it deletes carries the maximal harm `U = 1`, which the surviving pool reproduces; on a common start measure the long-run unsafe frequency is unchanged to within `6.2e-3`. |
 | **3** | **Conditional safety is 78x cheaper to protect than unconditional safety.** Repelling CAS from an all-AS population needs `L > 42.77`; from an all-CS population, `L > 0.55`. The AS–CS face is *exactly payoff neutral*, so this barrier is set by a neutrally drifting variable. At `p_max = 0.9` conditional safety needs no liability at all. |
 | **4** | **Long-run harm is not monotone in liability.** For `L ∈ (4.27, 42.77)` the system is bistable: liability taxes the retaliation that conditional safety relies on. Raising `L` from 4.2 to 4.5 raises the basin-averaged unsafe frequency from 0 to ≈ 0.32. A window of this kind exists at **every** prize and risk level tested (24/24 grid points), with multiplicative width 4.2–12.8. |
 | **5** | **The valley is long-lived, not an artefact of the deterministic limit.** In a finite population the mean escape time from the unsafe attractor at `L = 10` ranges from 65 generations (`Z=30, β=0.02`) to `3.9e13` generations (`Z=100, β=0.2`). |
@@ -85,7 +85,9 @@ results/round4.json              measurement channel, assortment, lag, grim trig
 results/tables/*.csv             payoff, harm, threshold and sweep tables
 results/tables/tables.tex        LaTeX tables included by the manuscript
 results/figures/fig0*.pdf        publication figures
-paper/main.pdf                   the compiled manuscript
+paper/main.pdf                   the compiled manuscript (built here, not committed:
+                                 the journals are told the paper has not appeared
+                                 anywhere, so no PDF of it is published in this repo)
 ```
 
 ## Package layout

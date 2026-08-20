@@ -42,7 +42,18 @@ SRC = os.path.join(ROOT, 'paper')
 DST = os.path.join(ROOT, 'paper-jaamas')
 FIGS = os.path.join(DST, 'figures')
 FRAG = os.path.join(HERE, 'jaamas')
+# Springer's class and its APA .bst.  The downloaded template package wins when
+# it is present, so upgrading is one download away; the two files the build
+# actually reads are also vendored under scripts/jaamas/springer-template/, both
+# LPPL, so that a clean clone regenerates the package without the download.  The
+# package directory sn-template-extract/ is .gitignored, which is why the
+# fallback exists at all.
 TPL = os.path.join(ROOT, 'sn-template-extract', 'sn-article-template')
+VENDORED = os.path.join(HERE, 'jaamas', 'springer-template')
+if not os.path.exists(os.path.join(TPL, 'sn-jnl.cls')):
+    TPL = VENDORED
+    print('template package not found; using vendored copy in %s'
+          % os.path.relpath(VENDORED, ROOT))
 
 sys.path.insert(0, FRAG)
 import normalise_bib                                              # noqa: E402
@@ -155,7 +166,16 @@ def main():
     doc = '\n'.join([
         head, '', abstract, '', B + 'maketitle', '',
         main_body, '', tail, '',
-        B + 'begin{appendices}', '', appendices, '', B + 'end{appendices}', '',
+        # sn-jnl restarts the table and figure counters in the appendices, so
+        # Table A1 and Table 1 both ask hyperref for the anchor "table.1" and
+        # pdflatex warns "destination with the same identifier"; the second
+        # anchor is dropped and one of the two links then goes to the wrong
+        # float.  Giving the appendix floats their own hyperref counter costs
+        # nothing and is invisible in the typeset output.
+        B + 'begin{appendices}', '',
+        B + 'renewcommand{' + B + 'theHtable}{app.' + B + 'thetable}',
+        B + 'renewcommand{' + B + 'theHfigure}{app.' + B + 'thefigure}', '',
+        appendices, '', B + 'end{appendices}', '',
         B + 'bibliography{refs}', '', B + 'end{document}', ''])
     open(os.path.join(DST, 'main.tex'), 'w', encoding='utf8').write(doc)
 
