@@ -1,0 +1,123 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Safe designs, unsafe ecosystems: deployment-layer selection in an
+%%  evolutionary AI race
+%%
+%%  Prepared for: Autonomous Agents and Multi-Agent Systems (JAAMAS), Springer
+%%  Template:     Springer Nature sn-jnl.cls, v3.1 (December 2024)
+%%
+%%  Build:  pdflatex main && bibtex main && pdflatex main && pdflatex main
+%%          (or: python build.py)
+%%
+%%  This file is generated from ../paper/main.tex by ../scripts/build_jaamas.py.
+%%  Edit the generator, not this file, unless you are finalising the submission.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[pdflatex]{sn-jnl}
+
+%%============================================================================%%
+%%  Reference style
+%%
+%%  JAAMAS cites by number in square brackets and prints an APA-formatted
+%%  reference list.  The Springer class ties citation form and list form
+%%  together (sn-apa gives author-year citations, sn-basic gives non-APA
+%%  entries), so neither option alone matches the journal.  We therefore load
+%%  Springer's own APA machinery and switch natbib into numeric mode by hand,
+%%  and use sn-apanum.bst, which is Springer's sn-apacite.bst with its sorting
+%%  passes suppressed so the list comes out in citation order.
+%%============================================================================%%
+\usepackage[natbibapa]{apacite}
+\makeatletter
+\providecommand{\BPBI}{.}%                      period between initials
+\setlength{\bibsep}{1em}%
+\def\bibfont{\reset@font\fontfamily{\rmdefault}\normalsize\selectfont}%
+\def\refdoi#1{\urlstyle{rm}\url{#1}}%
+\providecommand{\doiprefix}{}\renewcommand{\doiprefix}{}%
+\gdef\NumBib{YES}%
+\setcitestyle{numbers,square,comma,sort&compress}
+\def\@biblabel#1{[#1]}
+\renewenvironment{thebibliography}[1]{%
+  \section*{\refname}%
+  \bibfont
+  \list{\@biblabel{\@arabic\c@enumiv}}%
+       {\settowidth\labelwidth{\@biblabel{#1}}%
+        \leftmargin\labelwidth \advance\leftmargin\labelsep
+        \setlength{\itemsep}{\bibsep}\setlength{\parsep}{\z@}%
+        \usecounter{enumiv}\let\p@enumiv\@empty
+        \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+  \let\newblock\relax
+  \sloppy\clubpenalty4000\@clubpenalty\clubpenalty\widowpenalty4000%
+  \sfcode`\.\@m}
+ {\def\@noitemerr{\@latex@warning{Empty `thebibliography' environment}}%
+  \endlist}
+\makeatother
+\bibliographystyle{sn-apanum}
+
+%%============================================================================%%
+%%  Packages.  sn-jnl already provides geometry, fontenc, hyperref, amsthm,
+%%  appendix, rotating, threeparttable and wrapfig, so none of those is
+%%  reloaded here.
+%%============================================================================%%
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{microtype}
+\usepackage{xcolor}
+
+%%============================================================================%%
+%%  Theorem environments
+%%============================================================================%%
+\theoremstyle{thmstyleone}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{thmstylethree}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{thmstyletwo}
+\newtheorem{remark}{Remark}
+
+%%============================================================================%%
+%%  Notation carried over from the source manuscript
+%%============================================================================%%
+\definecolor{cAS}{HTML}{0072B2}
+\definecolor{cAU}{HTML}{D55E00}
+\definecolor{cCS}{HTML}{009E73}
+\definecolor{cCAS}{HTML}{CC79A7}
+
+\newcommand{\AS}{\textsf{AS}}
+\newcommand{\AU}{\textsf{AU}}
+\newcommand{\CS}{\textsf{CS}}
+\newcommand{\CAS}{\textsf{CAS}}
+\newcommand{\piP}{\pi_{P}}
+\newcommand{\piS}{\pi_{S}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Simplex}{\Delta_{n}}
+
+\begin{document}
+
+%%============================================================================%%
+%%  Title page
+%%
+%%  All three authors contributed equally: the shared first authorship is
+%%  carried by \equalcont, which sets a dagger on each name.  ORCIDs are
+%%  supplied through the Editorial Manager submission form, which is where
+%%  Springer collects them.  Springer will not accept changes to the author
+%%  list after acceptance.
+%%============================================================================%%
+\title[Deployment-layer selection in an evolutionary AI race]{Safe designs,
+unsafe ecosystems: deployment-layer selection in an evolutionary AI race}
+
+\author*[1]{\fnm{Trung-Kiet} \sur{Huynh}}\email{23122039@student.hcmus.edu.vn}
+\equalcont{These authors contributed equally to this work.}
+
+\author[1]{\fnm{Minh} \sur{Dao Sy Duy}}\email{23122041@student.hcmus.edu.vn}
+\equalcont{These authors contributed equally to this work.}
+
+\author[1]{\fnm{Chi-Nguyen} \sur{Tran}}\email{23122044@student.hcmus.edu.vn}
+\equalcont{These authors contributed equally to this work.}
+
+\affil*[1]{\orgdiv{Faculty of Information Technology},
+\orgname{University of Science, Vietnam National University Ho Chi Minh City},
+\orgaddress{\street{227 Nguyen Van Cu Street, District 5},
+\city{Ho Chi Minh City}, \postcode{700000}, \country{Vietnam}}}
+

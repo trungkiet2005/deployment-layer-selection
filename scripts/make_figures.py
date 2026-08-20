@@ -376,16 +376,20 @@ def figure_safe_face(base, outdir: Path) -> pd.DataFrame:
         rows.append({"mu": mu, "Z": Z, "L": 5.0,
                      "prob_vulnerable": float(dist[frac < xstar].sum())})
     xstar = critical_cs_fraction(base, 5.0)
-    # stop the marker and the shading below the legend band
-    top = 1.05 / 1.62
+    # The blue curve spikes to 1 at both ends, so the legend needs a band of
+    # its own.  That band is one row deep and the axis is extended by exactly
+    # that much; the marker and the shading stop below it.
+    ylim_top = 1.15
+    top = 1.02 / ylim_top
     ax.axvline(xstar, ymax=top, color=PALETTE["unsafe"], ls="--", lw=1.1)
-    ax.text(xstar + 0.03, 0.30, r"$x^{*}(L{=}5)$", fontsize=FS["annot"], ha="left",
+    # high on the marker rather than beside its foot: at mid height the
+    # mu=0.02 curve descends through every position the label could take
+    ax.text(xstar + 0.03, 0.88, r"$x^{*}(L{=}5)$", fontsize=FS["annot"], ha="left",
             va="center", color=PALETTE["unsafe"])
     ax.axvspan(0, xstar, ymax=top, color=PALETTE["unsafe"], alpha=0.10, lw=0)
     ax.set_xlabel(r"share of CS on the face")
     ax.set_ylabel("stationary density (scaled)")
-    # headroom for the legend: the blue curve spikes to 1 at both ends
-    ax.set_ylim(0, 1.62)
+    ax.set_ylim(0, ylim_top)
     panel_title(ax, "C", "neutral drift")
     fitted_legend(ax, loc="upper center", ncol=3, columnspacing=0.55,
                   handlelength=0.9, handletextpad=0.35, borderpad=0.15)

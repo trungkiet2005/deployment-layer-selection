@@ -44,6 +44,27 @@ CHANNEL_LABEL = {
     "threshold": r"de minimis below $m=2$",
 }
 
+# The panel is a third of the text width and carries five curves, so the
+# legend has to be narrow enough to sit in the empty right-hand corner
+# rather than on the data.  Only the two widest entries are abbreviated,
+# which is what sets the width; the charge shapes keep their forms.
+CHANNEL_LEGEND = {
+    "linear": r"linear, $\varphi=m$",
+    "convex": r"convex, $\varphi\propto m^{2}$",
+    "concave": r"concave, $\varphi\propto\sqrt{m}$",
+    "capped": r"capped, $m{=}3$",
+    "threshold": r"de minimis, $m{<}2$",
+}
+
+#: Top of the shared frequency axis in panels B and C of the generality
+#: figure.  The two panels measure the same quantity, so they carry the
+#: same scale, and the headroom is the depth of the legend and no more.
+FREQ_TOP = 1.30
+
+#: One compact legend geometry for every panel of that figure.
+LEGEND_KW = dict(handlelength=1.2, handletextpad=0.35, labelspacing=0.3,
+                 borderpad=0.2)
+
 
 def _fmt(value, digits=3, inf="$\\infty$"):
     if value is None:
@@ -191,7 +212,7 @@ def figure_generality(ext: dict, outdir: Path) -> None:
         twin.lines[0],
     ]
     ax.legend(handles, ["valley depth", "window width"], fontsize=FS["legend"],
-              loc="upper right", frameon=False)
+              loc="upper right", frameon=False, **LEGEND_KW)
     panel_title(ax, "A", "execution noise")
 
     # (B) alternative dynamics
@@ -204,18 +225,21 @@ def figure_generality(ext: dict, outdir: Path) -> None:
     ax.set_xscale("symlog", linthresh=1.0)
     ax.set_xlabel(r"effective liability $L$", fontsize=FS["label"])
     ax.set_ylabel("long-run unsafe frequency", fontsize=FS["label"])
-    fitted_legend(ax, loc="upper right")
+    ax.set_ylim(-0.05, FREQ_TOP)
+    fitted_legend(ax, loc="upper right", **LEGEND_KW)
     panel_title(ax, "B", "selection dynamics")
 
     # (C) non-linear charges
     ax = axes[2]
     for name in ("linear", "convex", "concave", "capped", "threshold"):
         d = ext["charges"][name]
-        ax.plot(d["liabilities"], d["curve"], "-o", ms=2.4, label=CHANNEL_LABEL[name])
+        ax.plot(d["liabilities"], d["curve"], "-o", ms=2.4,
+                label=CHANNEL_LEGEND[name])
     ax.set_xscale("symlog", linthresh=1.0)
     ax.set_xlabel(r"liability level $L$", fontsize=FS["label"])
     ax.set_ylabel("long-run unsafe frequency", fontsize=FS["label"])
-    fitted_legend(ax, loc="upper right")
+    ax.set_ylim(-0.05, FREQ_TOP)
+    fitted_legend(ax, loc="upper right", **LEGEND_KW)
     panel_title(ax, "C", "charge shape")
 
     save(fig, outdir / "fig10_generality.pdf")

@@ -1,0 +1,230 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Information sheet required with every JAAMAS submission.
+%%  JAAMAS returns papers without review when this sheet is incomplete or
+%%  uninformative, so each of the four questions is answered directly.
+%%  Build:  pdflatex information_sheet
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}          % scalable faces, needed by microtype expansion
+\usepackage[margin=1.9cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{parskip}
+\usepackage[colorlinks=true,allcolors=blue!55!black]{hyperref}
+\usepackage{xcolor}
+\usepackage{microtype}
+\pagestyle{plain}
+
+\newcommand{\AS}{\textsf{AS}}
+\newcommand{\AU}{\textsf{AU}}
+\newcommand{\CS}{\textsf{CS}}
+\newcommand{\CAS}{\textsf{CAS}}
+
+\begin{document}
+\small                       % keeps the sheet inside the two pages JAAMAS asks for
+
+\begin{center}
+{\large\bfseries Information sheet}\\[2pt]
+{\bfseries Safe designs, unsafe ecosystems: deployment-layer selection in an
+evolutionary AI race}\\[2pt]
+Regular research paper
+\end{center}
+
+\section*{1. What is the main claim, and why does it matter to the autonomous
+agents and multi-agent systems literature?}
+
+In an ecosystem of deployed agents, the payoff an agent earns and the quantity
+that decides whether its design is replicated are different functionals. The
+agent plays; a principal who is not a player decides whether to keep deploying
+it, and internalises only a fraction $\lambda$ of the harm the design causes
+third parties. We call that gap the \emph{selection wedge}. Writing $a$ for the
+expected task payoff of an interaction, $m$ for its expected number of unsafe
+actions and $h$ for the harm each one causes, the population of designs evolves
+under the replicator equation of the principal's functional
+$\pi_{P}=a-\lambda h\,m$ rather than of the social one. That functional depends
+on pass-through and harm only through the single product $L=\lambda h$, and it
+makes every invasion condition affine in $L$. The claim is that governance of
+such an ecosystem binds at the layer that selects designs and not at the layer
+that plays them: an instrument applied to the agents can be exactly inert,
+while the instrument that does move the vector field is not monotone in its own
+strength.
+
+This matters to the autonomous agents and multi-agent systems literature
+because that literature builds, evaluates and deploys populations of agents
+that principals choose, and every instrument it has for open agent populations
+-- social laws, electronic institutions, norm synthesis and sanctioning, trust
+and reputation, reward transfers and formal contracts -- acts from inside the
+interaction and so moves the behaviour of a population whose membership is
+given. Its evolutionary models of AI races, institutional incentives and
+delegation identify earned payoff with reproductive fitness, using one payoff
+matrix twice. Deployed ecosystems break that identification structurally, and
+the two-matrix version yields guidance the one-matrix version cannot express:
+which admission tests are dynamically empty and what to replace them with, why
+a population that looks stationary can be losing its protection, and why an
+accountability instrument has a range of strengths worse than a weaker
+setting.
+
+\section*{2. What is the evidence, and what does it imply?}
+
+The interaction layer is a four-design race -- always safe $\AS$, always unsafe
+$\AU$, conditionally safe $\CS$, conditionally antisocial $\CAS$ -- taken
+unchanged from the framed AI-race experiment of Fern\'{a}ndez Domingos and Han
+(preprint, arXiv:2607.26034, July 2026) and evaluated by exact expectation over
+the horizon law rather than by sampling. An invader beats a resident when its
+payoff and unsafe-action advantages satisfy $\delta a-L\,\delta m>0$, so each
+of the twelve ordered invasions has a critical liability
+$L^{*}=\delta a/\delta m$ wherever the two designs differ in unsafe count.
+Four of these, together with one interior threshold, organise the paper and
+span a factor of $368$: $0.116<0.551<4.274<42.765$. Each is a property of
+$\pi_{P}$ alone and is therefore shared by every imitative payoff-monotone
+dynamics, which we confirm for the logit, best-response and aspiration rules.
+
+\emph{Solo evaluation is dynamically empty.} In this pool $\CAS$ weakly
+dominates $\AU$ at every $L\ge0$, so a filter that scores a design against a
+safe environment removes only a weakly dominated design; the attractor it
+deletes carries the maximal long-run unsafe frequency $U=1$, and below
+$L=0.116$ the surviving pool reproduces that same all-unsafe state on a
+different design. Filtered and unfiltered long-run unsafe frequencies agree to
+within $1.2\times10^{-3}$ on a common start measure. The dominance is a
+property of the pool, not a theorem about filters: it fails once the pool
+contains a design that punishes for longer than it is punished, which is the
+one design-layer intervention the selection layer does not undo. Over all
+fifteen probe sets the separating margin takes exactly two values, $0.539$ when
+the probe reciprocates and contains no always-unsafe design and $0.132$
+otherwise, so a reciprocating probe needs $7$ episodes at zero execution error
+and $16$ at a $5\%$ rate where a solo probe needs $111$ and $136$. The
+implication is that an evaluation protocol should be specified by who the agent
+is evaluated against, not by how strict the threshold is.
+
+\emph{Protection is governed by a variable that drifts.} $\AS$ and $\CS$ are
+exact payoff twins, so the safe face carries no selection gradient, yet the
+liability needed to repel an invader falls from $42.765$ at the unconditional
+vertex to $0.551$ at the conditional one, a factor of $77.7$ at the baseline
+calibration and between $4.4$ and $90.4$ across the robustness grid. Nothing
+observable in the interaction changes as the population drifts along that face,
+so resilience has to be monitored as a composition rather than as an outcome.
+
+\emph{Long-run harm is not monotone in liability.} A mixture-free invasion
+lemma, valid for any symmetric matrix game, gives the guard threshold
+$L^{\dagger}=4.274$ exactly. On $(4.274,\,42.765)$ liability taxes the
+retaliation that conditional safety depends on, the unsafe rest point becomes
+uninvadable by conditional safety, and the basin-averaged unsafe frequency
+jumps discontinuously from $0$ to $0.32$ as $L$ crosses the lower edge from
+below. In a finite population the resulting trap is long-lived, with mean
+escape times from $65$ generations at $Z=30,\beta=0.02$ to
+$3.9\times10^{13}$ at $Z=100,\beta=0.2$. A dangerous range of this kind exists
+at all $24$ prize and risk grid points, under all five charge schedules we
+tried, and in every enlarged design pool at zero execution noise; its location
+is not transferable, since the lower edge moves from $4.274$ in the reduced
+pool to between $12$ and $13$ in the full one, and by an execution error rate
+of $5\%$ the range has closed because the state liability was protecting has
+itself stopped being safe. Assortative matching shrinks the range from above
+and closes it at $r=0.354$, whereas misattributing a fraction $q$ of the blame
+pushes the upper edge up exactly as $1/(1-q)$ while moving the lower edge by at
+most $11.8\%$, so at $q=0.5$ the dangerous range has doubled. The implication
+for a regulator is that raising liability out of a protected regime has to
+clear the whole range in one step, and that incident records which book an
+interaction against the wrong party widen the range they have to clear.
+
+\emph{Losing a protected regime costs more than keeping it.} Coupling
+enforcement to a monotone environmental state that erodes it to a residual
+fraction $\rho$ makes the transition hysteretic: the ratio of the liability at
+which the regime is recovered to the one at which it was lost is exactly
+$1/\rho$, for every erosion channel and every time-scale separation, provided
+the protected state is exactly safe. The cheap intervention is the early one.
+
+\section*{3. Closest related contributions by other authors}
+
+\textbf{Evolutionary models of AI races} are the closest work: Han, Pereira,
+Santos and Lenaerts, \emph{Journal of Artificial Intelligence Research}
+\textbf{69} (2020) 881--921; Cimpeanu et al., \emph{Scientific Reports}
+\textbf{12} (2022) 1723; Alalawi et al., \emph{Applied Mathematics and
+Computation} \textbf{508} (2026) 129627; surveyed in Han, \emph{AI
+Communications} \textbf{35} (2022) 327--337. There the racing actor and the
+reproducing actor coincide. We keep their race and replace the selection layer,
+so the contribution is orthogonal rather than corrective.
+
+\textbf{Evolutionary methods and normative design in multi-agent systems.}
+Evolutionary dynamics are a standard tool of this journal's literature:
+Bloembergen, Tuyls, Hennes and Kaisers, \emph{Journal of Artificial
+Intelligence Research} \textbf{53} (2015) 659--697; Tuyls et al.,
+\emph{Autonomous Agents and Multi-Agent Systems} \textbf{34} (2020) 7; Phelps,
+McBurney and Parsons, \emph{Autonomous Agents and Multi-Agent Systems}
+\textbf{21} (2010) 237--264. Norm and institution design supplies the
+instruments we compare against: Shoham and Tennenholtz, \emph{Artificial
+Intelligence} \textbf{73} (1995) 231--252; Morales, Wooldridge,
+Rodr\'{i}guez-Aguilar and L\'{o}pez-S\'{a}nchez, \emph{Autonomous Agents and
+Multi-Agent Systems} \textbf{32} (2018) 635--671; Morris-Martin, De Vos and
+Padget, \emph{Autonomous Agents and Multi-Agent Systems} \textbf{33} (2019)
+706--749. All of these act on agents inside the interaction; our instrument
+acts on a principal outside it and changes which designs exist.
+
+\textbf{Evaluation and reward modification in multi-agent settings.} Our
+evaluation result speaks to Omidshafiei et al., \emph{Scientific Reports}
+\textbf{9} (2019) 9937, which ranks agents by an evolutionary process over the
+interaction rather than by a solo score, and our non-monotone instrument
+contrasts with Willis, Du, Leibo and Luck, \emph{Autonomous Agents and
+Multi-Agent Systems} \textbf{38} (2024) 49, and Haupt, Christoffersen, Damani
+and Hadfield-Menell, \emph{Autonomous Agents and Multi-Agent Systems}
+\textbf{38} (2024) 51, whose transfers and contracts act among the agents
+themselves and admit a computable minimum. The closest architecture is Zheng,
+Trott, Srinivasa, Parkes and Socher, \emph{Science Advances} \textbf{8} (2022)
+eabk2607, whose outer planner optimises an instrument over a responding
+population; ours only selects.
+
+\textbf{The indirect evolutionary approach}: Alger and Weibull,
+\emph{Econometrica} \textbf{81} (2013) 2269--2302, surveyed in \emph{Annual
+Review of Economics} \textbf{11} (2019) 329--354; Dekel, Ely and Yilankaya,
+\emph{The Review of Economic Studies} \textbf{74} (2007) 685--704; Heifetz,
+Shannon and Spiegel, \emph{Journal of Economic Theory} \textbf{133} (2007)
+31--57. Ours is the mirror image: their distortion is endogenous and sits in
+behaviour, ours is an exogenous policy variable inside the selection
+functional.
+
+\textbf{Multilevel selection}: Wilson, \emph{Proceedings of the National
+Academy of Sciences} \textbf{72} (1975) 143--146; Traulsen and Nowak,
+\emph{Proceedings of the National Academy of Sciences} \textbf{103} (2006)
+10952--10955. Ours is degenerate but sharper: one selecting level, not the
+level that plays, selecting on a policy variable rather than on an aggregate of
+the lower level.
+
+\textbf{Multitask incentive distortion}: Holmstr\"{o}m, \emph{The Bell Journal
+of Economics} \textbf{10} (1979) 74--91; Holmstr\"{o}m and Milgrom,
+\emph{Journal of Law, Economics, and Organization} \textbf{7} (1991) 24--52;
+Baker, \emph{Journal of Political Economy} \textbf{100} (1992) 598--614.
+Liability is exactly such a distorted measure, taxing retaliation along with
+initiation, but here the reallocation is evolutionary rather than deliberate,
+and the loss is discontinuous in the power of the instrument rather than
+smooth.
+
+\textbf{Game-environment feedback}: Weitz et al., \emph{Proceedings of the
+National Academy of Sciences} \textbf{113} (2016) E7518--E7525; Tilman, Plotkin
+and Ak\c{c}ay, \emph{Nature Communications} \textbf{11} (2020) 915. Their
+environmental state can recover and deployed capability cannot, which is what
+makes our hysteresis width exactly computable. Nearby, Fern\'{a}ndez Domingos
+et al., \emph{Scientific Reports} \textbf{12} (2022) 8492, and Terrucha et al.,
+\emph{Scientific Reports} \textbf{14} (2024) 10460, treat delegation as a
+commitment device chosen inside the game; our principal sits outside it.
+
+\section*{4. Has any part been published before?}
+
+No. No part of this paper has been published or presented before, at a
+conference or elsewhere, and it is under review nowhere else. There is no
+earlier version by the authors as a workshop paper, extended abstract or
+preprint.
+
+The one component we did not originate is the interaction layer, which is taken
+unchanged from the framed AI-race experiment of Fern\'{a}ndez Domingos and Han
+(preprint, arXiv:2607.26034, July 2026), by different authors: its stage game,
+uncertain horizon, four reduced designs and parameter values are reused as
+that preprint reports them. The reuse is deliberate, so that every result here
+is attributable to the deployment layer alone; because every threshold is a
+closed form in the payoff matrix, the results carry over unchanged in form to
+any revised version of those constants. Computations use EGTtools
+(Fern\'{a}ndez Domingos, Santos and Lenaerts, \emph{iScience} \textbf{26}
+(2023) 106419). All code, tables and figures are public under the MIT licence
+at \url{https://github.com/trungkiet2005/deployment-layer-selection}, and every
+number quoted in the manuscript is regenerated by the released scripts and
+pinned by its test suite.
+
+\end{document}

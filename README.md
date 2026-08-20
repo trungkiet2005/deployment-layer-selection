@@ -57,15 +57,21 @@ python scripts/emit_extensions.py                  # their tables and fig10_gene
 python scripts/run_round4.py                       # attribution, assortment, lag, grim
 python scripts/emit_round4.py                      # their tables and fig11_observation
 python scripts/make_figures.py                     # the other figures
+python scripts/check_layout.py                     # no text on a curve or off the canvas
 python scripts/build_paper.py                      # stage figures, run pdflatex/bibtex
-pytest                                             # 68 checks of the analytics
+pytest                                             # 95 checks of the analytics and the layout
 ```
 
 `scripts/make_figures.py --quick` runs a coarser sweep in about a minute, and
 `--only 4 5` rebuilds a subset. Every figure is saved at the same width
 (`dls.plotting.FIG_WIDTH`) with an uncropped bounding box and is included at
 `\linewidth`, so all figures are reduced by the same factor on the page and
-their text renders at the same size; `tests/test_figures.py` enforces this. Everything is deterministic: the only
+their text renders at the same size; `tests/test_figures.py` enforces this.
+`scripts/check_layout.py` renders every figure and reports any legend sitting
+on a curve, text over text, or label pushed off the canvas, which is the class
+of fault that survives visual inspection and only shows up on the page; the
+same audit runs in `tests/test_figures.py` for the figures that are cheap to
+rebuild. Everything is deterministic: the only
 randomness is the choice of initial conditions for basin averaging, which is
 seeded.
 

@@ -1,0 +1,152 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Venue-specific passages spliced into the body by scripts/build_jaamas.py.
+%%
+%%  Format, repeated:
+%%      %%>> AFTER|BEFORE|REPLACE: <verbatim anchor line from paper/main.tex>
+%%      ... LaTeX to splice ...
+%%      %%<< END
+%%
+%%  The anchor must be a verbatim substring of paper/main.tex; the build fails
+%%  loudly if it is not, so an edit upstream cannot silently drop a passage.
+%%
+%%  JAAMAS tells authors that reviewers expect the main claim, why it matters to
+%%  the autonomous agents and multi-agent systems literature, and the evidence
+%%  for it, to appear in the introductory material of the paper.  These blocks
+%%  put them there and position the work against the MAS literature.  None of
+%%  them changes a result or a number.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%  1. Introduction: why this is a multi-agent systems problem.
+%%>> AFTER: the one that served the breeder.
+That makes this a multi-agent systems problem rather than a modelling
+curiosity. A deployed agent ecosystem is a multi-agent system whose
+composition is chosen by nobody inside it: an agent's autonomy does not move
+responsibility for its conduct away from the humans who deploy
+it~\citep{chan2023harms}, whose ethical and legal boundaries are still being
+drawn as agents take initiative at wider levels~\citep{wellman2017ethical},
+and who bear part of the harm it causes and all of the decision about whether
+that design is deployed again. The instruments this field has built for open
+agent populations act from within the interaction. Social laws restrict the
+strategies an agent may use~\citep{shoham1995social}, electronic institutions
+enforce the protocols it must follow~\citep{arcos2005electronic}, norms spread
+and are sanctioned among the agents that carry
+them~\citep{morrismartin2019norm,nardin2016sanctions}, reputation aggregates
+past behaviour into a signal its partners condition
+on~\citep{huynh2006integrated}, and reward transfers and formal contracts
+alter the payoffs it faces~\citep{willis2024minimal,haupt2024contracts}. The
+design-selection channel fixes the membership of the population all of them
+act on, through an actor none of them prices and on a functional none of them
+makes an object of policy.
+%%<< END
+
+
+%%  2. Related work: the multi-agent systems literature.
+%%>> BEFORE: \paragraph{Two-level selection.}
+\paragraph{Multi-agent systems.}
+Evolutionary dynamics are a standard analytical instrument in the field more
+broadly. They are its formal tool for describing multi-agent learning
+dynamics~\citep{bloembergen2015evolutionary}, and what that buys has been
+argued over explicitly~\citep{tuyls2007what}; agents are ranked by an
+evolutionary process over the interaction rather than by a solo
+score~\citep{omidshafiei2019alpharank}; empirical game-theoretic analysis
+estimates a payoff matrix over designs from simulated
+play~\citep{tuyls2020bounds}; and mechanism design against an evolving rather
+than an optimising population is a subject of its
+own~\citep{phelps2010evolutionary}. We take that machinery unchanged and
+change what drives it: the matrix that governs the dynamics is not the matrix
+the agents play. Normative multi-agent systems study how a behavioural
+regularity spreads through a population~\citep{morrismartin2019norm}, how
+sanctions are addressed to socio-technical actors~\citep{nardin2016sanctions},
+how normative systems are synthesised off-line under an evolutionary-stability
+criterion~\citep{morales2018offline}, and how social laws restrict the strategy
+set before run time~\citep{shoham1995social}; Corollary~\ref{cor:filter} shows
+that the last of these is exactly inert when the design it excludes is weakly
+dominated, and Theorem~\ref{thm:barrier} gives the barrier such a synthesis
+must then maintain against drift. Trust and reputation give an open system a
+native selection functional over partners~\citep{huynh2006integrated}, which
+the review of~\citet{pinyol2013computational} classifies by how far each model
+relies on direct experience rather than on third-party reports; that axis is
+where Proposition~\ref{prop:misattr} bites, because a signal assembled from
+third-party reports can book an interaction against the wrong party.
+Multi-agent reinforcement learning establishes that the designs which matter
+in a social dilemma are conditional and temporally
+extended~\citep{leibo2017sequential}, and that enforcement behaviour is hard
+to learn and needs supporting structure before it
+appears~\citep{koster2022spurious}; a dilemma can also be removed by transfers
+of reward among the agents themselves, with a computable minimum transfer that
+makes the social optimum dominant~\citep{willis2024minimal} and self-enforcing
+contracts that reach it~\citep{haupt2024contracts}. Every one of these
+instruments acts on agents that are in the game, so it moves the behaviour of
+a population whose membership is given. Ours acts on a principal outside the
+game and moves which designs exist. The closest architecture is that
+of~\citet{zheng2022aieconomist}, whose outer planner optimises an instrument
+over a responding population; ours only selects.
+%%<< END
+
+
+%%  3. Contribution: the claim and the evidence, stated before the four results.
+%%     JAAMAS asks for exactly these two things in the introductory material.
+%%>> REPLACE: We formalise deployment-layer selection, embed it in the reduced AI-race game
+The claim is that an ecosystem of deployed agents is governed at the layer
+that selects designs, so that an instrument applied to the agents can be
+exactly inert while an instrument applied to the principals' selection
+functional is not, and is not monotone either. The evidence is a closed-form
+invasion condition for every ordered pair of designs, affine in the liability
+and hence a critical liability wherever the two designs differ in unsafe
+count, together with replicator trajectories, finite-population fixation and
+stationary computations, and robustness sweeps over enlarged design pools,
+alternative dynamics, charge shapes, matching structures and measurement
+errors.
+We formalise deployment-layer selection, embed it in the reduced AI-race game
+%%<< END
+
+
+%%  4. Introduction, accuracy fix.  At L = 0 the whole population is unsafe, so
+%%     an intermediate liability is better than none, not worse; what the valley
+%%     result says is that it is worse than a weaker liability just below the
+%%     window's lower edge (Corollary cor:valley, and the "worse than either
+%%     bound" wording in the Liability paragraph of the related work).
+%%>> REPLACE: non-monotone in a way that makes intermediate regimes worse than none.
+non-monotone in a way that makes an intermediate range of it worse than a
+weaker setting.
+%%<< END
+
+
+%%  5. Related work: the AI-specific version of the incomplete-contracting point.
+%%>> REPLACE: that is worse than both endpoints.
+that is worse than both endpoints. That the gap between a specified objective
+and the one actually wanted is a contracting problem rather than a
+specification error has been made for artificial agents
+directly~\citep{hadfieldmenell2019incomplete}; the selection functional is the
+same gap moved from the agent's objective to the principal's.
+%%<< END
+
+
+%%  6. Discussion: what the four results mean for someone building or operating
+%%     a multi-agent system.
+%%  The anchor is the last line of the preceding Discussion paragraph, because
+%%  "\paragraph{Structured populations.}" occurs twice in the manuscript.
+%%>> AFTER: not its address.
+\paragraph{Implications for multi-agent system design.}
+For an engineer or a platform operator the four results read as operational
+statements. First, an admission test applied to one design at a time is
+dynamically inert when the design it rejects is weakly dominated by one it
+admits: the filter changes which design occupies the all-unsafe state rather
+than whether that state exists, and the long-run unsafe frequency is unchanged
+to within $1.2\times10^{-3}$ (Corollary~\ref{cor:filter}). Admission should be
+decided instead by a paired probe against a reciprocating counterpart, a
+scripted opponent with no capability of its own. Second, a population resting
+on a payoff-neutral face -- here the designs that never initiate, which are
+exact payoff twins -- drifts along that face at no fitness cost while its
+invasion barrier moves by a factor of $77.7$, from $L^{*}=42.77$ to
+$L^{*}=0.55$. Nothing observable in the interaction changes meanwhile, so
+resilience has to be monitored as a composition and not as an outcome. Third,
+an accountability charge tuned to intermediate strength can be worse than a
+weaker one: on $L\in(4.27,42.77)$ it taxes retaliation as well as initiation,
+and crossing the lower edge from below lifts the basin-averaged unsafe
+frequency from $0$ to $0.32$. Fourth, once the capability behind the unsafe
+option has diffused, recovering a lost safe regime needs a liability larger by
+the factor $1/\rho$ than the one that would have held it, so the cheap
+intervention is the early one.
+%%<< END
