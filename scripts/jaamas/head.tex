@@ -57,6 +57,10 @@
 %%  reloaded here.
 %%============================================================================%%
 \usepackage{graphicx}
+%%  The figures sit in figures/ in the submission package, but Editorial
+%%  Manager unpacks every uploaded file into one flat directory, so ./ is
+%%  searched too and the same source compiles under either layout.
+\graphicspath{{figures/}{./}}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{booktabs}
 \usepackage{multirow}

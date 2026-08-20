@@ -9,24 +9,43 @@ regular research paper.
 
 ## Contents
 
+```
+main.tex  refs.bib  main.bbl  main.pdf     the manuscript
+sn-jnl.cls  sn-apanum.bst                  the Springer style, next to main.tex
+                                           because that is where LaTeX looks
+figures/Fig1.pdf ... Fig11.pdf             the figures
+information_sheet.tex  .pdf                the sheet JAAMAS requires
+cover_letter.tex       .pdf                the letter to the editors
+build.py                                   compile and check
+build/                                     .aux, .log, .out, .blg; disposable
+```
+
 | File | What it is |
 |---|---|
 | `main.tex` | The manuscript, single `.tex` file as Springer requires |
 | `refs.bib` | 134 references (114 from the master plus 20 multi-agent-systems additions), APA-normalised |
-| `Fig1.pdf` ... `Fig11.pdf` | Figures, named and numbered as Springer requires |
+| `figures/Fig1.pdf` ... `Fig11.pdf` | Figures, named and numbered as Springer requires |
 | `sn-jnl.cls` | Springer Nature journal class, v3.1 (December 2024), unmodified |
 | `sn-apanum.bst` | Springer's `sn-apacite.bst` with sorting suppressed (see below) |
 | `information_sheet.tex` | The 1-2 page information sheet JAAMAS requires with every submission |
 | `cover_letter.tex` | Cover letter to the editors |
 | `build.py` | Compiles all three documents and runs the submission checks |
 
+The figures sit in `figures/` here, but `main.tex` still writes
+`\includegraphics{Fig7}` with no directory: the preamble sets
+`\graphicspath{{figures/}{./}}`, so the same source compiles both from this
+layout and from the single flat directory Editorial Manager unpacks an upload
+into. Nothing has to be rewritten before submitting.
+
 ## What to upload
 
 Editorial Manager wants the manuscript source, the figures, the information
 sheet and the cover letter. Upload `main.tex`, `refs.bib`, `main.bbl`,
-`sn-jnl.cls`, `sn-apanum.bst`, the eleven `Fig*.pdf` files, and the compiled
-`information_sheet.pdf` and `cover_letter.pdf`. Including `main.bbl` means the
-reference list survives even if the site's compiler cannot find the `.bst`.
+`sn-jnl.cls`, `sn-apanum.bst`, the eleven `figures/Fig*.pdf` files, and the
+compiled `information_sheet.pdf` and `cover_letter.pdf`. Upload the figures as
+plain files, not as a `figures` folder, and do not rename them. Including
+`main.bbl` means the reference list survives even if the site's compiler cannot
+find the `.bst`. Nothing in `build/` is uploaded.
 
 ## Before you submit
 

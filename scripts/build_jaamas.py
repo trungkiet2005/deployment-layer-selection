@@ -9,6 +9,9 @@ scripts/jaamas/:
   scripts/jaamas/tail.tex      acknowledgements and Springer declarations
   scripts/jaamas/insertions.tex  venue-specific prose spliced into the body
   scripts/jaamas/normalise_bib.py  APA-style fixes to refs.bib
+  scripts/jaamas/build.py      the compile-and-check script, copied into the
+                               package (everything in paper-jaamas/ is
+                               generated, so nothing is authored there)
 
 What the script does to the body, and why:
 
@@ -16,8 +19,10 @@ What the script does to the body, and why:
      include other tex files.  Submit your LaTeX manuscript as one .tex
      document."
   2. Renames the figure files to Fig1.pdf ... Fig11.pdf in order of first
-     appearance.  Springer: "Name your figure files with 'Fig' and the figure
-     number."
+     appearance and puts them in paper-jaamas/figures/.  Springer: "Name your
+     figure files with 'Fig' and the figure number."  The \graphicspath in
+     head.tex searches figures/ and then ./, so the manuscript also compiles
+     against the flat directory Editorial Manager unpacks the upload into.
   3. Replaces the venue-neutral Declarations block with the Springer one, and
      wraps the appendices in the appendices environment the class expects.
   4. Splices in the multi-agent-systems framing passages.
@@ -35,6 +40,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 SRC = os.path.join(ROOT, 'paper')
 DST = os.path.join(ROOT, 'paper-jaamas')
+FIGS = os.path.join(DST, 'figures')
 FRAG = os.path.join(HERE, 'jaamas')
 TPL = os.path.join(ROOT, 'sn-template-extract', 'sn-article-template')
 
@@ -97,9 +103,13 @@ def main():
         if m.group(2) not in order:
             order.append(m.group(2))
     figmap = {stem: 'Fig%d' % i for i, stem in enumerate(order, start=1)}
+    os.makedirs(FIGS, exist_ok=True)
+    for stale in os.listdir(FIGS):                    # drop figures no longer cited
+        if stale not in {new + '.pdf' for new in figmap.values()}:
+            os.remove(os.path.join(FIGS, stale))
     for stem, new in figmap.items():
         shutil.copy(os.path.join(SRC, 'figures', stem + '.pdf'),
-                    os.path.join(DST, new + '.pdf'))
+                    os.path.join(FIGS, new + '.pdf'))
     body, n_fig = figpat.subn(
         lambda m: B + 'includegraphics' + (m.group(1) or '') + '{' + figmap[m.group(2)] + '}',
         body)
@@ -162,7 +172,8 @@ def main():
 
     # ------------------------------------------- 7. accompanying documents
     n_doc = 0
-    for name in ('information_sheet.tex', 'cover_letter.tex', 'README.md'):
+    for name in ('information_sheet.tex', 'cover_letter.tex', 'README.md',
+                 'build.py'):
         p = os.path.join(FRAG, name)
         if os.path.exists(p):
             shutil.copy(p, DST)
@@ -171,7 +182,7 @@ def main():
     print('inlined table files    : %d' % n_input)
     print('figures renamed        : %d' % n_fig)
     for stem, new in figmap.items():
-        print('    %-24s -> %s.pdf' % (stem + '.pdf', new))
+        print('    %-24s -> figures/%s.pdf' % (stem + '.pdf', new))
     print('venue passages spliced : %d' % n_splice)
     print('accompanying documents : %d' % n_doc)
     print('bib entries            : %d master + %d multi-agent-systems '
