@@ -120,6 +120,10 @@ unsafe ecosystems: deployment-layer selection in an evolutionary AI race}
 \author[1,2]{\fnm{Chi-Nguyen} \sur{Tran}}\email{23122044@student.hcmus.edu.vn}
 \equalcont{These authors contributed equally to this work.}
 
+\author[1,2]{\fnm{Nguyen Lam Phu} \sur{Quy}}\email{23122048@student.hcmus.edu.vn}
+
+\author[1,2]{\fnm{Pham Phu} \sur{Hoa}}\email{23122030@student.hcmus.edu.vn}
+
 \affil*[1]{\orgdiv{Faculty of Information Technology},
 \orgname{University of Science (HCMUS)},
 \orgaddress{\city{Ho Chi Minh City}, \country{Vietnam}}}
@@ -137,19 +141,17 @@ call their difference the selection wedge, embed it in a four-strategy model of
 an artificial intelligence race, and analyse its replicator and
 finite-population dynamics. The wedge collapses to a single control parameter,
 an effective liability, in which every invasion condition is affine, so all
-thresholds are closed form. Four consequences follow for governance. Screening
-designs before deployment, at any tolerance that admits reciprocation, removes
-only a weakly dominated design and leaves the long-run unsafe frequency
-unchanged. That frequency is not monotone in liability: over an intermediate
-window liability also taxes the retaliation on which conditional safety
-depends, the unsafe state becomes uninvadable by conditional safety, and
-crossing the window's lower edge from below lifts the basin-weighted unsafe
-frequency from zero to about a third. The barrier protecting a safe population
-meanwhile varies by a factor of 77.7, at the baseline calibration, along a
-composition that selection leaves neutral. And irreversible capability
-diffusion makes the loss of a protected regime hysteretic, with exactly
-computable width. Governance of such an ecosystem binds at the layer that
-selects designs, not at the layer that plays them.}
+thresholds are closed form. Three consequences follow. Screening designs before
+deployment, at any tolerance that admits reciprocation, removes a weakly
+dominated design but does not materially improve long-run harm in this reduced
+pool: on a common start measure the basin-averaged unsafe frequency differs by
+at most $6.2\times10^{-3}$. That frequency is not monotone in liability: over
+an intermediate window liability taxes the retaliation on which conditional
+safety depends, the unsafe state becomes uninvadable by conditional safety, and
+crossing the lower edge lifts unsafe behaviour from zero to about a third of
+encounters. Coupling enforcement to diffusing capability produces hysteresis of
+computable width for the exact-safe branch. Governance binds at the selection
+layer, not at the design layer.}
 
 \keywords{Multi-agent systems, Evolutionary game theory, Replicator dynamics,
 Liability, Artificial intelligence governance}
@@ -1557,25 +1559,25 @@ $g_{1}=\delta a_{1}-L\,\delta m_{1}$ against a pure $\CS$ resident. On the
 face the replicator equation is
 $\dot x=x(1-x)\big[(1-x)g_{0}+xg_{1}\big]$, so neutrality breaks at first
 order in the perturbation and the face is traversed in a time proportional to
-the inverse of it. Under execution noise, to first order in $\eta$,
+the inverse of it. Under execution noise, to leading order as $\eta\to0$,
 \begin{equation}
 \begin{aligned}
-\delta m_{0}&=\big(\mathbb{E}[T]-1\big)\,\eta=8.000\,\eta,
- &\delta a_{0}&=379.8\,\eta,\\
-\delta m_{1}&=46.00\,\eta,
- &\delta a_{1}&=287.1\,\eta,
+\delta m_{0}&=\big(\mathbb{E}[T]-1\big)\,\eta=8.000\,\eta+O(\eta^2),
+ &\delta a_{0}&=379.8\,\eta+O(\eta^2),\\
+\delta m_{1}&=46.00\,\eta+O(\eta^2),
+ &\delta a_{1}&=287.1\,\eta+O(\eta^2),
 \end{aligned}
 \label{eq:rate}
 \end{equation}
-each with an $O(\eta^{2})$ remainder. Hence
+so the leading-order thresholds are
 \begin{enumerate}
-\item[(i)] a rare $\CS$ invades an $\AS$ resident exactly for
-$L<379.8/8.000=47.5$, and a rare $\AS$ invades a $\CS$ resident exactly for
-$L>287.1/46.00=6.24$;
-\item[(ii)] for $L<6.24$ conditional safety sweeps the face, and the crossing
+\item[(i)] a rare $\CS$ invades an $\AS$ resident for
+$L<379.8/8.000=47.5+O(\eta)$, and a rare $\AS$ invades a $\CS$ resident for
+$L>287.1/46.00=6.24+O(\eta)$;
+\item[(ii)] for $L<6.24+O(\eta)$ conditional safety sweeps the face, and the crossing
 time from $x_{0}=0.05$ to $1-x_{0}$ is $\Theta(1/\eta)$: $17.8$ time units at
 $\eta=10^{-3}$ and $1.78$ at $\eta=10^{-2}$, at $L=0$;
-\item[(iii)] for $6.24<L<47.5$ the face carries instead a stable interior
+\item[(iii)] for $6.24+O(\eta)<L<47.5+O(\eta)$ the face carries a stable interior
 composition, at a conditional share that is independent of $\eta$ at leading
 order,
 \begin{equation}
@@ -1584,9 +1586,9 @@ order,
          =\frac{379.8-8L}{92.7+38L};
 \label{eq:xhat}
 \end{equation}
-\item[(iv)] $\hat x(L)>x^{*}(L)$ at every $L\ge0$, where $x^{*}$ is the
-critical share of Theorem~\ref{thm:barrier}: the composition execution noise
-selects always lies on the protected side of the invasion barrier.
+\item[(iv)] $\hat x(L)>x^{*}(L)$ on the interval where the interior solution is
+relevant, so the composition chosen by execution noise lies on the protected
+side of the invasion barrier whenever protection is feasible.
 \end{enumerate}
 \end{proposition}
 
@@ -1761,7 +1763,7 @@ forgone payoff to the player.
 
 \paragraph{Non-linear charges.}
 Real liability is not linear in the number of incidents. Replace the charge by
-$L\varphi(m)$ for a strictly increasing $\varphi$ with $\varphi(0)=0$,
+$L\varphi(m)$ for a non-decreasing $\varphi$ with $\varphi(0)=0$,
 normalised so that $\varphi(9)=9$, which fixes the charge on a design that is
 unsafe throughout and makes $L$ comparable across shapes. Lemma~\ref{lem:affine}
 survives verbatim with $\delta m$ replaced by $\delta\varphi$, so every
@@ -1840,19 +1842,18 @@ and gives
 \end{aligned}
 \label{eq:sigma}
 \end{equation}
-so the liability needed to keep conditional aggression out falls steeply with
-assortment: $L>6.14$ suffices at $\sigma=1$, $L>3.14$ at $\sigma=1.5$ and
-$L>1.56$ at $\sigma=2$, while for $\sigma\ge2.93$ unconditional safety is
-protected with no liability at all. Against conditional safety the
-corresponding numbers are $L>0.33$ at $\sigma=1$ and no liability at all for
-$\sigma\ge1.10$. Assortment and liability are substitutes here, and the
-substitution is strongly in favour of the conditional design. Two caveats
-bound the criterion. It is exact only at weak selection, and weak-selection
-rankings need not extrapolate to the selection strengths that a large charge
-implies~\citep{wu2013extrapolating}. And it cannot settle the valley, because
-it orders each pair of
-designs and a bistable pair has no order; for that we need a route that keeps
-the dynamics.
+so the liability needed for $\AS$ to have a larger fixation probability than
+$\CAS$ falls steeply with assortation: $L>6.14$ suffices at $\sigma=1$,
+$L>3.14$ at $\sigma=1.5$ and $L>1.56$ at $\sigma=2$, while for
+$\sigma\ge2.93$ unconditional safety is protected with no liability at all.
+Against conditional safety the corresponding numbers are $L>0.33$ at
+$\sigma=1$ and no liability at all for $\sigma\ge1.10$. Assortment and
+liability are substitutes here, and the substitution is strongly in favour of
+the conditional design. Two caveats bound the criterion. It is exact only at
+weak selection, and weak-selection rankings need not extrapolate to the
+selection strengths that a large charge implies~\citep{wu2013extrapolating}.
+And it cannot settle the valley, because it orders each pair of designs and a
+bistable pair has no order; for that we need a route that keeps the dynamics.
 
 \paragraph{Assortative matching.}
 The deterministic idealisation of structure supplies one. Under assortment at
@@ -2209,19 +2210,20 @@ its endpoints is irrelevant. Everything the channel contributes is the single
 number $\rho$, and two channels sharing a $\rho$ share a width, as
 \eqref{eq:width} shows for $\theta=0.9$ and $\kappa=9$.
 
-Two remarks on the composition. The width $1/\rho$ is a ratio, so it is the
-same at every safe-face composition, but the two liabilities it relates are
-not: a population sitting at the unconditional vertex loses protection at
-$42.765$ rather than at $0.551$, and the loop is then two orders of magnitude
-higher on the $L$-axis. The loop is nevertheless self-consistent once it has
-been traversed, because the safe face is always re-entered through $\CS$: on
-the return sweep the guard invades the unsafe attractor as soon as
+Two remarks on the composition. For a repeated stationary cycle, where the
+safe face is re-entered at the same composition $x'=x$, the width is
+$L_{\uparrow}/L_{\downarrow}=1/\rho$ and the ratio is the same for every safe-face
+composition. The two liabilities it relates are not the same, however: a
+population sitting at the unconditional vertex loses protection at $42.765$
+rather than at $0.551$, and the loop is then two orders of magnitude higher on
+the $L$-axis. The loop is nevertheless self-consistent once it has been
+traversed, because the safe face is re-entered through $\CS$: on the return
+sweep the guard invades the unsafe attractor as soon as
 $L_{\mathrm{eff}}>L^{*}_{\CS\to\CAS}$ and holds it against $\CAS$ once
-$L_{\mathrm{eff}}>L^{*}_{\CAS\to\CS}$, so $x'=1$ and $L^{*}(x')=0.551$
-whatever composition the sweep started from. The sweep below is therefore run
-from a $\CS$-dominated safe population, $x=0.96$, which is the composition the
-return branch restores and the one at which the loop is stationary under
-repetition.
+$L_{\mathrm{eff}}>L^{*}_{\CAS\to\CS}$, so the repeated cycle returns to the
+conditional vertex and $L^{*}(x')=0.551$ regardless of the starting
+composition. The sweep below is therefore run from a $\CS$-dominated safe
+population, which is the composition the repeated cycle restores.
 
 Figure~\ref{fig:hysteresis} confirms the prediction numerically at
 $\theta=0.9$: the descending branch loses protection between $L=0.62$ and
@@ -2626,10 +2628,11 @@ Evolutionary computations use EGTtools~\citep{domingos2023egttools}. The
 repository includes the test suite that pins the reported numbers.
 
 \paragraph{Author contributions}
-All three authors contributed equally to this work. Study conception and
-design, model specification, analysis, code and figures were carried out
-jointly by Trung-Kiet Huynh, Dao Sy Duy Minh and Chi-Nguyen Tran. All three authors wrote,
-read and approved the final manuscript.
+Trung-Kiet Huynh, Dao Sy Duy Minh and Chi-Nguyen Tran contributed to the
+conceptualization, model specification, formal analysis, software,
+visualization and writing of the manuscript. Nguyen Lam Phu Quy contributed to
+manuscript review and refinement. Pham Phu Hoa contributed to manuscript
+review and refinement. All authors reviewed and approved the final manuscript.
 
 \paragraph{Use of large language models}
 %%  Springer requires generative use of an LLM to be documented; AI-assisted
